@@ -1,0 +1,73 @@
+<knaw_long xmlns="http://www.knaw.nl/narcis/1.0/long/">
+  <humanStartPage>http://depot.knaw.nl/565/</humanStartPage>
+  <persistentIdentifier>URN:NBN:NL:UI:17-565</persistentIdentifier>
+  <modificationDate>2009-02-13T16:15:44Z</modificationDate>  
+  <objectFiles>
+    <objectFile>
+      <mimeType>application/pdf</mimeType>
+      <url>http://depot.knaw.nl/565/1/14807.pdf</url>
+    </objectFile>
+    <objectFile>
+      <mimeType>application/ms-word</mimeType>
+      <url>http://depot.knaw.nl/566/1/blah.doc</url>
+      <accessRights>openAccess</accessRights>
+    </objectFile>
+  </objectFiles>
+  <accessRights>openAccess</accessRights>
+  <metadata>
+    <titleInfo>
+      <title>Appositie en de interne struktuur van de NP</title>
+    </titleInfo>
+    <titleInfo xml:lang="en">
+      <title>Appositie en de interne struktuur van de NP</title>
+    </titleInfo>
+    <name>
+      <type>personal</type>
+      <name>Bennis&amp;Bennis</name>
+      <given>prof.dr. H.J.</given>
+      <mcRoleTerm>aut</mcRoleTerm>
+      <dai>info:eu-repo/dai/be/071792279666</dai>
+    </name>
+    <name>
+      <type>personal</type>
+      <name>Ipsum</name>
+      <given>Lorum</given>
+      <termsOfAddress>Jr.</termsOfAddress>
+      <mcRoleTerm>rev</mcRoleTerm>
+    </name>
+    <name>
+      <type>corporate</type>
+      <name>Versiteit</name>
+      <given>Uni</given>
+      <mcRoleTerm>dgg</mcRoleTerm>
+      <dai>info:eu-repo/dai/nl/666</dai>
+    </name>
+    <genre>article</genre>
+    <abstract>FransHeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeellllllang</abstract>
+    <abstract xml:lang="en"
+      >EngelsDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD</abstract>
+    <dateIssued>
+      <dateIssued/>
+      <unParsed>opgraafdatum 3000 jaar voor christus</unParsed>
+    </dateIssued>
+    <language>nl</language>
+    <location_url>http://www.dds.nl/semantics/article</location_url>
+    <location_url>ftp://www.dds.nl/semantics/article</location_url>
+    <relatedItem type="host">
+      <part>
+        <volume>8</volume>
+        <issue>5</issue>
+        <start_page>209</start_page>
+        <end_page>228</end_page>
+      </part>
+      <titleInfo>
+        <title>Spektator</title>
+      </titleInfo>
+      <titleInfo xml:lang="en">
+        <title>Spektator</title>
+      </titleInfo>
+      <publication_identifier type="issn">00282162:wilko</publication_identifier>
+    </relatedItem>
+    <typeOfResource>text</typeOfResource>
+  </metadata>
+</knaw_long>

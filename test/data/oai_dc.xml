@@ -1,0 +1,23 @@
+<metadata xmlns="http://www.openarchives.org/OAI/2.0/">
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">        
+        <dc:title>Kroniek van Afrika: vol. 5, no. 1</dc:title>
+	<dc:title>Croniquel of Africa: very nice</dc:title>
+        <dc:creator>African Studies Centre, Leiden</dc:creator>
+	<dc:creator>Arnoud Jippes</dc:creator>
+	<dc:contributor>Wee. Es</dc:contributor>
+	<dc:creator>E. Dijk</dc:creator>
+        <dc:subject>Africa</dc:subject>        
+		<dc:rights>Rechten01</dc:rights> 
+		<dc:rights>Rechten02</dc:rights>
+        <dc:description>Leiden : African Studies Centre, 1965.</dc:description>
+        <dc:publisher>Leiden : African Studies Centre</dc:publisher>        
+	<dc:date>Opgegraven 200 jaar voor Christus</dc:date>
+	<dc:date>1965</dc:date>
+        <dc:type>Dissertation</dc:type>
+        <dc:format>application/pdf</dc:format>        
+        <dc:identifier>http://hdl.marga.net/1887/523</dc:identifier>
+		<dc:rights>Kopierecht WERELD</dc:rights>
+        <dc:language>eaa-US</dc:language>        
+		<dc:language>en</dc:language>
+    </oai_dc:dc>
+</metadata>

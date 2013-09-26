@@ -1,0 +1,23 @@
+<knaw_short xmlns="http://www.knaw.nl/narcis/1.0/short/">
+  <accessRights>openAccess</accessRights>
+  <metadata>
+    <titleInfo>
+      <title>Paths and flows---a historical survey</title>
+    </titleInfo>
+    <titleInfo xml:lang="en">
+      <title>Paths and flows---a historical survey</title>
+    </titleInfo>
+    <name>
+      <type>personal</type>
+      <family>Schrijver</family>
+      <given>A.</given>
+      <mcRoleTerm>aut</mcRoleTerm>
+      <dai>info:eu-repo/dai/nl/29806278</dai>
+    </name>
+    <genre>article</genre>
+    <dateIssued>
+      <parsed>1993-01-01</parsed>
+      <unParsed>1993-01-01</unParsed>
+    </dateIssued>
+  </metadata>
+</knaw_short>

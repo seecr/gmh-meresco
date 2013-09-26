@@ -1,0 +1,177 @@
+<updateRequest>
+    <srw:version xmlns:srw="http://www.loc.gov/zing/srw/">1.0</srw:version>
+    <ucp:action xmlns:ucp="http://www.loc.gov/ucp">info:srw/action/1/replace</ucp:action>
+    <ucp:recordIdentifier xmlns:ucp="http://www.loc.gov/ucp">knaw:oai:depot.knaw.nl:666</ucp:recordIdentifier>
+    <srw:record xmlns:srw="http://www.loc.gov/zing/srw/">
+        <srw:recordPacking>xml</srw:recordPacking>
+        <srw:recordSchema>metadata</srw:recordSchema>
+        <srw:recordData><document xmlns="http://meresco.org/namespace/harvester/document"><part name="header">&lt;header xmlns="http://www.openarchives.org/OAI/2.0/"&gt;
+      &lt;identifier&gt;oai:depot.knaw.nl:666&lt;/identifier&gt;
+      &lt;datestamp&gt;2009-02-13T16:15:44Z&lt;/datestamp&gt;
+      &lt;setSpec&gt;nl_didl&lt;/setSpec&gt;
+      &lt;setSpec&gt;66756C6C746578743D7075626C6963&lt;/setSpec&gt;
+      &lt;setSpec&gt;archive-40&lt;/setSpec&gt;&lt;/header&gt;</part><part name="meta">&lt;meta xmlns="http://meresco.org/namespace/harvester/meta"&gt;
+  &lt;upload&gt;&lt;id&gt;knaw:oai:depot.knaw.nl:666&lt;/id&gt;&lt;/upload&gt;
+  &lt;record&gt;
+    &lt;id&gt;oai:depot.knaw.nl:666&lt;/id&gt;
+  &lt;/record&gt;
+  &lt;repository&gt;
+    &lt;id&gt;knaw&lt;/id&gt;
+    &lt;set&gt;archive-40&lt;/set&gt;
+    &lt;baseurl&gt;http://depot.knaw.nl/cgi/oai2&lt;/baseurl&gt;
+    &lt;repositoryGroupId&gt;knawgroup&lt;/repositoryGroupId&gt;
+    &lt;metadataPrefix&gt;nl_didl&lt;/metadataPrefix&gt;
+    &lt;collection&gt;publication&lt;/collection&gt;
+  &lt;/repository&gt;
+&lt;/meta&gt;</part><part name="metadata">&lt;metadata&gt;&lt;didl:DIDL DIDLDocumentId=&quot;urn:nbn:nl:ui:11-dbi/43565b43c50ba&quot;
+    xmlns:didl=&quot;urn:mpeg:mpeg21:2002:02-DIDL-NS&quot;
+    xmlns:dii=&quot;urn:mpeg:mpeg21:2002:01-DII-NS&quot;
+    xmlns:dip=&quot;urn:mpeg:mpeg21:2005:01-DIP-NS&quot;
+    xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;
+    xmlns:dcterms=&quot;http://purl.org/dc/terms/&quot;
+    xmlns:dc=&quot;http://purl.org/dc/&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;urn:mpeg:mpeg21:2002:02-DIDL-NS 
+    http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd 
+    urn:mpeg:mpeg21:2002:01-DII-NS 
+    http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd 
+    urn:mpeg:mpeg21:2005:01-DIP-NS 
+    http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd&quot;&gt;
+    &lt;didl:Item&gt;
+        &lt;didl:Descriptor&gt;
+            &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                &lt;dii:Identifier&gt;urn:NBN:nl:ui:11-dbi/43565b43c50ba&lt;/dii:Identifier&gt;
+            &lt;/didl:Statement&gt;
+        &lt;/didl:Descriptor&gt;
+        &lt;didl:Descriptor&gt;
+            &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                &lt;dcterms:modified&gt;2003-11-17T14:34:54Z&lt;/dcterms:modified&gt;
+            &lt;/didl:Statement&gt;
+        &lt;/didl:Descriptor&gt;
+        &lt;didl:Component&gt;
+            &lt;didl:Resource mimeType=&quot;application/xml&quot;&gt;http://irs.ub.rug.nl/ppn/265450659&lt;/didl:Resource&gt;            
+        &lt;/didl:Component&gt;
+        &lt;didl:Item&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dip:ObjectType&gt;info:eu-repo/semantics/descriptiveMetadata&lt;/dip:ObjectType&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                    &lt;dcterms:modified&gt;2011-04-21T00:21:49Z&lt;/dcterms:modified&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Component&gt;
+                &lt;didl:Resource mimeType=&quot;text/xml&quot;&gt;
+                    &lt;mods
+                        version=&quot;3.2&quot;
+                        xmlns=&quot;http://www.loc.gov/mods/v3&quot;
+                        xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+                        xsi:schemaLocation=&quot;http://www.loc.gov/mods/v3
+                        http://www.loc.gov/standards/mods/v3/mods-3-2.xsd&quot;&gt;
+                        &lt;identifier type=&quot;local&quot; displayLabel=&quot;dbi&quot;&gt;43565b43c50ba&lt;/identifier&gt;
+                        &lt;identifier type=&quot;local&quot; displayLabel=&quot;ppn&quot;&gt;265450659&lt;/identifier&gt;
+                        &lt;recordInfo&gt;
+                            &lt;recordIdentifier&gt;oai:ub.rug.nl:dbi/43565b43c50ba&lt;/recordIdentifier&gt;
+                            &lt;recordChangeDate encoding=&quot;iso8601&quot;&gt;2011-04-21 00:21:49&lt;/recordChangeDate&gt;
+                        &lt;/recordInfo&gt;
+                        &lt;name type=&quot;personal&quot;&gt;
+                            &lt;namePart&gt;Allers, M.A.; Hoeben, C.&lt;/namePart&gt;
+                            &lt;role&gt;&lt;roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt;aut&lt;/roleTerm&gt;&lt;/role&gt;
+                        &lt;/name&gt;
+                        &lt;originInfo&gt;
+                            &lt;dateIssued encoding=&quot;iso8601&quot;&gt;2004&lt;/dateIssued&gt;
+                            &lt;publisher&gt;Rijksuniversiteit Groningen&lt;/publisher&gt;
+                        &lt;/originInfo&gt;
+                        &lt;language&gt;&lt;languageTerm authority=&quot;rfc3066&quot; type=&quot;code&quot;&gt;nl&lt;/languageTerm&gt;&lt;/language&gt;
+                        &lt;titleInfo&gt;
+                            &lt;title&gt;Achtergronden van tariefstijgingen van gemeentelijke belastingen&lt;/title&gt;
+                        &lt;/titleInfo&gt;
+                        &lt;typeOfResource&gt;text&lt;/typeOfResource&gt;
+                        &lt;genre&gt;info:eu-repo/semantics/workingPaper&lt;/genre&gt;
+                        &lt;physicalDescription&gt;
+                            &lt;extent&gt;33&lt;/extent&gt;
+                        &lt;/physicalDescription&gt;                  
+                    &lt;/mods&gt;
+                &lt;/didl:Resource&gt;
+            &lt;/didl:Component&gt;
+        &lt;/didl:Item&gt;
+        &lt;didl:Item&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dip:ObjectType&gt;info:eu-repo/semantics/objectFile&lt;/dip:ObjectType&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                    &lt;dii:Identifier&gt;URN:nbn:NL:UI:11-dbi/437c8ef151372&lt;/dii:Identifier&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dcterms:accessRights&gt;http://purl.org/eprint/accessRights/Openaccess&lt;/dcterms:accessRights&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            
+             &lt;didl:Descriptor&gt;
+               &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                  &lt;rdf:type rdf:resource=&quot;publishedversion&quot;/&gt;
+               &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dc:description&gt;Bennis, H.J. (2001) Alweer wat voor (een). In:
+                        Kerven in een rots. B. Dongelmans, J. Lalleman &amp;amp; O.
+                        Praamstra (red.). &lt;/dc:description&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;            
+            
+            &lt;!-- datestamp van het component --&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                    &lt;dcterms:modified&gt;2005-11-17T14:34:54Z&lt;/dcterms:modified&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Component&gt;
+                &lt;didl:Resource mimeType=&quot;application/pdf&quot; ref=&quot;http://coelo.eldoc.ub.rug.nl/FILES/root/2004/200404/rap0404.pdf&quot;/&gt;
+            &lt;/didl:Component&gt;
+        &lt;/didl:Item&gt;
+        &lt;didl:Item&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dip:ObjectType&gt;info:eu-repo/semantics/objectFile&lt;/dip:ObjectType&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                    &lt;dii:Identifier&gt;urn:nbn:nl:ui:bogus-pdf/437c8ef151372&lt;/dii:Identifier&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;!-- datestamp van het component --&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
+                    &lt;dcterms:modified&gt;2005-11-17T14:34:54Z&lt;/dcterms:modified&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Component&gt;
+                &lt;didl:Resource mimeType=&quot;application/pdf&quot; ref=&quot;http://coelo.eldoc.ub.rug.nl/FILES/root/2004/200504/toc07.pdf&quot;/&gt;
+            &lt;/didl:Component&gt;
+        &lt;/didl:Item&gt;        
+        &lt;didl:Item&gt;
+            &lt;didl:Descriptor&gt;
+                &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                    &lt;dip:ObjectType&gt;info:eu-repo/semantics/humanStartPage&lt;/dip:ObjectType&gt;
+                &lt;/didl:Statement&gt;
+            &lt;/didl:Descriptor&gt;
+            &lt;didl:Component&gt;
+                &lt;didl:Resource mimeType=&quot;text/html&quot; ref=&quot;http://irs.ub.rug.nl/ppn/265450659&quot;/&gt;
+            &lt;/didl:Component&gt;
+        &lt;/didl:Item&gt;        
+    &lt;/didl:Item&gt;
+&lt;/didl:DIDL&gt;&lt;/metadata&gt;
+</part></document></srw:recordData>
+    </srw:record>
+</updateRequest>

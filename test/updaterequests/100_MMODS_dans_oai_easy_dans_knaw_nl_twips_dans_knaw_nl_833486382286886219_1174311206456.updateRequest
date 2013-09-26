@@ -1,0 +1,124 @@
+<updateRequest>
+    <srw:version xmlns:srw="http://www.loc.gov/zing/srw/">1.0</srw:version>
+    <ucp:action xmlns:ucp="http://www.loc.gov/ucp">info:srw/action/1/replace</ucp:action>
+    <ucp:recordIdentifier xmlns:ucp="http://www.loc.gov/ucp">dans:oai:easy.dans.knaw.nl:twips.dans.knaw.nl-833486382286886219-1174311206456</ucp:recordIdentifier>
+    <srw:record xmlns:srw="http://www.loc.gov/zing/srw/">
+        <srw:recordPacking>xml</srw:recordPacking>
+        <srw:recordSchema>metadata</srw:recordSchema>
+        <srw:recordData><document xmlns="http://meresco.org/namespace/harvester/document"><part name="header">&lt;header xmlns="http://www.openarchives.org/OAI/2.0/"&gt;&lt;identifier&gt;oai:easy.dans.knaw.nl:twips.dans.knaw.nl-833486382286886219-1174311206456&lt;/identifier&gt;&lt;datestamp&gt;2010-03-26T14:55:36Z&lt;/datestamp&gt;&lt;setSpec&gt;twips.dans.knaw.nl--8739414114196558923-1179232222081:twips.dans.knaw.nl--1307254666806078241-1167404201797&lt;/setSpec&gt;&lt;/header&gt;</part><part name="meta">&lt;meta xmlns="http://meresco.org/namespace/harvester/meta"&gt;
+  &lt;upload&gt;&lt;id&gt;dans:oai:easy.dans.knaw.nl:twips.dans.knaw.nl-833486382286886219-1174311206456&lt;/id&gt;&lt;/upload&gt;
+  &lt;record&gt;
+    &lt;id&gt;oai:easy.dans.knaw.nl:twips.dans.knaw.nl-833486382286886219-1174311206456&lt;/id&gt;
+    &lt;harvestdate&gt;2009-04-28T07:54:04Z&lt;/harvestdate&gt;
+  &lt;/record&gt;
+  &lt;repository&gt;
+    &lt;id&gt;dans&lt;/id&gt;
+    &lt;set&gt;twips.bureel.dans.knaw.nl:twips.dans.knaw.nl&lt;/set&gt;
+    &lt;baseurl&gt;http://easy.dans.knaw.nl/oai&lt;/baseurl&gt;
+    &lt;repositoryGroupId&gt;dans&lt;/repositoryGroupId&gt;
+    &lt;metadataPrefix&gt;didl&lt;/metadataPrefix&gt;
+    &lt;collection&gt;dataset&lt;/collection&gt;
+  &lt;/repository&gt;
+&lt;/meta&gt;</part><part name="metadata">&lt;metadata xmlns="http://www.openarchives.org/OAI/2.0/"&gt;&lt;didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" urn:mpeg:mpeg21:2002:02-DIDL-NS  http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii.xsd/dii.xsd urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd"&gt;
+	&lt;didl:Item&gt;
+		&lt;didl:Descriptor&gt;
+			&lt;didl:Statement mimeType="application/xml"&gt;
+				&lt;dii:Identifier xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS"&gt;urn:nbn:nl:ui:13-9qz-2ce&lt;/dii:Identifier&gt;
+			&lt;/didl:Statement&gt;
+		&lt;/didl:Descriptor&gt;
+		&lt;didl:Descriptor&gt;
+			&lt;didl:Statement mimeType="text/xml"&gt;
+				&lt;dcterms:modified xmlns:dcterms="http://purl.org/dc/terms/"&gt;2010-03-26T00:00:00Z&lt;/dcterms:modified&gt;
+			&lt;/didl:Statement&gt;
+		&lt;/didl:Descriptor&gt;
+		&lt;didl:Component&gt;
+			&lt;didl:Resource mimeType="application/html" ref="https://easy.dans.knaw.nl/dms?command=AIP_info&amp;amp;aipId=twips.dans.knaw.nl-833486382286886219-1174311206456&amp;amp;windowStyle=default&amp;amp;windowContext=default"/&gt;&lt;/didl:Component&gt;
+		&lt;didl:Item&gt;
+			&lt;didl:Descriptor&gt;
+				&lt;didl:Statement mimeType="application/xml"&gt;
+					&lt;dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS"&gt;info:eu-repo/semantics/descriptiveMetadata&lt;/dip:ObjectType&gt;
+				&lt;/didl:Statement&gt;
+			&lt;/didl:Descriptor&gt;
+		
+			&lt;didl:Component&gt;
+				&lt;didl:Resource mimeType="application/xml"&gt;
+					&lt;oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd"&gt;
+						&lt;dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Leefstijlen in de provincie Utrecht 1988-1989&lt;/dc:title&gt;
+						&lt;dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Life styles in Utrecht province 1988-1989&lt;/dc:title&gt;
+						&lt;dc:categories xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;twips.dans.knaw.nl--1307254666806078241-1167404201797&lt;/dc:categories&gt;
+						&lt;dc:date xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;1994-01-01&lt;/dc:date&gt;
+						&lt;dc:date xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;2007-07-23&lt;/dc:date&gt;
+						&lt;dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Ganzeboom, H.B.G., Rijksuniversiteit Utrecht * Utrecht, vakgroep sociologie (primary investigator)&lt;/dc:creator&gt;
+						&lt;dc:description xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Lifestyle differentiation in Utrecht province Media participation / food preferences / consumer durables / housing / clothing / table manners / healthy living / holidays / moral values / political priorities / cultural consumption / preferences in arts, literature, music and television / cultural consumption of friends / cultural consumption of parents. Background variables: basic characteristics/ place of birth/ residence/ housing situation/ household characteristics/ characteristics of parental family/household/ occupation/employment/ income/capital assets/ education/ politics/ religion/ consumption of durables/ readership, mass media, and 'cultural' exposure/ organizational membership&lt;/dc:description&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;living conditions&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;social stratification&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;life styles&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;mass media&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;food&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;housing&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;consumption&lt;/dc:subject&gt;
+						&lt;dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;cultural activities&lt;/dc:subject&gt;
+						&lt;dc:relation xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Ganzeboom, H.B.G.; Speklapjes of muesli : Verschillen tussen bevolkingsgroepen niet meer in hoog-laag
+					tegenstelling onder te brengen; Politiek &amp;amp; Sociale Vorming; 8&lt;/dc:relation&gt;
+						&lt;dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Ganzeboom, H.B.G.Rijksuniversiteit Utrecht, vakgroep sociologie (research initiator) &lt;/dc:contributor&gt;
+						&lt;dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;Ganzeboom, H.B.G.Rijksuniversiteit Utrecht, vakgroep sociologie (data collector) &lt;/dc:contributor&gt;
+						&lt;dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;http://persistent-identifier.nl/?identifier=urn:nbn:nl:ui:13-9qz-2ce&lt;/dc:identifier&gt;
+					&lt;/oai_dc:dc&gt;
+				&lt;/didl:Resource&gt;
+			&lt;/didl:Component&gt;
+		&lt;/didl:Item&gt;
+		&lt;didl:Item&gt;
+			&lt;didl:Descriptor&gt;
+				&lt;didl:Statement mimeType="application/xml"&gt;
+					&lt;dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS"&gt;info:eu-repo/semantics/descriptiveMetadata&lt;/dip:ObjectType&gt;
+				&lt;/didl:Statement&gt;
+			&lt;/didl:Descriptor&gt;
+		
+			&lt;didl:Component&gt;
+				&lt;didl:Resource mimeType="application/xml"&gt;
+					&lt;mods xmlns="http://www.loc.gov/mods/v3" version="3.2" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd"&gt;
+						&lt;titleInfo&gt;
+							&lt;title&gt;Leefstijlen in de provincie Utrecht 1988-1989&lt;/title&gt;
+						&lt;/titleInfo&gt;
+						&lt;name type="personal" ID="twips.dans.knaw.nl-833486382286886219-1174311206456-070016992"&gt;
+							&lt;namePart type="family"&gt;H.B.G. Ganzeboom&lt;/namePart&gt;
+							&lt;role&gt;
+								&lt;roleTerm type="code" authority="marcrelator"&gt;aut&lt;/roleTerm&gt;
+							&lt;/role&gt;
+						&lt;/name&gt;
+						&lt;extension&gt;
+							&lt;daiList xmlns="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai http://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd"&gt;
+								&lt;identifier IDref="twips.dans.knaw.nl-833486382286886219-1174311206456-070016992" authority="info:eu-repo/dai/nl"&gt;070016992&lt;/identifier&gt;
+							&lt;/daiList&gt;
+						&lt;/extension&gt;
+					&lt;/mods&gt;
+				&lt;/didl:Resource&gt;
+			&lt;/didl:Component&gt;
+		&lt;/didl:Item&gt;
+		&lt;didl:Item&gt;
+			&lt;didl:Descriptor&gt;
+				&lt;didl:Statement mimeType="application/xml"&gt;
+					&lt;dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS"&gt;info:eu-repo/semantics/humanStartPage&lt;/dip:ObjectType&gt;
+				&lt;/didl:Statement&gt;
+			&lt;/didl:Descriptor&gt;
+		
+			&lt;didl:Component&gt;
+				&lt;didl:Resource mimeType="application/html" ref="https://easy.dans.knaw.nl/dms?command=AIP_info&amp;amp;aipId=twips.dans.knaw.nl-833486382286886219-1174311206456&amp;amp;windowStyle=default&amp;amp;windowContext=default"/&gt;
+			&lt;/didl:Component&gt;
+		&lt;/didl:Item&gt;
+		&lt;didl:Item&gt;
+			&lt;didl:Descriptor&gt;
+				&lt;didl:Statement mimeType="application/xml"&gt;
+					&lt;dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS"&gt;info:eu-repo/semantics/objectFile&lt;/dip:ObjectType&gt;
+				&lt;/didl:Statement&gt;
+			&lt;/didl:Descriptor&gt;
+		
+			&lt;didl:Component&gt;
+				&lt;didl:Resource mimeType="application/html" ref="https://easy.dans.knaw.nl/dms?command=AIP_info&amp;amp;aipId=twips.dans.knaw.nl-833486382286886219-1174311206456&amp;amp;windowStyle=default&amp;amp;windowContext=default"/&gt;
+			&lt;/didl:Component&gt;
+		&lt;/didl:Item&gt;
+	&lt;/didl:Item&gt;
+&lt;/didl:DIDL&gt;
+&lt;/metadata&gt;</part></document></srw:recordData>
+    </srw:record>
+</updateRequest>

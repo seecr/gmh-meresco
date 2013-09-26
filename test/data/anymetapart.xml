@@ -1,0 +1,14 @@
+<meta xmlns="http://meresco.org/namespace/harvester/meta">
+  <upload><id>person:PRS1242583</id></upload>
+  <record>
+    <id>PRS1242583</id>
+  </record>
+  <repository>
+    <id>person</id>
+    <set>personen</set>
+    <baseurl>http://narcis01.bureau.knaw.nl:8181/nodserver-0.0.1/nodbrug</baseurl>
+    <repositoryGroupId>nod</repositoryGroupId>
+    <metadataPrefix>nodpersoon</metadataPrefix>
+    <collection>person</collection>
+  </repository>
+</meta>

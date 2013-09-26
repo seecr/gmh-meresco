@@ -1,0 +1,30 @@
+<metadata>
+<organisatie xmlns="http://www.onderzoekinformatie.nl/nod/org" code="U.WUR.LO.Alterra">
+    <naam_nl>Alterra</naam_nl>
+    <naam_en>Alterra</naam_en>
+    <taak_nl>Alterra is het kennisinstituut voor de groene leefomgeving. Het instituut is ontstaan op 1 januari 2000 uit een fusie tussen het Staring Centrum, Instituut voor Onderzoek van het Landelijk Gebied (SC-DLO), het Instituut voor Bos- en Natuuronderzoek (IBN-DLO) en een deel van het Instituut voor Agrobiologisch en Bodemvruchtbaarheidsonderzoek (AB-DLO). Dankzij die samensmelting bundelt Alterra alle expertise op het gebied van de groene ruimte en het duurzaam maatschappelijk gebruik ervan: kennis van water, natuur, bos, milieu, bodem, landschap, klimaat, recreatie en allerlei andere aspecten die van belang zijn bij de ontwikkeling en het beheer van onze leefomgeving. &lt;br&gt; Alterra verricht strategisch en toegepast onderzoek ten behoeve van beleid en beheer op lokale, nationale en internationale schaal. Enerzijds gaat het hier om vernieuwend, interdisciplinair, interactief en iteratief onderzoek van complexe problemen in de sfeer van de groene ruimte, anderzijds levert het instituut kant en klaar toepasbare kennis en expertise om praktijkproblemen snel en adequaat op te lossen. &lt;br&gt; Een greep uit de vele thema's waar Alterra zich zowel nationaal als internationaal mee bezighoudt: relaties tussen stad en land, meervoudig gebruik van de groene ruimte, economie en ecologie, integraal waterbeheer, duurzame agrarische bedrijfssystemen, toekomstverkenningen, expertsystemen en modelonderzoek, biodiversiteit, landschapsontwikkeling en belevingswaarden, integraal bosbeheer, geo-informatie en remote sensing, ruimtelijke ontwikkeling van de recreatie, natuurontwikkeling in mariene en estuariene wateren, groene dooradering en ecologische netwerken, verontreinigingen en natuurwaarden in relatie tot versnippering.</taak_nl>
+    <taak_en>Alterra, the main Dutch centre of expertise on rural areas, was founded 1 January 2000 as a result of a merger between the Winand Staring Centre for Integrated Land, Soil and Water Research (SC-DLO), the Institute for Forestry and Nature Research (IBN-DLO) and part of the Research Institute for Agrobiology and Soil Fertility (AB-DLO). This merger means that Alterra now combines a huge range of expertise on rural areas and their sustainable use, including aspects such as water, wildlife, forests, the environment, soils, landscape, climate and recreation, as well as various other aspects relevant to the development and management of the environment we live in. Alterra engages in strategic and applied research to support design processes, policymaking and management at the local, national and international level. This includes not only innovative, interdisciplinary research on complex problems relating to rural areas, but also the production of readily applicable knowledge and expertise enabling rapid and adequate solutions to practical problems. |The many themes of Alterra's research effort include relations between cities and their surrounding countryside, multiple use of rural areas, economy and ecology, integrated water management, sustainable agricultural systems, planning for the future, expert systems and modelling, biodiversity, landscape planning and landscape perception, integrated forest management, geo-information and remote sensing, spatial planning of leisure activities, habitat creation in marine and estuarine waters, green belt development and ecological webs, and pollution risk assessment. |Alterra is part of Wageningen University and Research Centre (Wageningen UR) and includes two research sites, one in Wageningen and one on the isle of Texel.</taak_en>
+    <acroniem>DIA</acroniem>
+    <locatie>Wageningen</locatie>
+    <invoer_datum>1988-04-15</invoer_datum>
+    <url>http://www.narcis.nl/organisation/RecordID/ORG1236958</url>
+    <categories>
+      <category code="A10000">
+        <term xml:lang="nl">Exploitatie en beheer fysieke milieu</term>
+        <term xml:lang="en">Exploitation and management  physical environment</term>
+      </category>
+      <category code="A24000">
+        <term xml:lang="nl">Bosbouw</term>
+        <term xml:lang="en">Forestry</term>
+      </category>
+      <category code="A61000">
+        <term xml:lang="nl">Ruimtelijke ordening</term>
+        <term xml:lang="en">Environmental planning</term>
+      </category>
+      <category code="D65000">
+        <term xml:lang="nl">Planologie</term>
+        <term xml:lang="en">Urban and rural planning</term>
+      </category>
+    </categories>
+  </organisatie>
+</metadata>
