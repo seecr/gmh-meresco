@@ -48,8 +48,13 @@ from meresco.oai import OaiPmh, OaiJazz, OaiProvenance #OaiAddRecordWithDefaults
 from oaiaddrecord_gh import OaiAddRecordWithDefaults#, OaiAddRecord
 from weightless.io import Reactor
 
-from dnadebug import DNADebug
-from nl_didl_normalized import NL_DIDL_normalized
+#DEBUG
+from tools.dnadebugger import DNADebug
+
+from normalize_nl_didl import Normalize_nl_DIDL
+from normalize_nl_mods import Normalize_nl_MODS
+
+
 from nl_didl_combined import NL_DIDL_combined
 from filterpartnames import FilterPartNames
 
@@ -61,6 +66,10 @@ from meresco.components.storagecomponent import HashDistributeStrategy, DefaultS
 from logger import Logger
 #RSS:
 from logger_rss import LoggerRSS
+
+#XSD validator:
+from xsd_validator import Validate
+
 
 namespacesMap = {
     'dip'     : 'urn:mpeg:mpeg21:2005:01-DIP-NS',
@@ -85,7 +94,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
         (TransactionScope('batch'),
             (TransactionScope('record'),
                 (Venturi(
-                    should=[
+                    should=[ #Order DOES matter:
                         {'partname':'header', 'xpath':'/document:document/document:part[@name="header"]/text()', 'asString':False},                        
                         {'partname':'meta', 'xpath':'/document:document/document:part[@name="meta"]/text()', 'asString':False},
                         {'partname':'metadata', 'xpath':'/document:document/document:part[@name="metadata"]/text()', 'asString':False}
@@ -95,49 +104,52 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                     (FilterMessages(allowed=['delete']),
                         (DNADebug(enabled=True, prefix='DELETE'),
                             (storageComponent,),
-                            (oaiJazz,), 
+                            (oaiJazz,)
                         )
                     ),
                     (FilterMessages(allowed=['add']),
                         # Store ALL (original)parts retrieved by Venturi (required ('should') and optional ('could') parts).
-                        # Write all uploadParts to storage (header, metadata & meta)
+                        # Write all uploadParts to storage (header, meta & metadata)
                         (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                            (DNADebug(enabled=False, prefix='STOREALL'),
-                                (storageComponent,),
+                            (DNADebug(enabled=True, prefix='STOREALL'),
+                                (storageComponent,)
                             )
                         ),
-                        # IF DIDL/MODS is available...
-                        # TODO: Use FilterPartName
-                        #(XmlXPath(['//didl:DIDL[//mods:mods]'], 'lxmlNode', namespaceMap=namespacesMap),
                         (FilterPartNames(allowed=['metadata']),
-                        (DNADebug(enabled=False, prefix='DIDLMODZmetadata'),
-                            (NL_DIDL_normalized(nsMap=namespacesMap), # Normalize(d) metadataPart:
-                                (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
-                                    (RewritePartname('nl_didl_norm'), # Rename normalized partName
-                                        (storageComponent,) # Write normalized partName to storage
+                            (DNADebug(enabled=False, prefix='add metadata'),
+                                (Validate([('DIDL container','//didl:DIDL', 'didl.xsd')], nsMap=namespacesMap),   #('MODS metadata', '//mods:mods', 'mods.xsd'),
+                                    (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart
+                                        (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart
+                                            (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
+                                                (RewritePartname('nl_didl_norm'), # Rename normalized partName
+                                                    (DNADebug(enabled=False, prefix='to storage'),
+                                                        (storageComponent,) # Write normalized partName to storage                                    
+                                                    ) 
+                                                )
+                                            ),
+                                            # Create and store Combined format:
+                                            (NL_DIDL_combined(nsMap=namespacesMap), # Create combined format from stored metadataPart and normalized part. 
+                                                (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
+                                                    (RewritePartname('nl_didl_combined'), # Rename combined partName
+                                                         (storageComponent,) # Write combined partName to storage
+                                                    )
+                                                )
+                                            ),
+                                            (loggerComponent,) #TODO: insert loggerListeners into correct place into DNA.
+                                        )
                                     )
                                 ),
-                                (loggerComponent,),
-                            ),
-                            (NL_DIDL_combined(nsMap=namespacesMap), # Create combined format from metadataPart and stored normalized part. 
-                                 (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
-                                     #(storageComponent,),
-                                     (RewritePartname('nl_didl_combined'), # Rename combined partName
-                                         (storageComponent,) # Write combined partName to storage
-                                     )
-                                 )                             
-                             ),
-                            #Add new parts to OAI repository
-                            (DNADebug(enabled=False, prefix='ADD2OAI'),
-                            (OaiAddRecordWithDefaults(metadataFormats=[('metadata', 'http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didmodel.xsd', 'urn:mpeg:mpeg21:2002:02-DIDL-NS'),
-                                                                       ('nl_didl_norm', '', 'http://gh.kb-dans.nl/normalised/v0.9/'),
-                                                                       ('nl_didl_combined', '', 'http://gh.kb-dans.nl/combined/v0.9/')]),
-                                (storageComponent,), 
-                                (oaiJazz,) # Assert partNames header and meta are available from storage?????
-                            )
+                                #Add new parts to OAI repository
+                                (DNADebug(enabled=False, prefix='ADD2OAI'),
+                                    (OaiAddRecordWithDefaults(metadataFormats=[('metadata', 'http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didmodel.xsd', 'urn:mpeg:mpeg21:2002:02-DIDL-NS'),
+                                                                               ('nl_didl_norm', '', 'http://gh.kb-dans.nl/normalised/v0.9/'),
+                                                                               ('nl_didl_combined', '', 'http://gh.kb-dans.nl/combined/v0.9/')]),
+                                        (storageComponent,), 
+                                        (oaiJazz,) # Assert partNames header and meta are available from storage?????
+                                    )
+                                ) #Debug
                             ) #Debug
-                            ) #Debug
-                        ),
+                        ) #!FilterPartNames(allowed=['metadata']
                     ) # !FilterMessages(allowed=['add']
                 ) # !venturi
             ) # !record
@@ -148,7 +160,7 @@ def dna(reactor, host, portNumber, databasePath):
     #strategie = HashDistributeStrategy() #irreversible?
     #strategie = DefaultStrategy()
     strategie = Md5HashDistributeStrategy()
-        
+    
     #TODO: define which parts should be removed from storage on an SRU delete update.
     storageComponent = StorageComponent(join(databasePath, 'storage'), partsRemovedOnDelete=['nl_didl_norm', 'nl_didl_combined', 'metadata'], strategy=strategie)
 
@@ -160,7 +172,7 @@ def dna(reactor, host, portNumber, databasePath):
     return \
         (Observable(),
             (ObservableHttpServer(reactor, portNumber),
-                (PathFilter("/update"),                
+                (PathFilter("/update"),
                     (SRURecordUpdate(),
                         (Amara2Lxml(fromKwarg='amaraNode', toKwarg='lxmlNode'),
                             createUploadHelix(storageComponent, oaiJazz, loggerComponent)
@@ -168,16 +180,16 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),
                 (PathFilter('/oai'), #TODO: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijk Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), # batchSize = number of records before using resumptionToken...
+                    (OaiPmh(repositoryName='Gemeenschappelijk Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), # batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
                         (OaiProvenance( #NOTE: If one of the following fields lacks, provenance will NOT be written.
                                 nsMap=namespacesMap,
                                 #baseURL = ('meta', '/meta:meta/meta:repository/meta:baseurl/text()'),
-                                #harvestDate = ('meta', '/meta:meta/meta:record/meta:harvestdate/text()'), 
+                                #harvestDate = ('meta', '/meta:meta/meta:record/meta:harvestdate/text()'),
                                 baseURL = ('meta', '//*[local-name() = "baseurl"]/text()'),
                                 #harvestDate = ('meta', '//*[local-name() = "harvestdate"]/text()'),   
-                                harvestDate = ('header', '//*[local-name() = "datestamp"]/text()'),   
+                                harvestDate = ('header', '//*[local-name() = "datestamp"]/text()'),
                                 #See: http://www.openarchives.org/OAI/2.0/guidelines-provenance.htm
                                 #NOTE: Voorstel: Als DC wordt gevonden, dan DC namespace, anders MODS (de 'laagste' telt). DIDL negeren we.
                                 #NOGO: metadataNamespace = ('metadata', 'if ( boolean(count(//oai_dc:*)) ) then namespace-uri(//oai_dc:*) else namespace-uri(//mods:*)'),
@@ -189,14 +201,14 @@ def dna(reactor, host, portNumber, databasePath):
                                 datestamp = ('header', '/oai:header/oai:datestamp/text()')
                             ),
                             (storageComponent,)
-                        ),
+                        )
                     )
                 ),             
                 (PathFilter('/rss'),
                     (LoggerRSS( title = 'Gemeenschappelijk Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://someorganisation.org', maximumRecords = 30),
                         (loggerComponent,)
                     )
-                ),
+                )
             )
         )
 

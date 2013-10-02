@@ -97,82 +97,57 @@ class IntegrationTest(SeecrTestCase):
 #     </srw:record>
 # </srw:explainResponse>
 
-#     def testExplain(self):
-#         header, body = getRequest(reactor, port, '/sru', {})
-#         explainResponse = body.explainResponse
-#         self.assertEquals(config['host'], str(explainResponse.record.recordData.explain.serverInfo.host))
-#         portNumber = int(explainResponse.record.recordData.explain.serverInfo.port)
-#         self.assertTrue(50000 <= portNumber <= 60000, portNumber)
         
-    def testRSS(self):
- #         #, 'maximumRecords':'2'
-        body = self._doQuery({'ridd':'knaw_mir', 'maximumRecords':'3'}, path="/rss")
-        items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
+#     def testRSS(self):
+#  #         #, 'maximumRecords':'2'
+#         body = self._doQuery({'ridd':'knaw_mir', 'maximumRecords':'3'}, path="/rss")
+#         items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
          
-        print '\nRSS BODY:', body.xml(),
+        #print '\nRSS BODY:', body.xml(),
         #for item in items:
         #    print '\nRss ITEM:', item
              
-        self.assertEquals(3, len(items))
+#        self.assertEquals(3, len(items))
 #       self.assertSruQuery(1, 'volgens')
         #print str(items)
 #         # self.assertEquals([('Condition assessment PVC', 'Projectomschrijving<br>Ontwikkeling van betrouwbare\n                        methoden, procedures en extrapolatiemodellen om de conditie en\n                        restlevensduur van in gebruik zijnde PVC-leidingen te\n                        bepalen.<br>Beoogde projectopbrengsten<br>-\n               ', 'http://www.narcis.nl/research/RecordID/OND1272024/Language/en'), ('Example Publication', 'This is an example RDF entity to illustrate the structure of an Enhanced Publication.', 'http://www.narcis.nl/vpub/RecordID/vpub%3Aurn%3Anbn%3Anl%3Aui%3A10-1234/xyz/Language/en'), ('Example Program 1', 'This is an example program about Search with Meresco', 'http://www.narcis.nl/publication/RecordID/record%3A1/Language/en'), ('Example Program 2', 'This is an example program about Programming with Meresco', 'http://www.narcis.nl/publication/RecordID/record%3A2/Language/en')], items)
 
          
-      #Should be tested by reindex-client in tools dir??  
-#     def testReindexAll(self):
-#         print '\nStarting reindex'
-#         #First call: creates batchfiles and processes them all...
-#         header, body = getRequest(reactor, port, '/reindex', {'session':['narcisindex'], 'batchsize': ['2'], 'processbatch' : ['all']}, parse=False) #parse=False: returns string
-#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: plain/text', header)        
-#         print body
-#         batches_created =  int(body.count('#'))
-#         self.assertEquals(6, batches_created)
-#     
-#         remaining_batches =  int(body[len(body)-1])
-#         print 'Remainder:', remaining_batches
-#         ##Process all batches one by one:
-#         while remaining_batches > 0:
-#             header, body = getRequest(reactor, port, '/reindex', {'session':['narcisindex'], 'processbatch' : ['single']}, parse=False)            
-#             remaining_batches =  int(body[len(body)-1])
-#             self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: plain/text', header)
-#             print "remaining_batches:", remaining_batches
-#         self.assertEquals(0, remaining_batches)
         
-    def testOaiListMetadataFormats(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListMetadataFormats'})
-        #print 'ListMetadataFormats:', body.xml()
-        self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals(3, len(body.OAI_PMH.ListMetadataFormats.metadataFormat))
-        self.assertEquals('metadata', body.OAI_PMH.ListMetadataFormats.metadataFormat[0].metadataPrefix)
-        self.assertEquals('nl_didl_combined', body.OAI_PMH.ListMetadataFormats.metadataFormat[1].metadataPrefix)
-        self.assertEquals('nl_didl_norm', body.OAI_PMH.ListMetadataFormats.metadataFormat[2].metadataPrefix)
-         
-    def testOaiIdentify(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'Identify'})
-        #print 'Identify:', body.xml()
-        self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals('Gemeenschappelijk Harvester DANS-KB', body.OAI_PMH.Identify.repositoryName)
-        self.assertEquals('martin.braaksma@dans.knaw.nl', body.OAI_PMH.Identify.adminEmail)
-         
-    def testOaiListSets(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListSets'})
-        #print 'ListSets:', body.xml()
-        self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        #self.assertEquals(9, len(body.OAI_PMH.ListSets.set))
-        #self.assertEquals('ir', body.OAI_PMH.ListSets.set[0].setSpec)
-        #self.assertEquals('ir:repo_id', body.OAI_PMH.ListSets.set[1].setSpec)
-        
-    def testOaiListRecords(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined'}) #, 'set': 'ir'
-        #print 'ListRecords:', body.xml()
-        self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
-        
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'knawgroup:archive-40'})
-        #print 'ListRecords:', body.xml()
-        self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
+#     def testOaiListMetadataFormats(self):
+#         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListMetadataFormats'})
+#         #print 'ListMetadataFormats:', body.xml()
+#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
+#         self.assertEquals(3, len(body.OAI_PMH.ListMetadataFormats.metadataFormat))
+#         self.assertEquals('metadata', body.OAI_PMH.ListMetadataFormats.metadataFormat[0].metadataPrefix)
+#         self.assertEquals('nl_didl_combined', body.OAI_PMH.ListMetadataFormats.metadataFormat[1].metadataPrefix)
+#         self.assertEquals('nl_didl_norm', body.OAI_PMH.ListMetadataFormats.metadataFormat[2].metadataPrefix)
+#          
+#     def testOaiIdentify(self):
+#         header, body = getRequest(reactor, port, '/oai', {'verb': 'Identify'})
+#         #print 'Identify:', body.xml()
+#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
+#         self.assertEquals('Gemeenschappelijk Harvester DANS-KB', body.OAI_PMH.Identify.repositoryName)
+#         self.assertEquals('martin.braaksma@dans.knaw.nl', body.OAI_PMH.Identify.adminEmail)
+#          
+#     def testOaiListSets(self):
+#         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListSets'})
+#         #print 'ListSets:', body.xml()
+#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
+#         #self.assertEquals(9, len(body.OAI_PMH.ListSets.set))
+#         #self.assertEquals('ir', body.OAI_PMH.ListSets.set[0].setSpec)
+#         #self.assertEquals('ir:repo_id', body.OAI_PMH.ListSets.set[1].setSpec)
+#         
+#     def testOaiListRecords(self):
+#         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined'}) #, 'set': 'ir'
+#         #print 'ListRecords:', body.xml()
+#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
+#         self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
+#         
+#         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'knawgroup:archive-40'})
+#         #print 'ListRecords:', body.xml()
+#         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
+#         self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
         
 #     def testOaiGetRecord(self):
 #         #header, body = getRequest(reactor, port, '/oai', {'verb': 'GetRecord', 'metadataPrefix': 'knaw_long', 'identifier': 'knaw_mir:oai:depot.knaw.nl:557'}) 
@@ -222,7 +197,7 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/delete/*.updateRequest') #normalize/
+    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/test/*.updateRequest') #normalize/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         
