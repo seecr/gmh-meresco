@@ -35,6 +35,7 @@ from weightless.core import NoneOfTheObserversRespond, DeclineMessage
 from meresco.core import Observable
 from meresco.components import lxmltostring
 from meresco.components.xml_generic import  __file__ as xml_genericpath
+from meresco.components.xml_generic.validate import ValidateException
 
 #Schema validatie:
 from os.path import abspath, dirname, join
@@ -50,8 +51,8 @@ oftenUsedNamespaces = {
 #DIDL_XSD = etree.XMLSchema(etree.parse(join((join(dirname(abspath(__file__)), 'xsd')), 'didl.xsd') ))
 #MODS_XSD = etree.XMLSchema(etree.parse(join((join(dirname(abspath(__file__)), 'xsd')), 'mods.xsd') ))
 
-class ValidateException(Exception):
-    pass
+#class ValidateException(Exception):
+#    pass
 
 class Validate(Observable):
 
@@ -106,16 +107,16 @@ class Validate(Observable):
                     if xml and xml[0]:
                         schema.validate(xml[0])                
                         if schema.error_log:
-                            exception = ValidateException(formatException(strName + " is NOT valid in: " + kwargs.get('identifier', None), schema, arg))
+                            exception = ValidateException(formatXSDException(strName + " is NOT valid.", kwargs.get('identifier', None), schema, arg))
                             print str(exception)
-                            self.do.logException(exception) # What the F***?
+                            self.do.logException(exception) # TODO: What the F***?
                             raise exception
                         else:
                             print strName, 'Validation OK'
                     else:
-                        exception = ValidateException("Mandatory " + strName + ' NOT found in: ' + kwargs.get('identifier', None))
+                        exception = ValidateException(formatExceptionLine("Mandatory " + strName + " NOT found.", kwargs.get('identifier', None)))
                         print str(exception)
-                        self.do.logException(exception) # What the F***?
+                        self.do.logException(exception)
                         raise exception
 
 #TODO: What does this do? For UnitTests only?
@@ -126,9 +127,12 @@ def assertValid(xmlString, schemaPath):
     if schema.error_log:
         raise AssertionError(formatException("assertValid", schema, toValidate))
 
-def formatException(strMsg, schema, lxmlNode):
-    message = strMsg + "\n"
+def formatXSDException(strMsg, identifier, schema, lxmlNode):
+    message = formatExceptionLine(strMsg, identifier) + "\n"
     message += str(schema.error_log.last_error) + "\n\n"
     for nr, line in enumerate(lxmltostring(lxmlNode, pretty_print=True).split('\n')):
         message += "%s %s\n" % (nr+1, line)
     return message
+    
+def formatExceptionLine(strMsg, identifier):
+    return "ID: " + identifier + " -> " + strMsg

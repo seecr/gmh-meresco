@@ -67,8 +67,8 @@ from logger import Logger
 #RSS:
 from logger_rss import LoggerRSS
 
-#XSD validator:
-from xsd_validator import Validate
+#XML validator:
+from xml_validator import Validate
 
 
 namespacesMap = {
@@ -117,11 +117,11 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                         ),
                         (FilterPartNames(allowed=['metadata']),
                             (DNADebug(enabled=False, prefix='add metadata'),
-                                (Validate([('DIDL container','//didl:DIDL', 'didl.xsd')], nsMap=namespacesMap),   #('MODS metadata', '//mods:mods', 'mods.xsd'),
+                                (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-5.xsd')], nsMap=namespacesMap), 
                                     (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart
                                         (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart
-                                            (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
-                                                (RewritePartname('nl_didl_norm'), # Rename normalized partName
+                                            (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it from etree.ElementTree to plaintext
+                                                (RewritePartname('nl_didl_norm'), # Rename normalized partName from 'metadata' to 'nl_didl_norm'
                                                     (DNADebug(enabled=False, prefix='to storage'),
                                                         (storageComponent,) # Write normalized partName to storage                                    
                                                     ) 

@@ -52,18 +52,11 @@ class NL_DIDL_combined(Observable):
         e_normalized = etree.SubElement(root, GH_COMBINED + "nl_didl_norm")
         
         
-        didl_xml = storage_part.xpath('//didl:DIDL', namespaces=self._nsMap)
-        print(etree.tostring(didl_xml[0], pretty_print=True))
-        if didl_xml:
-            e_original.append( didl_xml[0] )
-        e_normalized.append( lxmlNode.getroot() )
-        
-        
-#        didl_xml = lxmlNode.xpath('//didl:DIDL', namespaces=self._nsMap)
-#        #print(etree.tostring(didl_xml[0], pretty_print=True))
-#        if didl_xml:
-#            e_original.append( didl_xml[0] )        
-#        e_normalized.append( storage_part.getroot() )
+        orginal_didl = storage_part.xpath('//didl:DIDL', namespaces=self._nsMap)
+        #print(etree.tostring(didl_xml[0], pretty_print=True))
+        if orginal_didl:
+            e_original.append( orginal_didl[0] )
+        e_normalized.append( lxmlNode.getroot() )        
         
         return root
         
