@@ -167,8 +167,7 @@
                                     &lt;roleTerm type=&quot;code&quot; authority=&quot;marcrelator&quot;&gt;aut&lt;/roleTerm&gt;
                                 &lt;/role&gt;
                             &lt;/name&gt;
-                            &lt;typeOfResource&gt;text&lt;/typeOfResource&gt;
-                            &lt;genre&gt;info:eu-repo/semantics/article&lt;/genre&gt;
+
                             &lt;originInfo&gt;
                                 &lt;publisher&gt;Elsevier&lt;/publisher&gt;
                                 &lt;dateIssued encoding=&quot;iso8601&quot;&gt;1996&lt;/dateIssued&gt;
@@ -206,6 +205,7 @@
                                     &lt;/extent&gt;
                                 &lt;/part&gt;
                             &lt;/relatedItem&gt;
+                            
                             &lt;extension&gt;
                                 &lt;dai:daiList xmlns:dai=&quot;info:eu-repo/dai&quot;
                                     xsi:schemaLocation=&quot;info:eu-repo/dai http://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd&quot;&gt;
@@ -220,6 +220,7 @@
                                     &lt;dai:identifier IDref=&quot;n9853-10&quot; authority=&quot;info:eu-repo/dai/nl&quot;
                                         &gt;314250980&lt;/dai:identifier&gt;
                                 &lt;/dai:daiList&gt;
+                                
                                 &lt;id:idList xmlns:id=&quot;http://purl.utwente.nl/ns/id-extension&quot;
                                     xsi:schemaLocation=&quot;http://purl.utwente.nl/ns/id-extension http://purl.utwente.nl/ns/id-extension.xsd&quot;&gt;
                                     &lt;id:identifier IDref=&quot;n9853-1&quot;
@@ -232,7 +233,46 @@
                                         authority=&quot;http://www.utwente.nl/types/shared/upnr&quot;
                                         &gt;76427293&lt;/id:identifier&gt;
                                 &lt;/id:idList&gt;
+                                                                 
+                                &lt;gal:grantAgreementList xmlns:gal=&quot;info:eu-repo/grantAgreement&quot; xsi:schemaLocation=&quot;info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd&quot;&gt;
+                                    &lt;gal:grantAgreement code=&quot;info:eu-repo/grantAgreement/EC/FP7/263227&quot;/&gt;
+                                &lt;/gal:grantAgreementList&gt;                               
+                               
                             &lt;/extension&gt;
+                            
+                            &lt;genre&gt;info:eu-repo/semantics/article&lt;/genre&gt;
+                            
+                            &lt;extension&gt;
+                                &lt;gal:grantAgreementList xmlns:gal=&quot;info:eu-repo/grantAgreement&quot; xsi:schemaLocation=&quot;info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd&quot;&gt;
+                                    &lt;gal:grantAgreement code=&quot;info:eu-repo/grantAgreement/EC/FP9/123456&quot;/&gt;
+                                &lt;/gal:grantAgreementList&gt;
+                            &lt;/extension&gt;
+                                                                      
+                            &lt;extension&gt;
+                                &lt;hbo:hbo xmlns:hbo=&quot;info:eu-repo/xmlns/hboMODSextension&quot;
+                                    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+                                    xsi:schemaLocation=&quot;info:eu-repo/xmlns/hboMODSextension http://wiki.surf.nl/download/attachments/11600294/hboMODSextension.xsd&quot;&gt;
+                                    &lt;hbo:name ID=&quot;nameID_1&quot; type=&quot;corporate&quot;&gt;
+                                        &lt;hbo:namePart type=&quot;organisation&quot;&gt;
+                                    Hogeschool van Amsterdam 
+                                &lt;/hbo:namePart&gt;
+                                    &lt;/hbo:name&gt;
+                                &lt;/hbo:hbo&gt;
+                            &lt;/extension&gt;                                                            
+                                 
+                            &lt;typeOfResource&gt;text&lt;/typeOfResource&gt;                                 
+                                                                                
+                            &lt;extension&gt;
+                                &lt;wmp:rights xmlns:wmp=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xsi:schemaLocation=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus rights.xsd&quot;&gt;
+                                    &lt;dc:description&gt;
+                                        © 2010 Hogeschool van Amsterdam
+                                        This work is licensed under a Creative Commons
+                                        Attribution-Noncommercial-No Derivative Works 3.0 Unported License.
+                                    &lt;/dc:description&gt;
+                                    &lt;dc:rights&gt;http://creativecommons.org/licenses/by-nc-nd/3.0/&lt;/dc:rights&gt;
+                                &lt;/wmp:rights&gt;
+                            &lt;/extension&gt;                                        
+                                                        
                         &lt;/mods&gt;
                     &lt;/didl:Resource&gt;
                 &lt;/didl:Component&gt;

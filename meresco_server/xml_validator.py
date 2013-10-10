@@ -67,7 +67,7 @@ class Validate(Observable):
         for strName, strXPath, schemaPath in xSDPathList:
             print 'schema init:', strName, strXPath, schemaPath
             try:
-                self._xmlSchemas.append((strName, strXPath, XMLSchema(parse(join((join(dirname(abspath(__file__)), 'xsd')), schemaPath) ) ) ))
+                self._xmlSchemas.append((strName, strXPath, XMLSchema(parse(join(join(dirname(abspath(__file__)), 'xsd'), schemaPath) ) ) ))
             except XMLSchemaParseError, e:
                 print 'XMLSchemaParseError.............',e.error_log.last_error
                 raise
@@ -130,9 +130,9 @@ def assertValid(xmlString, schemaPath):
 def formatXSDException(strMsg, identifier, schema, lxmlNode):
     message = formatExceptionLine(strMsg, identifier) + "\n"
     message += str(schema.error_log.last_error) + "\n\n"
-    for nr, line in enumerate(lxmltostring(lxmlNode, pretty_print=True).split('\n')):
-        message += "%s %s\n" % (nr+1, line)
+    #for nr, line in enumerate(lxmltostring(lxmlNode, pretty_print=True).split('\n')):
+    #   message += "%s %s\n" % (nr+1, line)
     return message
     
 def formatExceptionLine(strMsg, identifier):
-    return "ID: " + identifier + " -> " + strMsg
+    return identifier + " #### " + strMsg
