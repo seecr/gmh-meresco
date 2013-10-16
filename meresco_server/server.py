@@ -64,6 +64,7 @@ from meresco.components.storagecomponent import HashDistributeStrategy, DefaultS
 
 #Logging:
 from logger import Logger
+
 #RSS:
 from logger_rss import LoggerRSS
 
@@ -87,6 +88,8 @@ namespacesMap = {
     'xsi' : 'http://www.w3.org/2001/XMLSchema-instance'
 }
 
+NL_DIDL_NORMALISED_PREFIX = 'nl_didl_norm'
+NL_DIDL_COMBINED_PREFIX = 'nl_didl_combined'
 
 def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
 
@@ -94,7 +97,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
         (TransactionScope('batch'),
             (TransactionScope('record'),
                 (Venturi(
-                    should=[ #Order DOES matter:
+                    should=[ # Order DOES matter: First part goes first!
                         {'partname':'header', 'xpath':'/document:document/document:part[@name="header"]/text()', 'asString':False},                        
                         {'partname':'meta', 'xpath':'/document:document/document:part[@name="meta"]/text()', 'asString':False},
                         {'partname':'metadata', 'xpath':'/document:document/document:part[@name="metadata"]/text()', 'asString':False}
@@ -111,7 +114,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                         # Store ALL (original)parts retrieved by Venturi (required ('should') and optional ('could') parts).
                         # Write all uploadParts to storage (header, meta & metadata)
                         (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                            (DNADebug(enabled=True, prefix='STOREALL'),
+                            (DNADebug(enabled=False, prefix='STOREALL'),
                                 (storageComponent,)
                             )
                         ),
@@ -119,35 +122,36 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                             (DNADebug(enabled=False, prefix='add metadata'),
                                 (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-4.xsd')], nsMap=namespacesMap), 
                                     (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart
-                                        (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart
+                                        (loggerComponent,), #TODO: Check correct place into DNA.
+                                        (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart.
+                                            (loggerComponent,), #TODO: Check correct place into DNA.
                                             (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it from etree.ElementTree to plaintext
-                                                (RewritePartname('nl_didl_norm'), # Rename normalized partName from 'metadata' to 'nl_didl_norm'
+                                                (RewritePartname(NL_DIDL_NORMALISED_PREFIX), # Rename normalized partName from 'metadata' to 'nl_didl_norm'
                                                     (DNADebug(enabled=False, prefix='to storage'),
                                                         (storageComponent,) # Write normalized partName to storage                                    
-                                                    ) 
+                                                    )
                                                 )
                                             ),
                                             # Create and store Combined format:
                                             (NL_DIDL_combined(nsMap=namespacesMap), # Create combined format from stored metadataPart and normalized part. 
                                                 (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it to plaintext
-                                                    (RewritePartname('nl_didl_combined'), # Rename combined partName
+                                                    (RewritePartname(NL_DIDL_COMBINED_PREFIX), # Rename combined partName
                                                          (storageComponent,) # Write combined partName to storage
                                                     )
                                                 )
                                             ),
-                                            (loggerComponent,) #TODO: insert loggerListeners into correct place into DNA.
+                                            # Add parts to OAI repository/index
+                                            (DNADebug(enabled=False, prefix='ADD2OAI'),
+                                                (OaiAddRecordWithDefaults(metadataFormats=[('metadata', 'http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didmodel.xsd', 'urn:mpeg:mpeg21:2002:02-DIDL-NS'),
+                                                                                           (NL_DIDL_NORMALISED_PREFIX, '', 'http://gh.kb-dans.nl/normalised/v0.9/'),
+                                                                                           (NL_DIDL_COMBINED_PREFIX, '', 'http://gh.kb-dans.nl/combined/v0.9/')]),
+                                                    (storageComponent,), 
+                                                    (oaiJazz,) # Assert partNames header and meta are available from storage!
+                                                ) #! OaiAddRecord
+                                            ) #!Debug
                                         )
                                     )
-                                ),
-                                #Add new parts to OAI repository
-                                (DNADebug(enabled=False, prefix='ADD2OAI'),
-                                    (OaiAddRecordWithDefaults(metadataFormats=[('metadata', 'http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didmodel.xsd', 'urn:mpeg:mpeg21:2002:02-DIDL-NS'),
-                                                                               ('nl_didl_norm', '', 'http://gh.kb-dans.nl/normalised/v0.9/'),
-                                                                               ('nl_didl_combined', '', 'http://gh.kb-dans.nl/combined/v0.9/')]),
-                                        (storageComponent,), 
-                                        (oaiJazz,) # Assert partNames header and meta are available from storage?????
-                                    )
-                                ) #Debug
+                                )
                             ) #Debug
                         ) #!FilterPartNames(allowed=['metadata']
                     ) # !FilterMessages(allowed=['add']
@@ -162,7 +166,7 @@ def dna(reactor, host, portNumber, databasePath):
     strategie = Md5HashDistributeStrategy()
     
     #TODO: define which parts should be removed from storage on an SRU delete update.
-    storageComponent = StorageComponent(join(databasePath, 'storage'), partsRemovedOnDelete=['nl_didl_norm', 'nl_didl_combined', 'metadata'], strategy=strategie)
+    storageComponent = StorageComponent(join(databasePath, 'storage'), partsRemovedOnDelete=[NL_DIDL_NORMALISED_PREFIX, NL_DIDL_COMBINED_PREFIX, 'metadata'], strategy=strategie)
 
     loggerComponent = Logger(join(databasePath, 'logger'))
     
@@ -180,10 +184,10 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),
                 (PathFilter('/oai'), #TODO: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijk Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), # batchSize = number of records before issueing a resumptionToken...
+                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), # batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
-                        (OaiProvenance( #NOTE: If one of the following fields lacks, provenance will NOT be written.
+                        (OaiProvenance( #NOTE: If one of the following fields lacks, provenance will NOT be written. TODO: Get metadatanamespace correct!
                                 nsMap=namespacesMap,
                                 #baseURL = ('meta', '/meta:meta/meta:repository/meta:baseurl/text()'),
                                 #harvestDate = ('meta', '/meta:meta/meta:record/meta:harvestdate/text()'),
@@ -196,7 +200,7 @@ def dna(reactor, host, portNumber, databasePath):
                                 # | string("http://www.loc.gov/mods/v3")  //*[local-name()='mods']/namespace::node()[contains(.,'mods') or name()=""]                                
                                 #metadataNamespace = ('metadata', '//mods:mods/@xsi:schemaLocation'), #TODO: Juiste metadataNamespace meegeven!
                                 #metadataNamespace = 'MODS versie 3',
-                                metadataNamespace = ('nl_didl_norm', '//mods:mods/namespace::node()[name()="" or name()="mods" or contains(.,"mods")]'), #TODO: Juiste metadataNamespace meegeven!
+                                metadataNamespace = (NL_DIDL_NORMALISED_PREFIX, '//mods:mods/namespace::node()[name()="" or name()="mods" or contains(.,"mods")]'), #TODO: Juiste metadataNamespace meegeven!
                                 identifier = ('header', '/oai:header/oai:identifier/text()'),
                                 datestamp = ('header', '/oai:header/oai:datestamp/text()')
                             ),
@@ -205,7 +209,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),             
                 (PathFilter('/rss'),
-                    (LoggerRSS( title = 'Gemeenschappelijk Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://someorganisation.org', maximumRecords = 30),
+                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://someorganization.org', maximumRecords = 30),
                         (loggerComponent,)
                     )
                 )
@@ -219,7 +223,7 @@ config = {
 }
 
 if __name__ == '__main__':
-    databasePath = '/data/meresco'    
+    databasePath = '/data/meresco' 
     if not isdir(databasePath):
         makedirs(databasePath)
 

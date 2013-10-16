@@ -181,15 +181,18 @@ class Normalize_nl_MODS(Observable):
         print 'self._tlLanguage'
         #SSDC mandates iso639-1, SSMODS mandates iso639-1 or iso639-2 if iso639-1 is not available, but we'll settle for either 2 or 3 chars.
         rfc3066_lang = childNode.xpath("//mods:languageTerm[@type='code' and @authority='rfc3066']/text()", namespaces=self._nsMap)
-        if rfc3066_lang and rfc3066_lang[0]:
+        if len(rfc3066_lang) > 0:
             #See also: ftp://ftp.rfc-editor.org/in-notes/rfc3066.txt
             match = self._patternRFC3066.match(rfc3066_lang[0])
             if match and match.group(1).lower() in ISO639:
                 #print 'match:', match.group(1).lower()
-                e_tst = etree.SubElement(childNode, "tst")
-                e_tst.text = match.group(1).lower()
-            return childNode
-            
+                #e_tst = etree.SubElement(childNode, "tst")
+                #e_tst.text = match.group(1).lower()
+                return childNode
+            self.do.logMsg(self._identifier, rfc3066_lang[0] + ' is not a valid languageTerm.')
+            return None
+        self.do.logMsg(self._identifier, 'No languageTerm found.')
+        return None
                     
     def _tlGenre(self, childNode):
         print 'self._tlGenre'
@@ -229,7 +232,7 @@ class Normalize_nl_MODS(Observable):
         return childNode
 
     def _getValidModsExtension(self, modsNode):
-        print 'self._getValidModsExtension'
+        #print 'self._getValidModsExtension'
         #select all extensions available as seperate nodes:
         extensions = modsNode.xpath('//mods:extension/child::*', namespaces=self._nsMap)        
         e_extension = etree.Element("extension")        
@@ -240,7 +243,7 @@ class Normalize_nl_MODS(Observable):
         return e_extension if len(e_extension) > 0 else None
 
     def _tlExtension(self, childNode):
-        print 'self._tlExtension'
+        #print 'self._tlExtension'
         #BEWARE: All <extension> tags will be removed!
         return None
 
@@ -256,7 +259,7 @@ class Normalize_nl_MODS(Observable):
     def _isValidEduStandaardExtension(self, lxmlNode):
         #for xsdpath, xpad in mods_edu_extentions:
         for schema, xpad in self._edu_extension_schemas:
-            print "Trying xpad:", xpad , 'on', lxmlNode.tag 
+            #print "Trying xpad:", xpad , 'on', lxmlNode.tag 
             extent = lxmlNode.xpath(xpad, namespaces=self._nsMap)
             if len(extent) > 0: #validate found EduStandaard extension: this is not done by mods validation:
                 #print "FOUND EduStandaard extension:", tostring(lxmlNode), 'Validate with:', xsdpath
@@ -269,7 +272,8 @@ class Normalize_nl_MODS(Observable):
                     print "EduStandaard extension IS VALID", lxmlNode.tag 
                     return True
         #Looped over all allowed Edustandaard extensions types: None was found...
-        print 'Extension not recognized as EDUstandaard...', lxmlNode.tag 
+        print 'Extension not recognized as EDUstandaard...', lxmlNode.tag
+        self.do.logMsg(self._identifier, 'Extension not recognized as EDUstandaard...')
         return False
    
    

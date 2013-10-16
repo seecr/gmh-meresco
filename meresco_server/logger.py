@@ -16,8 +16,6 @@ RSS_TEMPLATE = """<item>
     <pubDate>%(date)s</pubDate>
 </item>"""
 
-#http://ip048.niwi.knaw.nl:4480/?verb=GetRecord&identifier=PRS1250477
-
 class Logger(Observable):
 
     def __init__(self, logfileDir, enabled=True, prefix=''):
@@ -25,14 +23,14 @@ class Logger(Observable):
         self._enabled = enabled
         self._msg_prefix = prefix #'[%s]'%(prefix)
         self._logfileDir = logfileDir
-        print "logfileDir:" ,self._logfileDir 
+        print "logfileDir:", self._logfileDir 
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
 
 
     def logMsg(self, identifier, logmsg):
         if self._enabled:
-            #print "RECEIVED:", identifier, (self._msg_prefix + logmsg)
+            print "LOGGER RECEIVED:", identifier, (self._msg_prefix + logmsg)
             with open(join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0])), "a") as logFile:
                 try:
                     logFile.write(str(strftime("%Y%m%dT%H:%M:%SZ", gmtime())) + " " + identifier + " " + self._msg_prefix+logmsg + "\n")
