@@ -1,0 +1,1 @@
+python ~/gharvester/util/dumpserver.py 8066 ~/wcptarget/dumpserver/

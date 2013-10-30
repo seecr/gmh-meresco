@@ -105,7 +105,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                     namespaceMap=namespacesMap),
                     # Remove all delete msgs from storage and OAI:
                     (FilterMessages(allowed=['delete']),
-                        (DNADebug(enabled=True, prefix='DELETE'),
+                        (DNADebug(enabled=False, prefix='DELETE'),
                             (storageComponent,),
                             (oaiJazz,)
                         )
@@ -114,7 +114,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                         # Store ALL (original)parts retrieved by Venturi (required ('should') and optional ('could') parts).
                         # Write all uploadParts to storage (header, meta & metadata)
                         (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                            (DNADebug(enabled=False, prefix='STOREALL'),
+                            (DNADebug(enabled=True, prefix='STOREALL'),
                                 (storageComponent,)
                             )
                         ),

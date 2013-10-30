@@ -31,7 +31,7 @@ INFO_EU_REPO_SEMANTICS = "info:eu-repo/semantics/"
 MODS_VERSION = '3.4'
 
 ##MODS root elements allwed by GH normalized:
-#allowed_mods_rootelem = ["abstract", "classification", "extension", "genre", "identifier", "language", "location", "name", "originInfo", "part", "physicalDescription", "relatedItem", "subject", "titleInfo", "typeOfResource"]
+#allowed_mods_rootelem = ["abstract", "classification", "extension", "genre", "identifier", "language", "location", "name", "originInfo", "physicalDescription", "relatedItem", "subject", "titleInfo", "typeOfResource"]
 
 # Do not list "extension", so it will be removed by default. <extension> is handeled by a different function. 
 mods_edu_tlelements = ["language", "genre", "titleInfo"]
@@ -45,8 +45,8 @@ mods_edu_extentions_ns = {
     'hbo': "info:eu-repo/xmlns/hboMODSextension",
     'wmp': "http://www.surfgroepen.nl/werkgroepmetadataplus",
 }
-
-mods_edu_extentions = [('dai/dai-extension.xsd', 'self::dai:daiList'), ('gal/gal-extension.xsd', 'self::gal:grantAgreementList'), ('hbo/hboMODSextension.xsd', 'self::hbo:hbo'), ('wmp/wmp-extension.xsd', 'self::wmp:rights')]
+# , ('hbo/hboMODSextension.xsd', 'self::hbo:hbo')
+mods_edu_extentions = [('dai/dai-extension.xsd', 'self::dai:daiList'), ('gal/gal-extension.xsd', 'self::gal:grantAgreementList'), ('wmp/wmp-extension.xsd', 'self::wmp:rights')]
 
 class Normalize_nl_MODS(Observable):
     """A class that normalizes MODS metadata to the Edustandaard applicationprofile"""
@@ -111,7 +111,7 @@ class Normalize_nl_MODS(Observable):
         #Our normalisation functions to call: TODO: complement the functions list.
         modsFunctions = [ self._convertFullMods2GHMods ]
         
-        if lxmlMODS and lxmlMODS[0]:
+        if len(lxmlMODS) > 0:
             print 'Found MODS, starting MODS normalization...'
         #2: Normalize it
             str_norm_mods = ''            

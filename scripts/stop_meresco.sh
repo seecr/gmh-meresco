@@ -2,7 +2,7 @@
 
 NAME=meresco_server
 PIDFILE=/home/meresco/$NAME.pid
-LOG=/data/meresco/$NAME.log
+LOG=/data/meresco/logs/gharvester/$NAME.log
 
 PID=`cat $PIDFILE 2>/dev/null`
 echo "Shutting down $NAME: $PID"

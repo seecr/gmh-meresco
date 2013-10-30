@@ -100,7 +100,7 @@ class Normalize_nl_DIDL(Observable):
         didlDocumentId = lxmlNode.xpath('//didl:DIDL/@DIDLDocumentId', namespaces=self._nsMap)
         strDocId = ''
         
-        if didlDocumentId:
+        if len(didlDocumentId) > 0:
             #check if it is valid: not in use elsewhere in the document (as an identifier):            
             diiIdentifiers = lxmlNode.xpath('//dii:Identifier/text()', namespaces=self._nsMap)
             blnIDexists = False
@@ -131,7 +131,7 @@ class Normalize_nl_DIDL(Observable):
         
 #1:     Get persistentIdentifier:
         pidlist = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Descriptor/didl:Statement/dii:Identifier/text()', namespaces=self._nsMap)
-        if pidlist:
+        if len(pidlist) > 0:
             pid = pidlist[0].strip().lower()
             self._checkURNFormat(pid)                
         else:
@@ -149,7 +149,7 @@ class Normalize_nl_DIDL(Observable):
         all_modified = lxmlNode.xpath('//didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
         
         #Get most recent date from all items:
-        if all_modified:
+        if len(all_modified) > 0:
             datedict = {}
             for date in all_modified:
                 if self._validateISO8601(date.strip()):
@@ -162,7 +162,7 @@ class Normalize_nl_DIDL(Observable):
 
 #3:     Get PidResourceMimetype
         mimetypelist = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Component/didl:Resource/@mimeType', namespaces=self._nsMap)
-        if mimetypelist: #TODO controle op geldige mimetype?
+        if len(mimetypelist) > 0: #TODO controle op geldige mimetype?
             mimetype = mimetypelist[0].strip().lower()
         else:
             mimetype = "application/xml" #overrides the default init value...
@@ -213,7 +213,7 @@ class Normalize_nl_DIDL(Observable):
     def _getDateModifiedDescriptor(self, lxmlNode): #TODO: Refactor, method is same as DIDL (#4)...        
         #4: Check geldige datemodified (feitelijk verplicht, hoewel vaak niet geimplemeteerd...)
         modified = lxmlNode.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
-        if modified and self._validateISO8601(modified[0]):
+        if len(modified) > 0 and self._validateISO8601(modified[0]):
             #print "DIDL MODS Item modified:", modified[0]
             return descr_templ % ('<dcterms:modified>'+modified[0].strip()+'</dcterms:modified>')
         else:
@@ -222,7 +222,7 @@ class Normalize_nl_DIDL(Observable):
     def _getMODSfromDMI(self, lxmlNodeDMI):    
         #1: Get MODS node from DIDL descr. metadata Item (DMI):
         mods = lxmlNodeDMI.xpath('self::didl:Item//mods:mods', namespaces=self._nsMap)
-        if mods:
+        if len(mods) > 0:
             return tostring(mods[0])
         else:
             raise ValidateException(formatExceptionLine("Mandatory MODS in descriptiveMetadata element not found in DIDL record.", self._identifier))
@@ -254,27 +254,27 @@ class Normalize_nl_DIDL(Observable):
                                                 
         #4: Check geldige datemodified (feitelijk verplicht, hoewel vaak niet geimplemeteerd...)
             modified = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
-            if modified and self._validateISO8601(modified[0]):
+            if len(modified) > 0 and self._validateISO8601(modified[0]):
                 #print "modified:", modified[0]
                 of_container += descr_templ % ('<dcterms:modified>'+modified[0].strip()+'</dcterms:modified>')   
                 
             
         #5: Check for 'file' description:
             descr = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dc:description/text()', namespaces=self._nsMap)
-            if descr:
+            if len(descr) > 0:
                 of_container += descr_templ % ('<dc:description>'+escapeXml(descr[0].strip())+'</dc:description>')  
                 
             
         #6: Check for embargo:
             embargo = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:available/text()', namespaces=self._nsMap)
-            if embargo and self._validateISO8601(embargo[0]):
+            if len(embargo) > 0 and self._validateISO8601(embargo[0]):
                 #print "embargo:", embargo[0]
                 of_container += descr_templ % ('<dcterms:available>'+embargo[0].strip()+'</dcterms:available>')  
 
             
         #7: Check for published version(author/publisher):
             pubVersion = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/rdf:type/@rdf:resource', namespaces=self._nsMap)
-            if pubVersion: #both (author/publisher) may be available: we'll take the first one...
+            if len(pubVersion) > 0: #both (author/publisher) may be available: we'll take the first one...
                 #print "publicationVersion:", pubVersion[0]
                 for key, value in pubVersions.iteritems():
                     #print key, value

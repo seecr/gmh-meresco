@@ -1,5 +1,0 @@
->>> from narcis.storagesplit import md5Split, md5Join, MD5JoinError
->>> id = ('tue:oai:library.tue.nl:692605','metadata')
->>> print md5Split(id)
-['tue', 'ff', 'fa', 'oai:library.tue.nl:692605', 'metadata']
->>> 
