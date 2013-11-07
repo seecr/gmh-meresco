@@ -114,7 +114,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                         # Store ALL (original)parts retrieved by Venturi (required ('should') and optional ('could') parts).
                         # Write all uploadParts to storage (header, meta & metadata)
                         (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                            (DNADebug(enabled=True, prefix='STOREALL'),
+                            (DNADebug(enabled=False, prefix='STOREALL'),
                                 (storageComponent,)
                             )
                         ),
