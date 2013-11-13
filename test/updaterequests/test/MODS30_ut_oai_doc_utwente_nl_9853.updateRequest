@@ -66,9 +66,9 @@
                         &lt;mods xmlns=&quot;http://www.loc.gov/mods/v3&quot; version=&quot;3.2&quot;
                             xsi:schemaLocation=&quot;http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd&quot;&gt;
                             &lt;titleInfo type=&quot;translated&quot;&gt;
-                            &lt;title&gt;Synthesis and biological evaluation of immunoconjugates of
-                            adriamycin and a human IgM linked by
-                            poly[N5-(2-hydroxyethyl)-l-glutamine&lt;/title&gt;                         
+                                &lt;title&gt;Synthesis and biological evaluation of immunoconjugates of
+                                adriamycin and a human IgM linked by
+                                poly[N5-(2-hydroxyethyl)-l-glutamine&lt;/title&gt;                         
                             &lt;/titleInfo&gt;
                             &lt;language&gt;
                                 &lt;languageTerm type=&quot;code&quot; authority=&quot;rfc3066&quot;&gt;nll&lt;/languageTerm&gt;
@@ -91,7 +91,8 @@
                                 &lt;/role&gt;
                             &lt;/name&gt;
                             &lt;titleInfo type=&quot;uniform&quot;&gt;
-                            &lt;title&gt;Second title block&lt;/title&gt;                         
+                                &lt;title&gt;Second title block&lt;/title&gt;
+                                &lt;subTitle&gt;William Bonk and American letters&lt;/subTitle&gt;
                             &lt;/titleInfo&gt;                            
                             &lt;name type=&quot;personal&quot; ID=&quot;n9853-2&quot;&gt;
                                 &lt;namePart type=&quot;given&quot;&gt;J.&lt;/namePart&gt;
@@ -188,7 +189,7 @@
                             
                             &lt;originInfo&gt;
                                 &lt;publisher&gt;Elsevier&lt;/publisher&gt;
-                                &lt;dateIssued encoding=&quot;iso8601&quot;&gt;1996/09/09&lt;/dateIssued&gt;
+                                &lt;dateIssued encoding=&quot;iso8601&quot;&gt;1996/09/01&lt;/dateIssued&gt;
                             &lt;/originInfo&gt;
                             
                             &lt;originInfo xml:lang=&apos;en&apos;&gt;
@@ -218,6 +219,7 @@
                                 &lt;dateIssued encoding=&quot;iso8601&quot;&gt;2002-03-12&lt;/dateIssued&gt;
                                 &lt;dateCreated encoding=&quot;iso8601&quot;&gt;opgravingsdatum tussen&lt;/dateCreated&gt;
                                 &lt;dateOther encoding=&quot;w3cdtf&quot; type=&quot;embargo&quot;&gt;1992-09-01&lt;/dateOther&gt;
+                                
                             &lt;/originInfo&gt;
                             
                             &lt;location&gt;
@@ -246,10 +248,12 @@
                             &lt;identifier type=&quot;doi&quot;&gt;&lt;/identifier&gt;
                             &lt;identifier type=&quot;doi&quot;&gt;doi:10.1006/jmbi.1995.0238&lt;/identifier&gt;
                             &lt;identifier&gt;doi:10.1006/jmbi.1995.0238&lt;/identifier&gt;
+                            
                             &lt;physicalDescription&gt;
-                                &lt;extent&gt;22 pges&lt;/extent&gt;
+                                &lt;extent&gt;22 pages&lt;/extent&gt;
                                 &lt;digitalOrigin&gt;born digital&lt;/digitalOrigin&gt;
                             &lt;/physicalDescription&gt;
+                            
                             &lt;abstract xml:lang=&quot;la&quot;&gt;The synthesis and purification of radiolabelled
                                 immunoconjugates, composed of a human IgM monoclonal antibody (IgM
                                 16.88) directed against an intracellular tumour-associated antigen,
@@ -264,8 +268,11 @@
                                 prepared by coupling of PHEG-ADR having a hydrolytically stable
                                 amide bond with 131I-labelled antibody through thioether bond
                                 formation involving a single thiol group at the C-terminus of the
-                                polymer chain and maleimido groups introduced onto the&lt;/abstract&gt;
-                                &lt;relatedItem type=&quot;references&quot;&gt;
+                                polymer chain and maleimido groups introduced onto the
+                            &lt;/abstract&gt;
+                            
+                            &lt;relatedItem type=&quot;host&quot;&gt;
+                            
                                 &lt;titleInfo&gt;
                                     &lt;title&gt;Journal of Controlled Release&lt;/title&gt;
                                 &lt;/titleInfo&gt;
@@ -275,8 +282,9 @@
                                         &lt;number&gt;38&lt;/number&gt;
                                     &lt;/detail&gt;
                                     &lt;extent unit=&quot;page&quot;&gt;
-                                        &lt;start&gt;245&lt;/start&gt;
+                                        &lt;start&gt;p. 245&lt;/start&gt;
                                         &lt;end&gt;266&lt;/end&gt;
+                                        &lt;total&gt;266&lt;/total&gt;
                                     &lt;/extent&gt;
                                 &lt;/part&gt;
                                 &lt;genre&gt;info:eu-repo/semantics/conferencePaper&lt;/genre&gt;
@@ -287,8 +295,7 @@
                                 &lt;role&gt;
                                 &lt;roleTerm type=&quot;code&quot; authority=&quot;marcrelator&quot;&gt;wst&lt;/roleTerm&gt;
                                 &lt;/role&gt;
-                                &lt;/name&gt;
-                                
+                                &lt;/name&gt;                                
                                 
                             &lt;/relatedItem&gt;
                             

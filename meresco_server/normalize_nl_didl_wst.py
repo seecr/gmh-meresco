@@ -48,6 +48,7 @@ class Normalize_nl_DIDL(Observable):
     def __init__(self, nsMap={}):
         Observable.__init__(self)
         self._nsMap=nsMap
+        #self._nsOAI = {'dc': nsMap.get('dc'), None : nsMap.get('oai_dc')}
         self._bln_success = False
         self._patternURN = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL]:[uU][iI]:\d{1,3}-.*')
         
@@ -71,7 +72,7 @@ class Normalize_nl_DIDL(Observable):
             return self.all.unknown(method, *newArgs, **newKwargs)
 
     def _normalizeRecord(self, lxmlNode):
-        #print 'Starting DIDL normalization...'
+        print 'Starting DIDL normalization...'
         str_didl = ''
         
         # Call our functions:
@@ -87,29 +88,7 @@ class Normalize_nl_DIDL(Observable):
         
         try:
             e_didl = parse(StringIO(str_didl), parser)
-            item_to_focus = e_didl.xpath('//didl:Item/didl:Item', namespaces=self._nsMap)
-          
-            for item in item_to_focus:
-                resource_to_focus = item.xpath('self::didl:Item/didl:Component/didl:Resource', namespaces=self._nsMap)
-                
-                if len(resource_to_focus) > 1:
-                    new_resource_to_focus = deepcopy(resource_to_focus)
-                    comp = resource_to_focus[0].getparent()  #<component>
-                    item.remove(comp) #item without component tag
-                    parent_item = item.getparent()
-                    
-                    for r in resource_to_focus:
-                        comp.remove(r) #remove all children from the component tag
-
-                    for nr in new_resource_to_focus:
-                        new_comp = deepcopy(comp) #copy the original(empty) component tag
-                        new_comp.append(nr) #add the Resource tag to the empty copied component tag
-                        new_item = deepcopy(item) #copy the original item tag
-                        new_item.append(new_comp) # add to the copied item
-                        parent_item.append(new_item) #add the copied item to the parent
-
-                    parent_item.remove(item)                    
-            #print "DIDL normalization succeeded."  #, etree.tostring(e_didl, encoding=XML_ENCODING)
+            print "DIDL normalization succeeded."#, etree.tostring(e_didl, encoding=XML_ENCODING)
             return e_didl
         except: #TODO: WST: what does this do?
             print 'Error while parsing: ', str_didl
@@ -130,11 +109,6 @@ class Normalize_nl_DIDL(Observable):
                 if idee.lower() == didlDocumentId[0].lower():
                     blnIDexists = True
                     break
-            #als niet gevonden hebt, oai-identifier checken.
-            if not blnIDexists:
-                if didlDocumentId[0].lower() == self._identifier:
-                    #print "!!!!!!"
-                    blnIDexists = True
             if not blnIDexists:
                 strDocId = ' DIDLDocumentId="%s"' % (escapeXml(didlDocumentId[0]))
 
@@ -183,7 +157,8 @@ class Normalize_nl_DIDL(Observable):
             #Get first sorted key:
             for key in reversed(sorted(datedict.iterkeys())):
                 modified = datedict[key]
-                break
+                break            
+            #print 'Most recent date:', modified
 
 #3:     Get PidResourceMimetype
         mimetypelist = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Component/didl:Resource/@mimeType', namespaces=self._nsMap)
@@ -218,7 +193,7 @@ class Normalize_nl_DIDL(Observable):
         if not descriptiveMetadataItem: #Fallback to dip namespace, if available...
             descriptiveMetadataItem = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/descriptiveMetadata"]', namespaces=self._nsMap)
             if descriptiveMetadataItem: self.do.logMsg(self._identifier, "Found descriptiveMetadata in dip:ObjectType. This should have been: rdf:type/@rdf:resource")
-        if len(descriptiveMetadataItem) > 0:
+        if descriptiveMetadataItem:
             mods_template = """<didl:Item>
                                     <didl:Descriptor>
                                         <didl:Statement mimeType="application/xml">
@@ -259,16 +234,19 @@ class Normalize_nl_DIDL(Observable):
             objectfiles = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]', namespaces=self._nsMap)              
         for objectfile in objectfiles:
         #1:Define correct ObjectFile descriptor:
-            of_container += '<didl:Item><didl:Descriptor><didl:Statement mimeType="application/xml"><rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/></didl:Statement></didl:Descriptor>' 
+            of_container += '<didl:Item><didl:Descriptor><didl:Statement mimeType="application/xml"><rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/></didl:Statement></didl:Descriptor>'           
+            #print 'OBJECTFILE: ', etree.tostring(objectfile, encoding=XML_ENCODING)
             
         #2: Check geldige Identifier (feitelijk verplicht, hoewel vaak niet geimplemeteerd...) 
             pi = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dii:Identifier/text()', namespaces=self._nsMap)
             if pi: #TODO: URN pattern check?
+                #print "pi:", pi[0]
                 of_container += descr_templ % ('<dii:Identifier>'+escapeXml(pi[0].strip().lower())+'</dii:Identifier>') 
                             
         #3: Check op geldige AccessRights:
             arights = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:accessRights/text()', namespaces=self._nsMap)
             if arights:
+                #print "arights:", arights[0]
                 for key, value in accessRights.iteritems():
                     if arights[0].strip().lower().find(key) >= 0:  
                         of_container += descr_templ % ('<dcterms:accessRights>'+value+'</dcterms:accessRights>')                        
@@ -277,6 +255,7 @@ class Normalize_nl_DIDL(Observable):
         #4: Check geldige datemodified (feitelijk verplicht, hoewel vaak niet geimplemeteerd...)
             modified = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
             if len(modified) > 0 and self._validateISO8601(modified[0]):
+                #print "modified:", modified[0]
                 of_container += descr_templ % ('<dcterms:modified>'+modified[0].strip()+'</dcterms:modified>')   
                 
             
@@ -289,13 +268,16 @@ class Normalize_nl_DIDL(Observable):
         #6: Check for embargo:
             embargo = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:available/text()', namespaces=self._nsMap)
             if len(embargo) > 0 and self._validateISO8601(embargo[0]):
+                #print "embargo:", embargo[0]
                 of_container += descr_templ % ('<dcterms:available>'+embargo[0].strip()+'</dcterms:available>')  
 
             
         #7: Check for published version(author/publisher):
             pubVersion = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/rdf:type/@rdf:resource', namespaces=self._nsMap)
             if len(pubVersion) > 0: #both (author/publisher) may be available: we'll take the first one...
+                #print "publicationVersion:", pubVersion[0]
                 for key, value in pubVersions.iteritems():
+                    #print key, value
                     if pubVersion[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<rdf:type rdf:resource="'+value+'"/>')                                
                         break
@@ -303,7 +285,6 @@ class Normalize_nl_DIDL(Observable):
         #8:Check for MANDATORY resources and mimetypes:
             didl_resources = objectfile.xpath('self::didl:Item/didl:Component/didl:Resource', namespaces=self._nsMap)
             resources = ''
-            _url_list = [ ]
             #print "Checking resources..."
             for resource in didl_resources:
                 #print "found resource..."
@@ -311,7 +292,6 @@ class Normalize_nl_DIDL(Observable):
                 uri = resource.xpath('self::didl:Resource/@ref', namespaces=self._nsMap)
                 if mimeType and uri: #TODO: valid ref check??
                     resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip().lower()), escapeXml(uri[0].strip())) #uri not .lower()!
-                    _url_list.append("""<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip().lower()), escapeXml(uri[0].strip())))
             if resources != '':
                 of_container += """<didl:Component>
                 %s
@@ -321,6 +301,11 @@ class Normalize_nl_DIDL(Observable):
                 raise ValidateException(formatExceptionLine("Mandatory Resource not found in ObjectFile Item.", self._identifier))            
             
             of_container += '</didl:Item>'
+            #laatste: Sluit container af als er geldige objectfiles objecten gevonden zijn...                        
+#            if hasValidResources and hasValidPID:
+#                of_container += '</didl:Item>'
+#            else:
+#                of_container = ''
                 
         return of_container
     
@@ -361,6 +346,13 @@ class Normalize_nl_DIDL(Observable):
                     </didl:Item>""" % (uriref, mimetype)
         else:
             return ""
+
+#    def _checkURNFormat(self, pid):
+#        p = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL]:[uU][iI]:\d{1,3}-.*')
+#        m = p.match(pid)
+#        if not m:
+#            raise ValidateException(formatExceptionLine("Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: " + pid, self._identifier))
+#        return True
          
     def _checkURNFormat(self, pid):
         m = self._patternURN.match(pid)
@@ -389,3 +381,6 @@ class Normalize_nl_DIDL(Observable):
 
     def __str__(self):
         return 'Normalize_nl_DIDL'
+
+#def formatException(strMsg, identifier):
+#    return "ID: " + identifier + " -> " + strMsg

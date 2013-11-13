@@ -104,18 +104,18 @@ class Validate(Observable):
                 for strName, strXPath, schema in self._xmlSchemas:
                     #Doe xpath op betreffende XML/argument:
                     xml = arg.xpath(strXPath, namespaces=self._namespacesMap)        
-                    if xml and xml[0]:
+                    if len(xml) > 0:
                         schema.validate(xml[0])                
                         if schema.error_log:
                             exception = ValidateException(formatXSDException(strName + " is NOT valid.", kwargs.get('identifier', None), schema, arg))
-                            print str(exception)
-                            self.do.logException(exception) # TODO: What the F***?
+                            #print str(exception)
+                            self.do.logException(exception) # TODO: Who takes care of this message??
                             raise exception
-                        else:
-                            print strName, 'Validation OK'
+                        #else:
+                        #    print strName, 'Validation OK'
                     else:
                         exception = ValidateException(formatExceptionLine("Mandatory " + strName + " NOT found.", kwargs.get('identifier', None)))
-                        print str(exception)
+                        #print str(exception)
                         self.do.logException(exception)
                         raise exception
 
