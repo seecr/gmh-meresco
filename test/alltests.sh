@@ -25,5 +25,5 @@
 
 export PYTHONPATH=.:"$PYTHONPATH"
 
-python2.5 _integrationtest.py
-python2.5 component_tests.py
+#python2.6 _dnaintegrationtest.py
+python2.6 component_tests.py

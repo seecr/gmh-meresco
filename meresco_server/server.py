@@ -56,7 +56,8 @@ from normalize_nl_mods import Normalize_nl_MODS
 
 
 from nl_didl_combined import NL_DIDL_combined
-from filterpartnames import FilterPartNames
+#from filterpartnames import FilterPartNames
+from meresco.components import FilterPartByName
 
 #We'll use MD5-hash to divide records into multiple folders.
 from storagesplit import Md5HashDistributeStrategy
@@ -118,7 +119,8 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                                 (storageComponent,)
                             )
                         ),
-                        (FilterPartNames(allowed=['metadata']),
+                        #(FilterPartNames(allowed=['metadata']),
+                        (FilterPartByName(included=['metadata']),
                             (DNADebug(enabled=False, prefix='add metadata'),
                                 (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-4.xsd')], nsMap=namespacesMap), 
                                     (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart

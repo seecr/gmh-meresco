@@ -5,7 +5,7 @@ from md5 import md5
 
 from meresco.components.storagecomponent import defaultSplit, defaultJoin
 
-from narcis.storagesplit import md5Split, md5Join, MD5JoinError
+from meresco_server.storagesplit import md5Split, md5Join, MD5JoinError
 
 class StorageSplitTest(TestCase):
     def testOriginal(self):
@@ -39,5 +39,4 @@ class StorageSplitTest(TestCase):
         self.assertEquals(['without_colon'], defaultSplit(identifier))
         self.assertEquals(['without_colon'], md5Split(identifier))
         self.assertRaises(MD5JoinError, md5Join, md5Split(identifier))
-        #self.assertEquals(('without_colon', 'without_colon'), md5Join(md5Split(identifier)))
         

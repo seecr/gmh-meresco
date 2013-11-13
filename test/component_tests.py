@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.5
+#!/usr/bin/env python2.6
 # -*- coding: utf-8 -*-
 from os import system
 from sys import path
@@ -12,11 +12,11 @@ path.insert(0, '..')
 
 from unittest import main
 
-from storagesplittest import StorageSplitTest
+#from storagesplittest import StorageSplitTest
 from filterpartnamestest import FilterPartNamesTest
-from knawlongtest import KNAWLongTest
-from knawlong2shorttest import KNAWLong2ShortTest
-from nod2shorttest import NOD2ShortTest
+#from knawlongtest import KNAWLongTest
+#from knawlong2shorttest import KNAWLong2ShortTest
+#from nod2shorttest import NOD2ShortTest
 
 
 if __name__ == '__main__':
