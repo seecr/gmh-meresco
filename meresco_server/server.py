@@ -56,7 +56,6 @@ from normalize_nl_mods import Normalize_nl_MODS
 
 
 from nl_didl_combined import NL_DIDL_combined
-#from filterpartnames import FilterPartNames
 from meresco.components import FilterPartByName
 
 #We'll use MD5-hash to divide records into multiple folders.
@@ -211,7 +210,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),             
                 (PathFilter('/rss'),
-                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://someorganization.org', maximumRecords = 30),
+                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester21.dans.knaw.nl:8000', maximumRecords = 30),
                         (loggerComponent,)
                     )
                 )

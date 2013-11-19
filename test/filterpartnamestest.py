@@ -10,46 +10,60 @@ from weightless.core import compose
 
 class FilterPartNamesTest(SeecrTestCase):
 
-
-    def testFilterIncluded(self):
-        filter = FilterPartNames(allowed=['metadata'])
-        observer = CallTrace('observer')
-        observer.methods['yieldRecord'] = lambda **kwargs: (f for f in ['data'])
-        filter.addObserver(observer)
-
-        self.assertEquals(['data'], list(compose(filter.yieldRecord(identifier='identifier', partname='metadata'))))
-        self.assertEquals([], list(compose(filter.yieldRecord(identifier='identifier', partname='no'))))
-
-
     def testMetadataNamePart(self):
-        startHere = Observable()
+        
         filterpn = FilterPartNames(allowed=['metadata'])
         observer = CallTrace('observer')
-        startHere.addObserver(filterpn)
-        filterpn.addObserver(observer)
         didlNode = parse(StringIO(DIDL_FULL))
-        startHere.do.some_method('identifier', 'metadata', didlNode)
+        observer.methods['some_method'] = lambda **kwargs: (f for f in ['data'])
+        filterpn.addObserver(observer)
+
+        self.assertEquals(['data'], list(compose(filterpn.do.some_method(identifier='identifier', partname='metadata'))))
+        
+        
+        for m in observer.calledMethods:
+            print 'Called methods:', m.name
+        else:
+            print 'No methods called!'
+            
         self.assertEquals(1, len(observer.calledMethods))
+
+
+#        filter = FilterPartByName(included=['thisone'])
+#        observer = CallTrace('observer')
+#        observer.methods['yieldRecord'] = lambda **kwargs: (f for f in ['data'])
+#        filter.addObserver(observer)
+#
+#        self.assertEquals(['data'], list(compose(filter.yieldRecord(identifier='identifier', partname='thisone'))))
+#        self.assertEquals([], list(compose(filter.yieldRecord(identifier='identifier', partname='no'))))
+
+
 
     def testMetadataNamePart2(self):
         startHere = Observable()
         filterpn = FilterPartNames(allowed=['metadata'])
-        observer = CallTrace()
+        observer = CallTrace('observer')
         startHere.addObserver(filterpn)
         filterpn.addObserver(observer)
         didlNode = parse(StringIO(DIDL_FULL))
-        startHere.do.some_method('identifier', 'header', didlNode)
-        self.assertEquals(0, len(observer.calledMethods))
+        startHere.all.unknown('identifier', 'metadata', didlNode)
+        
+        for m in observer.calledMethods:
+            print 'Called methods:', m.name
+        else:
+            print 'No methods called!'
+        
+        self.assertEquals(1, len(observer.calledMethods))
 
     def testOtherNamePart(self):
         startHere = Observable()
-        filterpn = FilterPartNames(disallowed=['metadata'])
+        filterpn = FilterPartNames(allowed=['metadata'])
         observer = CallTrace()
         startHere.addObserver(filterpn)
         filterpn.addObserver(observer)
         didlNode = parse(StringIO(DIDL_FULL))
-        startHere.do.some_method('identifier', 'metadata', didlNode)
-        self.assertEquals(0, len(observer.calledMethods))
+        startHere.all.unknown('identifier', 'metadata', didlNode)
+        self.assertEquals(1, len(observer.calledMethods))
 
     def testOtherNamePartKwargs(self):
         startHere = Observable()

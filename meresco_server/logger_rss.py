@@ -62,7 +62,7 @@ class LoggerRSS(Observable):
             Scheme, Netloc, Path, Query, Fragment = urlsplit(RequestURI)
             arguments = parse_qs(Query)
             maximumRecords = int(arguments.get('maximumRecords', [self._maximumRecords])[0])
-            rId = arguments.get('rid', [''])[0] #['']
+            rId = arguments.get('repositoryId', [''])[0] #['']
             if rId =='' or not rId:
                 raise BadRequestException('Invalid repository (rid) parameter.') 
 

@@ -8,12 +8,15 @@ from os.path import join, isdir, isfile, basename, abspath, getsize
 from os import rename, listdir, remove, makedirs, link
 import mmap
 from escaping import escapeFilename, unescapeFilename
+from dateutil.parser import parse as parseDate
 
 
 RSS_TEMPLATE = """<item>
+    <title>%(title)s</title>
     <description>%(description)s</description>
-    <guid>%(oai_id)s</guid>
+    <guid>%(identifier)s</guid>
     <pubDate>%(date)s</pubDate>
+    <link>%(link)s</link>
 </item>"""
 
 class Logger(Observable):
@@ -46,12 +49,16 @@ class Logger(Observable):
             for line in reversed(lines):
                 #print "LINE: ", line
                 lineparts = line.split(' ', 2)
+                oai_id = lineparts[1].split(':', 1 )[1]
                 rssData = {
+                'title': xmlEscape( oai_id ),
                 'description': xmlEscape( lineparts[2] ),
-                'oai_id': xmlEscape( lineparts[1] ),
-                'date': xmlEscape( lineparts[0] )
+                'identifier': xmlEscape( lineparts[1] ),
+                'date': xmlEscape( str((parseDate(lineparts[0], ignoretz=True)).date()) ),
+                'link': xmlEscape( 'http://baseurl.com'+'?verb=GetRecord&identifier='+oai_id+'&metadataPrefix=nl_didl' ),
                 }
                 buffer += str(RSS_TEMPLATE % rssData)
+
             
         return buffer
             #https://github.com/seecr/meresco-components/blob/master/meresco/components/rss.py

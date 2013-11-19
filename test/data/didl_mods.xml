@@ -34,15 +34,15 @@
                     <didl:Resource mimeType="application/xml">
                         <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.0" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
                             <mods:originInfo>
-                                <mods:dateIssued encoding="iso8601">opgraafdatum 3000 jaar voor christus</mods:dateIssued>
+                                <mods:dateIssued encoding="iso8601">1999/09/09</mods:dateIssued>
                             </mods:originInfo>
 							<mods:language><mods:languageTerm type="code" authority="rfc3066">NL-01234</mods:languageTerm></mods:language>
 							<mods:identifier type="local">info:doi/00282162</mods:identifier>
                             <mods:titleInfo>
                                 <mods:title>Appositie en de interne struktuur van de NP</mods:title>
                             </mods:titleInfo>
-                            <mods:abstract xml:lang="fr">FransHeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeellllllang</mods:abstract>
-                            <mods:abstract xml:lang="en">EngelsDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD</mods:abstract>
+                            <mods:abstract xml:lang="fr">Frans Heeelllang</mods:abstract>
+                            <mods:abstract xml:lang="en">Engels DDD</mods:abstract>
                             <mods:name type="corporate" ID="n565-aut2">
                                 <mods:namePart type="given">Uni</mods:namePart>
                                 <mods:namePart type="family">Versiteit</mods:namePart>

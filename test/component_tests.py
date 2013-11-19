@@ -13,10 +13,8 @@ path.insert(0, '..')
 from unittest import main
 
 #from storagesplittest import StorageSplitTest
-from filterpartnamestest import FilterPartNamesTest
-#from knawlongtest import KNAWLongTest
-#from knawlong2shorttest import KNAWLong2ShortTest
-#from nod2shorttest import NOD2ShortTest
+from norm_modstest import NormModsTest
+#from norm_didltest import NormDidlTest
 
 
 if __name__ == '__main__':

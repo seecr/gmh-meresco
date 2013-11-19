@@ -99,10 +99,10 @@ class IntegrationTest(SeecrTestCase):
 
 
     def testRSS(self):
-        body = self._doQuery({'rid':'ut', 'maximumRecords':'3'}, path="/rss")
+        body = self._doQuery({'repositoryId':'ut', 'maximumRecords':'3'}, path="/rss")
         items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
          
-        #print 'RSS BODY:', body.xml()
+        print 'RSS BODY:', body.xml()
 #        for item in items:
 #           print '\nRss ITEM:', item
 

@@ -116,6 +116,10 @@ class Normalize_nl_MODS(Observable):
 
     def all_unknown(self, method, *args, **kwargs):
         self._identifier = kwargs.get('identifier')
+        
+#        for k, v in kwargs.items():
+#            print k,v
+        
         newArgs = [self._detectAndConvert(arg) for arg in args]     
         newKwargs = dict((key, self._detectAndConvert(value)) for key, value in kwargs.items())
         if self._bln_success:

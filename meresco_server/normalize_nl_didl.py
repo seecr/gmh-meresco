@@ -108,7 +108,7 @@ class Normalize_nl_DIDL(Observable):
                         new_item.append(new_comp) # add to the copied item
                         parent_item.append(new_item) #add the copied item to the parent
 
-                    parent_item.remove(item)                    
+                    parent_item.remove(item)
             #print "DIDL normalization succeeded."  #, etree.tostring(e_didl, encoding=XML_ENCODING)
             return e_didl
         except: #TODO: WST: what does this do?
@@ -130,10 +130,9 @@ class Normalize_nl_DIDL(Observable):
                 if idee.lower() == didlDocumentId[0].lower():
                     blnIDexists = True
                     break
-            #als niet gevonden hebt, oai-identifier checken.
+            # Als niet als id elders gevonden, oai-identifier checken.
             if not blnIDexists:
-                if didlDocumentId[0].lower() == self._identifier:
-                    #print "!!!!!!"
+                if didlDocumentId[0].lower() == self._identifier.split(':', 1 )[0].lower():
                     blnIDexists = True
             if not blnIDexists:
                 strDocId = ' DIDLDocumentId="%s"' % (escapeXml(didlDocumentId[0]))
@@ -165,7 +164,7 @@ class Normalize_nl_DIDL(Observable):
 
 #2:     Get toplevel modificationDate: self._validateISO8601()
         tl_modified = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
-        #check op geldig/aanwezig-heid tlModified, anders exception:
+        #check op geldig/aanwezigheid tlModified, anders exception:
         if tl_modified and not self._validateISO8601(tl_modified[0]):
             raise ValidateException(formatExceptionLine("Mandatory date modified in toplevelItem not a valid ISO8601 date: " + tl_modified[0], self._identifier))
         elif not tl_modified:
@@ -174,7 +173,7 @@ class Normalize_nl_DIDL(Observable):
         #get all modified dates (min 1: the tl modified):
         all_modified = lxmlNode.xpath('//didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
         
-        #Get most recent date from all items:
+        #Get most recent date from all items, to add to toplevelItem:
         if len(all_modified) > 0:
             datedict = {}
             for date in all_modified:
@@ -198,7 +197,7 @@ class Normalize_nl_DIDL(Observable):
         '//didl:DIDL/didl:Item/didl:Component/didl:Resource/text()',
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref', #DIDL 3.0
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
-        "//mods:mods/mods:location/mods:url[contains(.,'://')]/text()", #fallback MODS
+        #"//mods:mods/mods:location/mods:url[contains(.,'://')]/text()", #fallback MODS
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref' #fallback DIDL 2.3.1
         )
@@ -263,14 +262,14 @@ class Normalize_nl_DIDL(Observable):
             
         #2: Check geldige Identifier (feitelijk verplicht, hoewel vaak niet geimplemeteerd...) 
             pi = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dii:Identifier/text()', namespaces=self._nsMap)
-            if pi: #TODO: URN pattern check?
+            if len(pi) > 0: #TODO: URN pattern check?
                 of_container += descr_templ % ('<dii:Identifier>'+escapeXml(pi[0].strip().lower())+'</dii:Identifier>') 
                             
         #3: Check op geldige AccessRights:
             arights = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:accessRights/text()', namespaces=self._nsMap)
-            if arights:
+            if len(arights) > 0:
                 for key, value in accessRights.iteritems():
-                    if arights[0].strip().lower().find(key) >= 0:  
+                    if arights[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<dcterms:accessRights>'+value+'</dcterms:accessRights>')                        
                         break
                                                 
@@ -299,9 +298,9 @@ class Normalize_nl_DIDL(Observable):
                     if pubVersion[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<rdf:type rdf:resource="'+value+'"/>')                                
                         break
-            
+
         #8:Check for MANDATORY resources and mimetypes:
-            didl_resources = objectfile.xpath('self::didl:Item/didl:Component/didl:Resource', namespaces=self._nsMap)
+            didl_resources = objectfile.xpath('self::didl:Item/didl:Component/didl:Resource[@mimeType and @ref]', namespaces=self._nsMap)
             resources = ''
             _url_list = [ ]
             #print "Checking resources..."
@@ -325,15 +324,15 @@ class Normalize_nl_DIDL(Observable):
         return of_container
     
     
-    def _getHumanStartPage(self, lxmlNode): #TODO: check completeness
+    def _getHumanStartPage(self, lxmlNode):
         
         uriref, mimetype = None, 'text/html'
         
         uriref = self._findAndBindFirst(lxmlNode,
         '%s',
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref', #DIDL 3.0
-        '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1     
-        "//mods:mods/mods:location/mods:url[contains(.,'://')]/text()") #, #fallback MODS
+        '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref') #fallback DIDL 2.3.1     
+        #"//mods:mods/mods:location/mods:url[contains(.,'://')]/text()") #, #fallback MODS
         #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
         #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
         #"//dc:identifier[1]/text()") #Greedy fallback DC. If all else fails...
@@ -341,13 +340,11 @@ class Normalize_nl_DIDL(Observable):
         mimetype = self._findAndBindFirst(lxmlNode,
         '%s',
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType', #DIDL 3.0
-        '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType') #fallback DIDL 2.3.1     
-
+        '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType') #fallback DIDL 2.3.1
         #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
         #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
         #"//dc:identifier[1]/text()") #Greedy fallback DC. If all else fails...
         
-        #        
         if uriref != None: # and mimetype!= None:
             return """<didl:Item>
                         <didl:Descriptor>
