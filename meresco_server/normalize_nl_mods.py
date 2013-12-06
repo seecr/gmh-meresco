@@ -218,28 +218,14 @@ class Normalize_nl_MODS(Observable):
         # We'll add the MODS node to a new custom element and remove it again, so that lxml will use the mods prefix used in the namespacemap.
         # Otherwise default namespaces may be used for MODS...
         root = etree.Element('{'+self._nsMap['mods']+'}temp', nsmap=self._nsMap)
-        root.append(e_modsroot_copy)
-        
-        #print "ROOT BEFORE:", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ), pretty_print=True, encoding=XML_ENCODING)
-        
-        #mods = root.find( ('{%s}mods') % self._nsMap['mods']
-        #root.find( ('{%s}mods') % self._nsMap['mods']
-        
-        
-        #Perhaps some namespaces are not used anymore by the normalisation: remove them...
+        root.append(e_modsroot_copy)       
+                
+        #Some namespaces may not be in use anymore after normalisation: remove them...
         etree.cleanup_namespaces(root)
-        
-        #print "ROOT AFTER:", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ), pretty_print=True, encoding=XML_ENCODING)
-        #print "MODSSSS", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ) , pretty_print=True, encoding=XML_ENCODING)
-        #print etree.tostring(root, pretty_print=True, encoding=XML_ENCODING)
-        
-        #TODO: check parser options to eliminate empty tags, and remove unused namespaces.
-        #etree.cleanup_namespaces(e_modsroot_copy)
         
         returnxml = tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ) , pretty_print=True, encoding=XML_ENCODING)
         #returnxml = etree.tostring(e_modsroot_copy, pretty_print=True, encoding=XML_ENCODING)
         
-        #print "RETURN STRING:", returnxml
         return returnxml
 
 ## mods version:

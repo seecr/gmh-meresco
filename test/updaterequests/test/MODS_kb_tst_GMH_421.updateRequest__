@@ -32,11 +32,11 @@
                             &lt;/didl:Descriptor&gt;
                             &lt;didl:Descriptor&gt;
                                 &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
-                                    &lt;dcterms:modified&gt;2012-11-23&lt;/dcterms:modified&gt;
+                                    &lt;dcterms:modified&gt;2012-11-20&lt;/dcterms:modified&gt;
                                 &lt;/didl:Statement&gt;
                             &lt;/didl:Descriptor&gt;
                             &lt;didl:Component&gt;
-                            &lt;didl:Resource mimeType=&quot;application/xml&quot; ref=&quot;http://repository.tue.nl/716490&quot;&gt;&lt;/didl:Resource&gt;
+                            &lt;didl:Resource mimeType=&quot;applicationxml&quot; ref=&quot;http://repository.tue.nl/716490&quot;&gt;&lt;/didl:Resource&gt;
                             &lt;/didl:Component&gt;
                             &lt;didl:Item&gt;
                                 &lt;didl:Descriptor&gt;
@@ -144,7 +144,7 @@
                                 &lt;/didl:Descriptor&gt;
                                 &lt;didl:Descriptor&gt;
                                     &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
-                                        &lt;dcterms:modified&gt;2012-11-23&lt;/dcterms:modified&gt;
+                                        &lt;dcterms:modified&gt;2012-11-21&lt;/dcterms:modified&gt;
                                     &lt;/didl:Statement&gt;
                                 &lt;/didl:Descriptor&gt;
                                 &lt;didl:Descriptor&gt;
