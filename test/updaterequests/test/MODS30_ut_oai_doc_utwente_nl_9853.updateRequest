@@ -238,7 +238,7 @@
                             &lt;classification authority=&quot;lcc&quot;&gt;&lt;/classification&gt;
                             
                             &lt;subject authority=&quot;lcsh&quot;&gt;
-                                &lt;topic&gt;Real property--Mississippi--Tippah County--Maps&lt;/topic&gt;
+                                
                             &lt;/subject&gt;
                             
                             &lt;subject authority=&quot;lcsh&quot;&gt;
@@ -250,7 +250,7 @@
                             &lt;identifier&gt;doi:10.1006/jmbi.1995.0238&lt;/identifier&gt;
                             
                             &lt;physicalDescription&gt;
-                                &lt;extent&gt;22 pages&lt;/extent&gt;
+                                &lt;extent&gt; &lt;/extent&gt;
                                 &lt;digitalOrigin&gt;born digital&lt;/digitalOrigin&gt;
                             &lt;/physicalDescription&gt;
                             

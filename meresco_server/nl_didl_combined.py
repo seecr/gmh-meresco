@@ -62,11 +62,10 @@ class NL_DIDL_combined(Observable):
         
     def _getPart(self, recordId, partname):
         if self.call.isAvailable(recordId, partname) == (True, True):
-            print 'Getting', partname, ' part for', self._identifier
+            #print 'Getting', partname, ' part for', self._identifier
             stream = self.call.getStream(recordId, partname)
             return parse(stream) #stream.read()
-        return None    
-            #print 'STREAM:', stream.read()
+        return None
             
     def __str__(self):
         return 'NL_DIDL_combined'

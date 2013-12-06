@@ -10,6 +10,17 @@ import mmap
 from escaping import escapeFilename, unescapeFilename
 from dateutil.parser import parse as parseDate
 
+from lxml import etree
+from lxml.etree import _ElementTree, tostring, parse as lxmlParse
+
+import logging
+import logging.handlers
+
+# Max number of backup files to be created by RotatingFileHandler, before overwriting them:
+BACKUPCOUNT = 5
+
+# Max logfilesize:
+MAXLOGSIZE = 10485760
 
 RSS_TEMPLATE = """<item>
     <title>%(title)s</title>
@@ -26,39 +37,64 @@ class Logger(Observable):
         self._enabled = enabled
         self._msg_prefix = prefix #'[%s]'%(prefix)
         self._logfileDir = logfileDir
-        print "logfileDir:", self._logfileDir 
+        print "Logger directory:", self._logfileDir
+        
+        self._logger = logging.getLogger('Logger')
+        self._logger.setLevel(logging.WARNING)        
+        self._formatter = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
+                
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
 
 
     def logMsg(self, identifier, logmsg):
         if self._enabled:
-            print "LOGGER RECEIVED:", identifier, (self._msg_prefix + logmsg)
-            with open(join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0])), "a") as logFile:
-                try:
-                    logFile.write(str(strftime("%Y%m%dT%H:%M:%SZ", gmtime())) + " " + identifier + " " + self._msg_prefix+logmsg + "\n")
-                    logFile.flush()
-                finally:                    
-                    logFile.close()
-                                                        
-    def getLogLinesAsRssItems(self, rId, maxlines):
+            #print "LOGGER RECEIVED:", identifier, (self._msg_prefix + logmsg)
+            LOG_FILENAME = join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0]))
+
+            #Use python logging module:
+            handler = logging.handlers.RotatingFileHandler((LOG_FILENAME), maxBytes=MAXLOGSIZE, backupCount=BACKUPCOUNT)
+            handler.setFormatter(self._formatter)
+            self._logger.addHandler(handler)
+            self._logger.warning( identifier + " " + self._msg_prefix+logmsg )
+            self._logger.removeHandler(handler)
+            
+            ## OR -> create our own logfile...
+            #with open(LOG_FILENAME, "a") as logFile:
+            #    try:
+            #        logFile.write(str(strftime("%Y%m%dT%H:%M:%SZ", gmtime())) + " " + identifier + " " + self._msg_prefix+logmsg + "\n")
+            #        logFile.flush()
+            #    finally:                    
+            #        logFile.close()
+            
+            # OR -> Custom RotatedFile: http://www.snip2code.com/Snippet/4441/Rotating-file-implementation-for-python-/ 
+                                                       
+    def getLogLinesAsRssItems(self, repositoryId, maxlines):
         """Geeft RSS <item> representatie van loglines terug"""
+        #print "Getting loglines for", repositoryId, maxlines
         buffer = ''
-        lines = self._tail(rId, maxlines)
+        lines = self._getUniqueLogLines(repositoryId, maxlines)       
+        #lines = self._tail(repositoryId, maxlines)
         if lines:
-            for line in reversed(lines):
-                #print "LINE: ", line
+            burl, prfx = None, None
+            for line in reversed(lines):                
+                
                 lineparts = line.split(' ', 2)
+                
+                # Get baseUrl and metadataperfix from meta part only once:
+                # Beware: We'll assume the latest warning has the most recent (and probably correct) repository settings. 
+                if burl is None:
+                    burl, prfx = self._getMetaPartStuff(lineparts[1])
+                
                 oai_id = lineparts[1].split(':', 1 )[1]
                 rssData = {
                 'title': xmlEscape( oai_id ),
                 'description': xmlEscape( lineparts[2] ),
                 'identifier': xmlEscape( lineparts[1] ),
                 'date': xmlEscape( str((parseDate(lineparts[0], ignoretz=True)).date()) ),
-                'link': xmlEscape( 'http://baseurl.com'+'?verb=GetRecord&identifier='+oai_id+'&metadataPrefix=nl_didl' ),
+                'link': xmlEscape( ('%s?verb=GetRecord&identifier=%s&metadataPrefix=%s') % (burl, oai_id, prfx)   )             
                 }
                 buffer += str(RSS_TEMPLATE % rssData)
-
             
         return buffer
             #https://github.com/seecr/meresco-components/blob/master/meresco/components/rss.py
@@ -84,4 +120,46 @@ class Logger(Observable):
                 finally:
                     fm.close()
         else:
-            return[]    
+            return[]
+
+    def _getMetaPartStuff(self, uploadId):
+        meta = self._getPart(uploadId, 'meta')
+        if meta is not None:
+            baseu = meta.xpath("//meta:repository/meta:baseurl/text()", namespaces={'meta':'http://meresco.org/namespace/harvester/meta'})
+            prefix = meta.xpath("//meta:repository/meta:metadataPrefix/text()", namespaces={'meta':'http://meresco.org/namespace/harvester/meta'})
+            return baseu[0], prefix[0]
+        return None, None
+
+
+    def _getPart(self, recordId, partname):
+        if self.call.isAvailable(recordId, partname) == (True, True):
+            stream = self.call.getStream(recordId, partname)
+            #print 'STREAMing', recordId
+            return lxmlParse(stream)
+        return None
+
+
+    def _getUniqueLogLines(self, repositoryId, maxlines):
+        log_dict = {}
+        #maxlines  = 10
+        bckpcnt = 0
+        #reversed... CON: Reads complete file into memory...
+        #for line in reversed(open(join(self._logfileDir, "ut"), 'r').readlines()):
+        while len(log_dict) < maxlines and bckpcnt <= BACKUPCOUNT:
+            #Check which file to open:
+            file_name = repositoryId if bckpcnt == 0 else (repositoryId +'.'+ str(bckpcnt))
+            #print "Checking file...", file_name
+            if isfile(join(self._logfileDir, file_name)):
+                #print "Opening log file...", file_name
+                with open(join(self._logfileDir, file_name), 'r') as file:
+                    #print "LOGfile OPENED..."
+                    for line in file:
+                        log_dict [line.split(' ', 2)[2]] = line #log_dict [line.split(' ', 3)[3]] = line
+            if len(log_dict) >= maxlines:
+                #print "Reached max lines...", maxlines
+                break
+            bckpcnt = bckpcnt+1
+        #print "Return UNIQUE:", str(len(log_dict))
+        #for v in sorted(log_dict.values()):
+        #    print v
+        return sorted(log_dict.values())

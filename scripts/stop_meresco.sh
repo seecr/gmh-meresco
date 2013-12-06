@@ -1,7 +1,7 @@
 #!/bin/sh
 
 NAME=meresco_server
-PIDFILE=/home/meresco/$NAME.pid
+PIDFILE=/home/meresco/gharvester/$NAME.pid
 LOG=/data/meresco/logs/gharvester/$NAME.log
 
 PID=`cat $PIDFILE 2>/dev/null`

@@ -211,7 +211,9 @@ def dna(reactor, host, portNumber, databasePath):
                 ),             
                 (PathFilter('/rss'),
                     (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester21.dans.knaw.nl:8000', maximumRecords = 30),
-                        (loggerComponent,)
+                        (loggerComponent, 
+                            (storageComponent,)
+                        )
                     )
                 )
             )
@@ -224,7 +226,7 @@ config = {
 }
 
 if __name__ == '__main__':
-    databasePath = '/data/meresco' 
+    databasePath = '/data/meresco/gharvester'
     if not isdir(databasePath):
         makedirs(databasePath)
 

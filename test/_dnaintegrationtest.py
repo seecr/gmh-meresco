@@ -102,7 +102,7 @@ class IntegrationTest(SeecrTestCase):
         body = self._doQuery({'repositoryId':'ut', 'maximumRecords':'3'}, path="/rss")
         items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
          
-        print 'RSS BODY:', body.xml()
+        #print 'RSS BODY:', body.xml()
 #        for item in items:
 #           print '\nRss ITEM:', item
 
@@ -134,8 +134,10 @@ class IntegrationTest(SeecrTestCase):
         #self.assertEquals('ir:repo_id', body.OAI_PMH.ListSets.set[1].setSpec)
         
     def testOaiListRecords(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined'}) #, 'set': 'ir'
-        #print 'ListRecords:', body.xml()
+        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_norm'}) #, 'set': 'ir'
+        print 'ListRecords: AANTAL:', len(body.OAI_PMH.ListRecords.record)
+        print 'BODY:', body.xml()
+        
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
         self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
         
@@ -180,7 +182,7 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/test/*.updateRequest') #normalize/
+    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/test/*.updateRequest__') #normalize/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         

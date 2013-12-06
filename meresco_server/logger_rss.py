@@ -55,7 +55,7 @@ class LoggerRSS(Observable):
         self._link = link
         self._maximumRecords = maximumRecords
 
-    def handleRequest(self, RequestURI='', **kwargs):
+    def handleRequest(self, RequestURI='', **kwargs):        
         yield httputils.okRss
         yield """<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>"""
         try:
@@ -83,4 +83,5 @@ class LoggerRSS(Observable):
         yield """</rss>"""
             
     def _yieldLogResults(self, rId=None, maxlines=10):
+        print "Yielding results for:", rId, maxlines
         yield self.call.getLogLinesAsRssItems(rId, maxlines) #self.call.getLogLinesAsXml()

@@ -81,7 +81,7 @@ class Normalize_nl_MODS(Observable):
         
         self._bln_success = False
         # http://www.schemacentral.com/sc/xsd/t-xsd_language.html
-        self._patternRFC3066 = compile('^([A-Za-z]{2,3})(-[a-zA-Z0-9]{1,8})?$')# Captures first 2 or 3 language chars if nothing else OR followed by '-' and 1 to 8 alfanum chars.
+        #self._patternRFC3066 = compile('^([A-Za-z]{2,3})(-[a-zA-Z0-9]{1,8})?$')# Captures first 2 or 3 language chars if nothing else OR followed by '-' and 1 to 8 alfanum chars.
         self._patternURN = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL]:[uU][iI]:\d{1,3}-.*')
         self._patternURL = compile(
         r'^(?:http|ftp)s?://' # http:// or https://
@@ -108,7 +108,8 @@ class Normalize_nl_MODS(Observable):
         return anObject
 
     def convert(self, lxmlNode):
-        self._bln_success = False                
+        self._bln_success = False
+        self._bln_hasTypOfResource = False
         result_tree = self._normalizeRecord(lxmlNode)
         if result_tree != None:
             self._bln_success = True            
@@ -117,8 +118,6 @@ class Normalize_nl_MODS(Observable):
     def all_unknown(self, method, *args, **kwargs):
         self._identifier = kwargs.get('identifier')
         
-#        for k, v in kwargs.items():
-#            print k,v
         
         newArgs = [self._detectAndConvert(arg) for arg in args]     
         newKwargs = dict((key, self._detectAndConvert(value)) for key, value in kwargs.items())
@@ -155,7 +154,7 @@ class Normalize_nl_MODS(Observable):
         #3: Put it back in place:        
             #print 'Replacing original MODS with normalized MODS element...'
             lxmlMODS[0].getparent().replace(lxmlMODS[0], etree.fromstring(str_norm_mods) )
-#            print etree.tostring(lxmlNode, pretty_print=True)                 
+            #print "BACK IN DIDL:", etree.tostring(lxmlNode, pretty_print=True)                 
 
         else: #This should never happen @runtime: record should have been validated up front...
             #print 'NO MODS element found!'
@@ -206,19 +205,49 @@ class Normalize_nl_MODS(Observable):
             else: #Wordt alleen geskipped als ie uit 'break' komt...
                 e_modsroot_copy.remove(child)
                 
-        # Append our <extension> element to root:
-        if e_extensions is not None: e_modsroot_copy.append(e_extensions)
+        # Append our <extension> child elements to the root:
+        if e_extensions is not None:
+            for child in e_extensions.iterfind(('{%s}extension') % self._nsMap['mods']):
+                e_modsroot_copy.append(child)
         
-        # Append one typeOfResource to root:
-        self._addTypeOfResource(e_modsroot_copy)
+        # Append one typeOfResource to root, if it does not exist:
+        if not self._bln_hasTypOfResource:
+            self._addTypeOfResource(e_modsroot_copy)
+        
+        # Quick and Dirty:
+        # We'll add the MODS node to a new custom element and remove it again, so that lxml will use the mods prefix used in the namespacemap.
+        # Otherwise default namespaces may be used for MODS...
+        root = etree.Element('{'+self._nsMap['mods']+'}temp', nsmap=self._nsMap)
+        root.append(e_modsroot_copy)
+        
+        #print "ROOT BEFORE:", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ), pretty_print=True, encoding=XML_ENCODING)
+        
+        #mods = root.find( ('{%s}mods') % self._nsMap['mods']
+        #root.find( ('{%s}mods') % self._nsMap['mods']
+        
+        
+        #Perhaps some namespaces are not used anymore by the normalisation: remove them...
+        etree.cleanup_namespaces(root)
+        
+        #print "ROOT AFTER:", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ), pretty_print=True, encoding=XML_ENCODING)
+        #print "MODSSSS", tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ) , pretty_print=True, encoding=XML_ENCODING)
+        #print etree.tostring(root, pretty_print=True, encoding=XML_ENCODING)
         
         #TODO: check parser options to eliminate empty tags, and remove unused namespaces.
-        returnxml = etree.tostring(e_modsroot_copy, pretty_print=True, encoding=XML_ENCODING)
-        print returnxml
+        #etree.cleanup_namespaces(e_modsroot_copy)
+        
+        returnxml = tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ) , pretty_print=True, encoding=XML_ENCODING)
+        #returnxml = etree.tostring(e_modsroot_copy, pretty_print=True, encoding=XML_ENCODING)
+        
+        #print "RETURN STRING:", returnxml
         return returnxml
 
 ## mods version:
     def _normalizeModsVersion(self, e_modsroot):
+        #assert that default namespace will be MODS:
+        #print "Root XMLNS: ", e_modsroot.get('xmlns')
+        #if e_modsroot.get('xmlns') is not None:
+        #    e_modsroot.set("xmlns", self._nsMap['mods'])
         version_orig = e_modsroot.get("version")
         if version_orig != MODS_VERSION:
             e_modsroot.set("version", MODS_VERSION)
@@ -239,9 +268,9 @@ class Normalize_nl_MODS(Observable):
 
     def _isValidTitleInfoTag(self, lxmlNode):
         #Correct @type:
-        if lxmlNode.get('type') != 'translated':
-            if lxmlNode.attrib.has_key('type'):
-                del lxmlNode.attrib['type'] # Remove 'type' attribute if value other than 'translated'...
+        #if lxmlNode.get('type') != 'translated':
+        #    if lxmlNode.attrib.has_key('type'):
+        #        del lxmlNode.attrib['type'] # Remove 'type' attribute if value other than 'translated'...
         #Throw Exception if no or empty title tag:
         for title in lxmlNode.iterfind(('{%s}title') % self._nsMap['mods']):
             if not title.text:
@@ -265,7 +294,7 @@ class Normalize_nl_MODS(Observable):
             raise ValidateException(formatExceptionLine("Mandatory name element not found! ", self._identifier))
 
     def __isValidRoleTerm(self, str_roleTerm):
-        return True if str_roleTerm in MARC_ROLES else False
+        return True if str_roleTerm.strip() in MARC_ROLES else False
         
     def _tlName(self, childNode):
         #Pass thru all (normalized) name nodes...
@@ -274,17 +303,20 @@ class Normalize_nl_MODS(Observable):
 ## Language:
     def _tlLanguage(self, childNode):
         #SSDC mandates iso639-1, SSMODS mandates iso639-1 or iso639-2 if iso639-1 is not available, but we'll settle for either 2 or 3 chars.
-        rfc3066_lang = childNode.xpath("self::mods:languageTerm[@type='code' and @authority='rfc3066']/text()", namespaces=self._nsMap)
+        rfc3066_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='code' and @authority='rfc3066']/text()", namespaces=self._nsMap)
+        txt_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='text']/text()", namespaces=self._nsMap)
         if len(rfc3066_lang) > 0:
             #See also: ftp://ftp.rfc-editor.org/in-notes/rfc3066.txt
             #match = self._patternRFC3066.match(rfc3066_lang[0])
             #if match and match.group(1).lower() in ISO639:
-            if rfc3066_lang[0] in ISO639:
+            if rfc3066_lang[0].strip() in ISO639:
                 return childNode
-            self.do.logMsg(self._identifier, rfc3066_lang[0] + ' is not a valid languageTerm.')
+            self.do.logMsg(self._identifier, rfc3066_lang[0] + ' is not a valid RFC3066 language code.')
             return None
+        elif len(txt_lang) > 0:
+            return childNode
         else:
-            self.do.logMsg(self._identifier, 'No rfc3066 language code found.')
+            #self.do.logMsg(self._identifier, 'No valid languageTerm found.')
             return None
 
 ## Genre:
@@ -376,29 +408,44 @@ class Normalize_nl_MODS(Observable):
 ## PhysicalDescription:
     def _tlPhysicaldescription(self, childNode): #Extent check, skip otherwise...
         pages = childNode.xpath('self::mods:physicalDescription/mods:extent/text()', namespaces=self._nsMap)
+        #print "LEN:", len(pages)
         if len(pages) <= 0:
-            #self.do.logMsg(self._identifier, 'physicalDescription/Extend not found.')
             return childNode
-        elif not self._isInt(pages[0]):
-            self.do.logMsg(self._identifier, pages[0] + ' does not represent an Integer.')
+        elif not pages[0].strip():            
+            #self.do.logMsg(self._identifier, pages[0] + ' Empty text value.')
             return None
         return childNode
 
 ## RelatedItem:
     def _tlRelateditem(self, childNode):
-        if not childNode.get('type') in ['preceding', 'host', 'succeeding', 'series', 'otherVersion']:
+        #1: Remove all non-Edustandaard 'types':
+        if not childNode.get('type').strip() in ['preceding', 'host', 'succeeding', 'series', 'otherVersion']:
             return None
-            
-        children = childNode.xpath("self::mods:relatedItem/mods:part/child::*[@type='issue' or @type='volume' or @unit='page']/child::*", namespaces=self._nsMap)
+        
+        #2: Check if <start>, <end> and <total> tags are integers:
+        children = childNode.xpath("self::mods:relatedItem/mods:part/mods:extent[@unit='page']/child::*", namespaces=self._nsMap)
         if len(children) > 0:
-            for child in children: # <numbers>, <start>, <end>, <total> tags...
-                if child.tag in [('{%s}number') % self._nsMap['mods'], ('{%s}start') % self._nsMap['mods'], ('{%s}end') % self._nsMap['mods'], ('{%s}total') % self._nsMap['mods']] and not self._isInt(child.text):
+            for child in children: # <start>, <end>, <total> tags...
+                if child.tag in [('{%s}start') % self._nsMap['mods'], ('{%s}end') % self._nsMap['mods'], ('{%s}total') % self._nsMap['mods']] and not self._isInt(child.text):
                     ouder = child.getparent()
                     ouder.remove(child)
                     if len(ouder) == 0:
                         ouder.getparent().remove(ouder)                    
+        
+        
+        #3: Normalize <part><date encoding=""> tag:
+        children = childNode.xpath("self::mods:relatedItem/mods:part/mods:date", namespaces=self._nsMap)
+        print "RELATED DATE:", len(children)
+        if len(children) > 0:
+            for child in children:
+                if self._validateISO8601( child.text ):                    
+                    child.text = self._granulateDate(child.text)
+                    child.set('encoding', 'w3cdtf')
+                    #if child.tag == ('{%s}dateIssued') % self._nsMap['mods']: hasDateIssued = True
+                else:
+                    child.getparent().remove(child)
+        
         return childNode if len(childNode) > 0 else None
-
 
 ## Part (relatedItem):
     def _isValidPart(self, partNode):
@@ -407,11 +454,13 @@ class Normalize_nl_MODS(Observable):
 
 ## TypeOfResource:
     def _tlTypeofresource(self, childNode):
-        return None # Beware, all elements are removed from the document!
+        terug = childNode if not self._bln_hasTypOfResource else None
+        self._bln_hasTypOfResource = True
+        return terug
 
     def _addTypeOfResource(self, modsNode):
-        # Adds exactly one typeOfResource element to the mods node
-        tor = etree.SubElement(modsNode, "typeOfResource")
+        # Adds exactly one typeOfResource element to the mods node.
+        tor = etree.SubElement(modsNode, ('{%s}typeOfResource') % self._nsMap['mods'])
         tor.text = 'text'
 
 ## Identifier:
@@ -422,13 +471,13 @@ class Normalize_nl_MODS(Observable):
 
 ## Classification:        
     def _tlClassification(self, childNode):
-        if not childNode.attrib.has_key('authority') or childNode.text is None:
+        if not (childNode.attrib.has_key('authority') or childNode.attrib.has_key('authorityURI') ) or childNode.text is None:
             return None
         return childNode #transfer 'as is'.
 
 ## Subject:
     def _tlSubject(self, childNode):
-        if not childNode.attrib.has_key('authority') or len(childNode.xpath('mods:topic', namespaces=self._nsMap)) < 1:
+        if len(childNode.xpath('mods:topic', namespaces=self._nsMap)) < 1:
             return None      
         return childNode #transfer 'as is'.
 
@@ -438,12 +487,14 @@ class Normalize_nl_MODS(Observable):
         return None
 
     def _getValidModsExtension(self, modsNode):
-        #select all 'extension' child elements as separate nodes:
-        extensions = modsNode.xpath('self::mods:extension/child::*', namespaces=self._nsMap)        
-        e_rootExten = etree.Element("extension")
+        #select all 'extension' child elements as separate nodes:        
+        extensions = modsNode.xpath('self::mods:mods/mods:extension/child::*', namespaces=self._nsMap)
+        #extensions = modsNode.xpath('self::mods:extension/child::*', namespaces=self._nsMap)
+        #if len(extensions) > 0: print "FOUND Extensions..."
+        e_rootExten = etree.Element(('{%s}extension') % self._nsMap['mods'])
         for extension in extensions:
             if self._isValidEduStandaardExtension(extension):
-                e_ext = etree.SubElement(e_rootExten, "extension") #Create extension sub-element. 
+                e_ext = etree.SubElement(e_rootExten, ('{%s}extension') % self._nsMap['mods']) #Create extension sub-element. 
                 e_ext.append(extension)
                 e_rootExten.append(e_ext)
         return e_rootExten if len(e_rootExten) > 0 else None
@@ -472,12 +523,12 @@ class Normalize_nl_MODS(Observable):
             raise ValidateException(formatExceptionLine("Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: " + pid, self._identifier))
         return True     
 
-    def _validateISO8601(self, datestring):
-        try:
-            parseDate(datestring)
-        except ValueError:
-            return False
-        return True
+#    def _validateISO8601(self, datestring):
+#        try:
+#            parseDate(datestring)
+#        except ValueError:
+#            return False
+#        return True
 
     def _isInt(self, s):
         if s is None:

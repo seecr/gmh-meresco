@@ -109,7 +109,15 @@ class Normalize_nl_DIDL(Observable):
                         parent_item.append(new_item) #add the copied item to the parent
 
                     parent_item.remove(item)
-            #print "DIDL normalization succeeded."  #, etree.tostring(e_didl, encoding=XML_ENCODING)
+            
+            etree.cleanup_namespaces(e_didl)
+            #print "DIDL normalization succeeded.", etree.tostring(e_didl, encoding=XML_ENCODING)
+
+            #root = etree.Element('temp', nsmap=self._nsMap)
+            #root.append(e_didl)
+            #etree.cleanup_namespaces(root)            
+            #return root.find( ('{%s}DIDL') % self._nsMap['didl']
+            
             return e_didl
         except: #TODO: WST: what does this do?
             print 'Error while parsing: ', str_didl
@@ -141,6 +149,7 @@ class Normalize_nl_DIDL(Observable):
     xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" 
     xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" 
     xmlns:dc="http://purl.org/dc/elements/1.1/" 
+    xmlns:steiny="http://steiny.nl" 
     xmlns:dcterms="http://purl.org/dc/terms/" 
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"     
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -165,10 +174,10 @@ class Normalize_nl_DIDL(Observable):
 #2:     Get toplevel modificationDate: self._validateISO8601()
         tl_modified = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
         #check op geldig/aanwezigheid tlModified, anders exception:
-        if tl_modified and not self._validateISO8601(tl_modified[0]):
+        if len(tl_modified) > 0 and not self._validateISO8601(tl_modified[0]):
             raise ValidateException(formatExceptionLine("Mandatory date modified in toplevelItem not a valid ISO8601 date: " + tl_modified[0], self._identifier))
-        elif not tl_modified:
-            raise ValidateException(formatExceptionLine("Mandatory date modified in toplevelItem missing.", self._identifier))     
+        elif len(tl_modified) == 0:
+            raise ValidateException(formatExceptionLine("Mandatory date dcterms:modified in toplevelItem not found.", self._identifier))     
 
         #get all modified dates (min 1: the tl modified):
         all_modified = lxmlNode.xpath('//didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
