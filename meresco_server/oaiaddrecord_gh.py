@@ -91,7 +91,7 @@ class OaiAddRecordWithDefaults(Transparent):
         #record = kwargs['lxmlNode'] if iselement(kwargs['lxmlNode']) else kwargs['lxmlNode'].getroot()
         sets=[]
         fullpath=''
-        #We need meta part for set definition:
+        ## We need meta part for the 'set' definition:
         #record = self._getPart(kwargs.get('identifier'), "meta")
         metapart, headerpart = None, None 
         #print 'Getting meta part for ID:', identifier
@@ -117,7 +117,6 @@ class OaiAddRecordWithDefaults(Transparent):
         sets = set(((rgid[0].strip()+':'+str(s)), (rgid[0].strip()+':'+str(s))) for s in setSpecs)
         sets.add((rgid[0].strip(), rgid[0].strip()))
         
-
         #print 'adding sets:', str(sets)
         #print 'adding metadataFormats:', str(metadataFormats)
 

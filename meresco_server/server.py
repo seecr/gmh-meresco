@@ -71,6 +71,8 @@ from logger_rss import LoggerRSS
 #XML validator:
 from xml_validator import Validate
 
+# Add current harvestdate:
+from harvestdate import AddHarvestDateToMetaPart
 
 namespacesMap = {
     'dip'     : 'urn:mpeg:mpeg21:2005:01-DIP-NS',
@@ -105,32 +107,35 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                     namespaceMap=namespacesMap),
                     # Remove all delete msgs from storage and OAI:
                     (FilterMessages(allowed=['delete']),
-                        (DNADebug(enabled=False, prefix='DELETE'),
+                        #(DNADebug(enabled=False, prefix='DELETE'),
                             (storageComponent,),
                             (oaiJazz,)
-                        )
+                        #)
                     ),
                     (FilterMessages(allowed=['add']),
+                    
+                        ## Write harvestdate (=now()) to meta part (OAI provenance)
+                        (FilterPartByName(included=['meta']),                            
+                            (AddHarvestDateToMetaPart(verbose=False),)                            
+                        ),                    
                         # Store ALL (original)parts retrieved by Venturi (required ('should') and optional ('could') parts).
                         # Write all uploadParts to storage (header, meta & metadata)
                         (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                            (DNADebug(enabled=False, prefix='STOREALL'),
                                 (storageComponent,)
-                            )
                         ),
-                        #(FilterPartNames(allowed=['metadata']),
-                        (FilterPartByName(included=['metadata']),
-                            (DNADebug(enabled=False, prefix='add metadata'),
+                        (FilterPartByName(included=['metadata']), # Normalize 'metadata' part:
+                            #(DNADebug(enabled=False, prefix='add metadata'),
+                                # Validate DIDL and MODS part against their xsd-schema:
                                 (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-4.xsd')], nsMap=namespacesMap), 
                                     (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart
-                                        (loggerComponent,), #TODO: Check correct place into DNA.
+                                        (loggerComponent,),
                                         (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart.
-                                            (loggerComponent,), #TODO: Check correct place into DNA.
+                                            (loggerComponent,),
                                             (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'), # Convert it from etree.ElementTree to plaintext
                                                 (RewritePartname(NL_DIDL_NORMALISED_PREFIX), # Rename normalized partName from 'metadata' to 'nl_didl_norm'
-                                                    (DNADebug(enabled=False, prefix='to storage'),
+                                                    #(DNADebug(enabled=False, prefix='to storage'),
                                                         (storageComponent,) # Write normalized partName to storage                                    
-                                                    )
+                                                    #)
                                                 )
                                             ),
                                             # Create and store Combined format:
@@ -142,18 +147,18 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                                                 )
                                             ),
                                             # Add parts to OAI repository/index
-                                            (DNADebug(enabled=False, prefix='ADD2OAI'),
+                                            #(DNADebug(enabled=False, prefix='ADD2OAI'),
                                                 (OaiAddRecordWithDefaults(metadataFormats=[('metadata', 'http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didmodel.xsd', 'urn:mpeg:mpeg21:2002:02-DIDL-NS'),
                                                                                            (NL_DIDL_NORMALISED_PREFIX, '', 'http://gh.kb-dans.nl/normalised/v0.9/'),
                                                                                            (NL_DIDL_COMBINED_PREFIX, '', 'http://gh.kb-dans.nl/combined/v0.9/')]),
                                                     (storageComponent,), 
                                                     (oaiJazz,) # Assert partNames header and meta are available from storage!
                                                 ) #! OaiAddRecord
-                                            ) #!Debug
+                                            #) #!Debug
                                         )
                                     )
                                 )
-                            ) #Debug
+                            #) #Debug
                         ) #!FilterPartNames(allowed=['metadata']
                     ) # !FilterMessages(allowed=['add']
                 ) # !venturi
@@ -161,12 +166,12 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
         ) # !batch
 
 def dna(reactor, host, portNumber, databasePath):
-    #Choose our storage strategy:
+    #Choose ONE storage strategy:
     #strategie = HashDistributeStrategy() #irreversible?
     #strategie = DefaultStrategy()
     strategie = Md5HashDistributeStrategy()
     
-    #TODO: define which parts should be removed from storage on an SRU delete update.
+    ## Define which parts should be removed from storage on an SRU delete update.
     storageComponent = StorageComponent(join(databasePath, 'storage'), partsRemovedOnDelete=[NL_DIDL_NORMALISED_PREFIX, NL_DIDL_COMBINED_PREFIX, 'metadata'], strategy=strategie)
 
     loggerComponent = Logger(join(databasePath, 'logger'))
@@ -184,25 +189,23 @@ def dna(reactor, host, portNumber, databasePath):
                         )
                     )
                 ),
-                (PathFilter('/oai'), #TODO: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), # batchSize = number of records before issueing a resumptionToken...
+                (PathFilter('/oai'), #XWAIT: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
+                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
-                        (OaiProvenance( #NOTE: If one of the following fields lacks, provenance will NOT be written. TODO: Get metadatanamespace correct!
-                                nsMap=namespacesMap,
-                                #baseURL = ('meta', '/meta:meta/meta:repository/meta:baseurl/text()'),
-                                #harvestDate = ('meta', '/meta:meta/meta:record/meta:harvestdate/text()'),
-                                baseURL = ('meta', '//*[local-name() = "baseurl"]/text()'),
-                                #harvestDate = ('meta', '//*[local-name() = "harvestdate"]/text()'),   
-                                harvestDate = ('header', '//*[local-name() = "datestamp"]/text()'),
+                        (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written. TODO: Get metadatanamespace correct!
+                                nsMap=namespacesMap,                                                          
+                                baseURL = ('meta', '//*[local-name() = "baseurl"]/text()'),                                                                
+                                harvestDate = ('meta', '//*[local-name() = "harvestdate"]/text()'),   
+                                
                                 #See: http://www.openarchives.org/OAI/2.0/guidelines-provenance.htm
-                                #NOTE: Voorstel: Als DC wordt gevonden, dan DC namespace, anders MODS (de 'laagste' telt). DIDL negeren we.
                                 #NOGO: metadataNamespace = ('metadata', 'if ( boolean(count(//oai_dc:*)) ) then namespace-uri(//oai_dc:*) else namespace-uri(//mods:*)'),
                                 # | string("http://www.loc.gov/mods/v3")  //*[local-name()='mods']/namespace::node()[contains(.,'mods') or name()=""]                                
                                 #metadataNamespace = ('metadata', '//mods:mods/@xsi:schemaLocation'), #TODO: Juiste metadataNamespace meegeven!
                                 #metadataNamespace = 'MODS versie 3',
                                 metadataNamespace = (NL_DIDL_NORMALISED_PREFIX, '//mods:mods/namespace::node()[name()="" or name()="mods" or contains(.,"mods")]'), #TODO: Juiste metadataNamespace meegeven!
-                                identifier = ('header', '/oai:header/oai:identifier/text()'),
+                                
+                                identifier = ('header', '/oai:header/oai:identifier/text()'),                                
                                 datestamp = ('header', '/oai:header/oai:datestamp/text()')
                             ),
                             (storageComponent,)
@@ -232,7 +235,7 @@ if __name__ == '__main__':
 
     reactor = Reactor()
     server = be(dna(reactor, config['host'], config['port'], databasePath))
-    #server.once.observer_init() # OUD: alle generators dienen tezamen gepakt te worden:
+    ## server.once.observer_init() # OUD: alle generators dienen nu tezamen gepakt te worden:
     list(compose(server.once.observer_init()))
 
     print "Server listening on", config['host'], "at port", config['port']

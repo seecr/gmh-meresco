@@ -32,31 +32,31 @@ RSS_TEMPLATE = """<item>
 
 class Logger(Observable):
 
-    def __init__(self, logfileDir, enabled=True, prefix=''):
+    def __init__(self, logfileDir, enabled=True):
         Observable.__init__(self)
         self._enabled = enabled
-        self._msg_prefix = prefix #'[%s]'%(prefix)
-        self._logfileDir = logfileDir
-        print "Logger directory:", self._logfileDir
-        
+        self._logfileDir = logfileDir           
         self._logger = logging.getLogger('Logger')
         self._logger.setLevel(logging.WARNING)        
         self._formatter = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
-                
+            
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
+            
+        print "Logger directory:", self._logfileDir
 
 
-    def logMsg(self, identifier, logmsg):
+    def logMsg(self, identifier, logmsg, prefix=None):
         if self._enabled:
-            #print "LOGGER RECEIVED:", identifier, (self._msg_prefix + logmsg)
+            str_logline = identifier + " " + logmsg if prefix is None else identifier + " " + prefix +" "+ logmsg
+            #print "LOGGER RECEIVED:", str_logline
             LOG_FILENAME = join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0]))
 
             #Use python logging module:
             handler = logging.handlers.RotatingFileHandler((LOG_FILENAME), maxBytes=MAXLOGSIZE, backupCount=BACKUPCOUNT)
             handler.setFormatter(self._formatter)
             self._logger.addHandler(handler)
-            self._logger.warning( identifier + " " + self._msg_prefix+logmsg )
+            self._logger.warning( str_logline )
             self._logger.removeHandler(handler)
             
             ## OR -> create our own logfile...
@@ -122,6 +122,7 @@ class Logger(Observable):
         else:
             return[]
 
+
     def _getMetaPartStuff(self, uploadId):
         meta = self._getPart(uploadId, 'meta')
         if meta is not None:
@@ -134,14 +135,12 @@ class Logger(Observable):
     def _getPart(self, recordId, partname):
         if self.call.isAvailable(recordId, partname) == (True, True):
             stream = self.call.getStream(recordId, partname)
-            #print 'STREAMing', recordId
             return lxmlParse(stream)
         return None
 
 
     def _getUniqueLogLines(self, repositoryId, maxlines):
         log_dict = {}
-        #maxlines  = 10
         bckpcnt = 0
         #reversed... CON: Reads complete file into memory...
         #for line in reversed(open(join(self._logfileDir, "ut"), 'r').readlines()):

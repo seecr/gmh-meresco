@@ -37,7 +37,7 @@ from meresco.components import lxmltostring
 from meresco.components.xml_generic import  __file__ as xml_genericpath
 from meresco.components.xml_generic.validate import ValidateException
 
-#Schema validatie:
+## Schema validatie:
 from os.path import abspath, dirname, join
 
 oftenUsedNamespaces = {
@@ -48,12 +48,6 @@ oftenUsedNamespaces = {
     'meta': "http://meresco.org/namespace/harvester/meta",
 }
 
-#DIDL_XSD = etree.XMLSchema(etree.parse(join((join(dirname(abspath(__file__)), 'xsd')), 'didl.xsd') ))
-#MODS_XSD = etree.XMLSchema(etree.parse(join((join(dirname(abspath(__file__)), 'xsd')), 'mods.xsd') ))
-
-#class ValidateException(Exception):
-#    pass
-
 class Validate(Observable):
 
     def __init__(self, xSDPathList=[], nsMap=None):
@@ -63,7 +57,7 @@ class Validate(Observable):
         self._namespacesMap.update(nsMap or {})
         self._xmlSchemas = []
         
-#Fill the schemas list for later use:
+        ## Fill the schemas list for later use:
         for strName, strXPath, schemaPath in xSDPathList:
             print 'schema init:', strName, strXPath, schemaPath
             try:
@@ -102,24 +96,19 @@ class Validate(Observable):
             if type(arg) == _ElementTree: #Should be only one...
                 
                 for strName, strXPath, schema in self._xmlSchemas:
-                    #Doe xpath op betreffende XML/argument:
+                    ## Doe xpath op betreffende XML/argument:
                     xml = arg.xpath(strXPath, namespaces=self._namespacesMap)        
                     if len(xml) > 0:
                         schema.validate(xml[0])                
                         if schema.error_log:
-                            exception = ValidateException(formatXSDException(strName + " is NOT valid.", kwargs.get('identifier', None), schema, arg))
-                            #print str(exception)
-                            self.do.logException(exception) # TODO: Who takes care of this message??
+                            exception = ValidateException(formatXSDException(strName + " is NOT valid.", None, schema)) #, arg                     
+                            self.do.logException(exception)
                             raise exception
-                        #else:
-                        #    print strName, 'Validation OK'
                     else:
-                        exception = ValidateException(formatExceptionLine("Mandatory " + strName + " NOT found.", kwargs.get('identifier', None)))
-                        #print str(exception)
+                        exception = ValidateException(formatExceptionLine("Mandatory " + strName + " NOT found."))                    
                         self.do.logException(exception)
                         raise exception
 
-#TODO: What does this do? For UnitTests only?
 def assertValid(xmlString, schemaPath):
     schema = XMLSchema(parse(open(schemaPath)))
     toValidate = parse(StringIO(xmlString))
@@ -127,12 +116,13 @@ def assertValid(xmlString, schemaPath):
     if schema.error_log:
         raise AssertionError(formatException("assertValid", schema, toValidate))
 
-def formatXSDException(strMsg, identifier, schema, lxmlNode):
+def formatXSDException(strMsg, identifier, schema): #, lxmlNode
     message = formatExceptionLine(strMsg, identifier) + "\n"
     message += str(schema.error_log.last_error) + "\n\n"
     #for nr, line in enumerate(lxmltostring(lxmlNode, pretty_print=True).split('\n')):
     #   message += "%s %s\n" % (nr+1, line)
     return message
     
-def formatExceptionLine(strMsg, identifier):
-    return identifier + " #### " + strMsg
+def formatExceptionLine(strMsg, identifier=None, prefix=None):
+    str_mssg = prefix +" "+ strMsg if prefix is not None else strMsg
+    return str_mssg if identifier is None else identifier + " <=> " + str_mssg

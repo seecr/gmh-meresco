@@ -14,7 +14,7 @@ from weightless.core import Transparent, be, compose
             
 GH_COMBINED_NS = "http://gh.kb-dans.nl/combined/v0.9/"
 GH_COMBINED = "{%s}" % GH_COMBINED_NS
-NSMAP = {None : GH_COMBINED_NS} # the default namespace (no prefix)
+NSMAP = {None : GH_COMBINED_NS} # Default namespace (no prefix)
 
 class NL_DIDL_combined(Observable):
 
@@ -44,13 +44,12 @@ class NL_DIDL_combined(Observable):
 
     def _combineRecord(self, lxmlNode):
         #Get partName from disk to combine:
-        storage_part = self._getPart(self._identifier, "metadata") #nl_didl_norm"
+        storage_part = self._getPart(self._identifier, "metadata")
         
         #Create wrapper:
         root = etree.Element(GH_COMBINED + "nl_didl_combined", nsmap=NSMAP)
         e_original = etree.SubElement(root, GH_COMBINED + "nl_didl")
-        e_normalized = etree.SubElement(root, GH_COMBINED + "nl_didl_norm")
-        
+        e_normalized = etree.SubElement(root, GH_COMBINED + "nl_didl_norm")        
         
         orginal_didl = storage_part.xpath('//didl:DIDL', namespaces=self._nsMap)
         #print(etree.tostring(didl_xml[0], pretty_print=True))

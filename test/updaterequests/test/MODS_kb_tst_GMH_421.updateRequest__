@@ -83,7 +83,14 @@
                                                     &lt;/dai:identifier&gt;&lt;dai:identifier IDref=&quot;n716490-3&quot; authority=&quot;info:eu-repo/dai/nl&quot;&gt;
                                                         09702886X
                                                     &lt;/dai:identifier&gt;&lt;/dai:daiList&gt;
-                                            &lt;/extension&gt;
+                                            &lt;/extension&gt;                                            
+                                            
+                                            &lt;extension&gt;
+                                                &lt;hbo:name xmlns:hbo=&quot;info:eu-repo/xmlns/hboMODSextension&quot; ID=&quot;nameID_1&quot; type=&quot;corporate&quot;&gt;
+                                                    &lt;hbo:namePart type=&quot;organisation&quot;&gt; Hogeschool van Amsterdam &lt;/hbo:namePart&gt;
+                                                &lt;/hbo:name&gt;
+                                            &lt;/extension&gt;                                            
+                                            
                                             &lt;extension&gt;
                                                 &lt;wmp:rights xmlns:wmp=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xsi:schemaLocation=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus rights.xsd&quot;&gt;
                                                     &lt;dc:description&gt;Copyright (c) Karsten, FJP (Frank)&lt;/dc:description&gt;
@@ -94,7 +101,10 @@
                                                 &lt;wmp:rights xmlns:wmp=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xsi:schemaLocation=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus rights.xsd&quot;&gt;
                                                     &lt;dc:description&gt;Copyright (c) Houtum, GJJAN (Geert Jan)  van&lt;/dc:description&gt;
                                                 &lt;/wmp:rights&gt;
-                                            &lt;/extension&gt;&lt;typeOfResource&gt;text&lt;/typeOfResource&gt;
+                                            &lt;/extension&gt;
+                                            
+                                            &lt;typeOfResource&gt;text&lt;/typeOfResource&gt;                                                                                        
+                                            
                                             &lt;genre&gt;info:eu-repo/semantics/report&lt;/genre&gt;
                                             
                                             &lt;originInfo&gt;

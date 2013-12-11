@@ -20,6 +20,7 @@ from os.path import abspath, dirname, join
 
 ## Default xml-encoding:
 XML_ENCODING = 'utf-8'
+STR_DIDL = "DIDL:"
 
 
 ## Translation maps (key needs to be found somewhere in textvalues to be mapped):
@@ -75,10 +76,9 @@ class Normalize_nl_DIDL(Observable):
         newArgs = [self._detectAndConvert(arg) for arg in args]     
         newKwargs = dict((key, self._detectAndConvert(value)) for key, value in kwargs.items())
         if self._bln_success:
-            return self.all.unknown(method, *newArgs, **newKwargs)
+            yield self.all.unknown(method, *newArgs, **newKwargs)
 
     def _normalizeRecord(self, lxmlNode):
-        #print 'Starting DIDL normalization...'
         str_didl = ''
         
         # Call our functions:
@@ -102,11 +102,11 @@ class Normalize_nl_DIDL(Observable):
                 if len(resource_to_focus) > 1:
                     new_resource_to_focus = deepcopy(resource_to_focus)
                     comp = resource_to_focus[0].getparent()  #<component>
-                    item.remove(comp) #item without component tag
+                    item.remove(comp) ## Item without component tag
                     parent_item = item.getparent()
                     
                     for r in resource_to_focus:
-                        comp.remove(r) #remove all children from the component tag
+                        comp.remove(r) ## Remove all children from the component tag
 
                     for nr in new_resource_to_focus:
                         new_comp = deepcopy(comp) #copy the original(empty) component tag
@@ -126,26 +126,25 @@ class Normalize_nl_DIDL(Observable):
             #return root.find( ('{%s}DIDL') % self._nsMap['didl']
             
             return e_didl
-        except: #TODO: WST: what does this do?
+        except:
             print 'Error while parsing: ', str_didl
             raise
         
         
     def _getRootElement(self, lxmlNode):
-        #Check if DIDLDocumentId is available, if so, if it is valid: not in use elsewhere in the document.
+        ##Check if DIDLDocumentId is available, if so, if it is valid: not in use elsewhere in the document.
         didlDocumentId = lxmlNode.xpath('//didl:DIDL/@DIDLDocumentId', namespaces=self._nsMap)
         strDocId = ''
         
         if len(didlDocumentId) > 0:
-            #check if it is valid: not in use elsewhere in the document (as an identifier):            
+            ##Check if it is valid: not in use elsewhere in the document (as an identifier):            
             diiIdentifiers = lxmlNode.xpath('//dii:Identifier/text()', namespaces=self._nsMap)
             blnIDexists = False
             for idee in diiIdentifiers: #lower-case() xpath 2.0 function not available???
-                #print idee
                 if idee.lower() == didlDocumentId[0].lower():
                     blnIDexists = True
                     break
-            # Als niet als id elders gevonden, oai-identifier checken.
+            ## Als niet als id elders gevonden, oai-identifier checken.
             if not blnIDexists:
                 if didlDocumentId[0].lower() == self._identifier.split(':', 1 )[0].lower():
                     blnIDexists = True
@@ -166,7 +165,7 @@ class Normalize_nl_DIDL(Observable):
 
 
     def _getTopItem(self, lxmlNode):
-        # Wrappers:
+        ## Wrappers:
         pid, modified, mimetype, pidlocation = '', '', "application/xml", ''
         
 #1:     Get persistentIdentifier:
@@ -175,43 +174,43 @@ class Normalize_nl_DIDL(Observable):
             pid = pidlist[0].strip().lower()
             self._checkURNFormat(pid)                
         else:
-            raise ValidateException(formatExceptionLine("Mandatory persistent identifier (urn:nbn) not found in top level Item.", self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory persistent identifier (urn:nbn) not found in top level Item.", prefix=STR_DIDL))
 
 #2:     Get toplevel modificationDate: self._validateISO8601()
         tl_modified = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
-        #check op geldig/aanwezigheid tlModified, anders exception:
+        ## Check op geldig/aanwezigheid tlModified, anders exception:
         if len(tl_modified) > 0 and not self._validateISO8601(tl_modified[0]):
-            raise ValidateException(formatExceptionLine("Mandatory date modified in toplevelItem not a valid ISO8601 date: " + tl_modified[0], self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory date modified in toplevelItem not a valid ISO8601 date: " + tl_modified[0], prefix=STR_DIDL))
         elif len(tl_modified) == 0:
-            raise ValidateException(formatExceptionLine("No mandatory date dcterms:modified in toplevelItem.", self._identifier))
+            raise ValidateException(formatExceptionLine("No mandatory date dcterms:modified in toplevelItem.", prefix=STR_DIDL))
 
-        #get all modified dates:
+        ## Get all modified dates:
         all_modified = lxmlNode.xpath('//didl:Item/didl:Descriptor/didl:Statement/dcterms:modified/text()', namespaces=self._nsMap)
         
-        #Get most recent date from all items, to add to toplevelItem:
+        ## Get most recent date from all items, to add to toplevelItem:
         if len(all_modified) > 0:
             datedict = {}
             for date in all_modified:
                 if self._validateISO8601(date.strip()):
                     datedict[parseDate(date.strip())] = date.strip()
-            #Get first sorted key:
+            ## Get first sorted key:
             for key in reversed(sorted(datedict.iterkeys())):
                 modified = datedict[key]
                 break
             
         if not tl_modified[0].strip() == modified:
-            self.do.logMsg(self._identifier, "Top level Item date modified replaced by more recent child Item date modified.")
-            print "Top level Item date modified replaced by more recent child Item date modified."
+            self.do.logMsg(self._identifier, "Top level Item date modified replaced by more recent child Item date modified.", prefix=STR_DIDL)
+            #print "Top level Item date modified replaced by more recent child Item date modified."
             
 #3:     Get PidResourceMimetype
         mimetypelist = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Component/didl:Resource/@mimeType', namespaces=self._nsMap)
-        if len(mimetypelist) > 0: #TODO controle op geldige mimetype? http://www.iana.org/assignments/media-types/media-types.xhtml
+        if len(mimetypelist) > 0:
             mimetype = mimetypelist[0].strip().lower()
-            if "/" not in mimetype:
-                self.do.logMsg(self._identifier, "Normalized invalid mimeType: " +mimetype+ " to default: text/html")
+            if not self._isMimeType(mimetype):
+                self.do.logMsg(self._identifier, "Normalized invalid mimeType: " +mimetype+ " to default: text/html", prefix=STR_DIDL)
                 mimetype = "text/html" #overrides the default init value...
-        else: # Schema validation Error if it does not exist ...
-            mimetype = "text/html" #overrides the default init value...
+        else: ## Schema validation Error if it does not exist ...
+            mimetype = "text/html"
 
 #4:     Get PidResourceLocation:
         pidlocation = self._findAndBindFirst(lxmlNode, '%s',
@@ -226,9 +225,9 @@ class Normalize_nl_DIDL(Observable):
         )
 
         if pidlocation == '':
-            raise ValidateException(formatExceptionLine("Mandatory resource location not found in top level Item.", self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory resource location not found in top level Item.", prefix=STR_DIDL))
         if not self._isURL(pidlocation):
-            raise ValidateException(formatExceptionLine("Mandatory resource location is not a valid URL: " + pidlocation, self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory resource location is not a valid URL: " + pidlocation, prefix=STR_DIDL))
         
         return """<didl:Item>
         <didl:Descriptor><didl:Statement mimeType="application/xml"><dii:Identifier>%s</dii:Identifier></didl:Statement></didl:Descriptor>
@@ -241,10 +240,10 @@ class Normalize_nl_DIDL(Observable):
         descriptiveMetadataItem = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/descriptiveMetadata"]', namespaces=self._nsMap)
         if len(descriptiveMetadataItem) == 0: #Fallback to @resource (no rdf nmsp), if available...
             descriptiveMetadataItem = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@resource="info:eu-repo/semantics/descriptiveMetadata"]', namespaces=self._nsMap)
-            if len(descriptiveMetadataItem) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in rdf:type/@resource. This should have been: rdf:type/@rdf:resource")
+            if len(descriptiveMetadataItem) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in rdf:type/@resource. This should have been: rdf:type/@rdf:resource", prefix=STR_DIDL)
         if len(descriptiveMetadataItem) == 0: #Fallback to dip namespace, if available...
             descriptiveMetadataItem = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/descriptiveMetadata"]', namespaces=self._nsMap)
-            if len(descriptiveMetadataItem) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource")
+            if len(descriptiveMetadataItem) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource", prefix=STR_DIDL)
         if len(descriptiveMetadataItem) > 0:
             item_template = """<didl:Item>
                                     <didl:Descriptor>
@@ -259,7 +258,7 @@ class Normalize_nl_DIDL(Observable):
                                     </didl:Component>
                                 </didl:Item>""" % (self._getIdentifierDescriptor(descriptiveMetadataItem[0]), self._getDateModifiedDescriptor(descriptiveMetadataItem[0]), self._getMODSfromDMI(descriptiveMetadataItem[0]))
         else:
-            raise ValidateException(formatExceptionLine("Mandatory descriptiveMetadata item element not found!", self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory descriptiveMetadata item element not found!", prefix=STR_DIDL))
         return item_template
    
     def _getDateModifiedDescriptor(self, lxmlNode):
@@ -284,17 +283,17 @@ class Normalize_nl_DIDL(Observable):
         if len(mods) > 0:
             return tostring(mods[0])
         else:
-            raise ValidateException(formatExceptionLine("Mandatory MODS in descriptiveMetadata element not found in DIDL record.", self._identifier))
+            raise ValidateException(formatExceptionLine("Mandatory MODS in descriptiveMetadata element not found in DIDL record.", prefix=STR_DIDL))
 
     def _getObjectfiles(self, lxmlNode):              
         of_container = ''
         objectfiles = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]', namespaces=self._nsMap)
         if len(objectfiles) ==0:
             objectfiles = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@resource="info:eu-repo/semantics/objectFile"]', namespaces=self._nsMap)
-            if len(objectfiles) > 0: self.do.logMsg(self._identifier, "Found objectFile in rdf:type/@resource. This should have been: rdf:type/@rdf:resource")
+            if len(objectfiles) > 0: self.do.logMsg(self._identifier, "Found objectFile in rdf:type/@resource. This should have been: rdf:type/@rdf:resource", prefix=STR_DIDL)
         if len(objectfiles) ==0:
             objectfiles = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]', namespaces=self._nsMap)
-            if len(objectfiles) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource")
+            if len(objectfiles) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource", prefix=STR_DIDL)
         for objectfile in objectfiles:
         #1:Define correct ObjectFile descriptor:
             of_container += '<didl:Item><didl:Descriptor><didl:Statement mimeType="application/xml"><rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/></didl:Statement></didl:Descriptor>' 
@@ -312,7 +311,7 @@ class Normalize_nl_DIDL(Observable):
                         of_container += descr_templ % ('<dcterms:accessRights>'+value+'</dcterms:accessRights>')                        
                         break
             else:
-                self.do.logMsg(self._identifier, "No accessRights found for objectfile.")
+                self.do.logMsg(self._identifier, "No accessRights found for objectfile.", prefix=STR_DIDL)
                 #print "No accessRights found for objectfile."
                                                 
         #4: Check geldige datemodified (feitelijk verplicht, hoewel vaak niet geimplemeteerd...)
@@ -345,7 +344,7 @@ class Normalize_nl_DIDL(Observable):
             
         #7: Check for published version(author/publisher):
             pubVersion = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/rdf:type/@rdf:resource', namespaces=self._nsMap)
-            if len(pubVersion) > 0: #both (author/publisher) may be available: we'll take the first one...
+            if len(pubVersion) > 0: ## Both (author/publisher) may be available: we'll take the first one...
                 for key, value in pubVersions.iteritems():
                     if pubVersion[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<rdf:type rdf:resource="'+value+'"/>')                                
@@ -355,26 +354,23 @@ class Normalize_nl_DIDL(Observable):
             didl_resources = objectfile.xpath('self::didl:Item/didl:Component/didl:Resource[@mimeType and @ref]', namespaces=self._nsMap)
             resources = ''
             _url_list = [ ]
-            #print "Checking resources..."
             for resource in didl_resources:
-                #print "found resource..."
                 mimeType = resource.xpath('self::didl:Resource/@mimeType', namespaces=self._nsMap)
                 uri = resource.xpath('self::didl:Resource/@ref', namespaces=self._nsMap)
-                # We need both mimeType and URI:
+                ## We need both mimeType and URI:
                 if len(mimeType) > 0 and len(uri) > 0:
                     if self._isMimeType(mimeType[0]) and self._isURL(uri[0]):
-                        resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip().lower()), escapeXml(uri[0].strip())) #uri not .lower()!
+                        resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip().lower()), escapeXml(uri[0].strip())) ## uri not .lower()!
                         _url_list.append("""<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip().lower()), escapeXml(uri[0].strip())))
                     else:
-                        self.do.logMsg(self._identifier, "Invalid mimeType or URL found for objectfile Resource: skipping")
+                        self.do.logMsg(self._identifier, "Invalid mimeType or URL found for objectfile Resource: skipping", prefix=STR_DIDL)
                         
             if resources != '':
                 of_container += """<didl:Component>
                 %s
             </didl:Component>""" % (resources)
             else:
-                #print "NO (valid) resources found..."
-                raise ValidateException(formatExceptionLine("Mandatory Resource(s) not found in ObjectFile Item.", self._identifier))            
+                raise ValidateException(formatExceptionLine("Mandatory Resource(s) not found in ObjectFile Item.", prefix=STR_DIDL))            
             
             of_container += '</didl:Item>'
                 
@@ -392,22 +388,17 @@ class Normalize_nl_DIDL(Observable):
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
         '//didl:DIDL/didl:Item/didl:Component/didl:Resource/@ref',
         '//didl:DIDL/didl:Item/didl:Component/didl:Resource/text()')
-        #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
-        #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
-
 
         mimetype = self._findAndBindFirst(lxmlNode,
         '%s',
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType', #DIDL 3.0
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType', #DIDL 3.0
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@mimeType') #fallback DIDL 2.3.1
-        #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
-        #'//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 2.3.1
 
         if not self._isMimeType(mimetype):
             mimetype = 'text/html'
             
-        if uriref != None: # and mimetype!= None:
+        if uriref != None:
             return """<didl:Item>
                         <didl:Descriptor>
                             <didl:Statement mimeType="application/xml">
@@ -419,13 +410,13 @@ class Normalize_nl_DIDL(Observable):
                         </didl:Component>
                     </didl:Item>""" % (uriref, mimetype)
         else:
-            self.do.logMsg(self._identifier, "No valid HumanStartPage found!")
+            self.do.logMsg(self._identifier, "No valid HumanStartPage found!", prefix=STR_DIDL)
             return ""
          
     def _checkURNFormat(self, pid):
         m = self._patternURN.match(pid)
         if not m:
-            raise ValidateException(formatExceptionLine("Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: " + pid, self._identifier))
+            raise ValidateException(formatExceptionLine("Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: " + pid, prefix=STR_DIDL))
         return True
     
     def _validateISO8601(self, datestring):
@@ -443,11 +434,12 @@ class Normalize_nl_DIDL(Observable):
         return bln_isValid
                 
     def _isMimeType(self, string):
+        ## TODO: controle op geldige mimetype? http://www.iana.org/assignments/media-types/media-types.xhtml
         return False if string is None else "/" in string
        
         
     def _findAndBindFirst(self, node, template, *xpaths):
-        # Will bind only the FIRST (xpath match/record) to the template. It will never return more than one templated element...
+        ## Will bind only the FIRST (xpath match/record) to the template. It will never return more than one templated element...
         items = []
         for p in xpaths:
             items += node.xpath(p, namespaces=self._nsMap)

@@ -36,7 +36,6 @@ def md5Join(parts):
     if parts and len(parts) == 5:
         return ('%s:%s' %(parts[0], parts[3]), parts[-1])
     raise MD5JoinError('md5Join Error. Need 5 parts' + str(parts))
-#    raise 'md5Join Error. Need 5 parts', parts
 
 class MD5JoinError(Exception):
     def __init__(self, value):

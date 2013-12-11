@@ -29,19 +29,13 @@
 ## end license ##
 
 from xml.sax.saxutils import escape as xmlEscape
-
-
 from cgi import parse_qs
 from urlparse import urlsplit
-
 from amara.binderytools import bind_string
-
 from meresco.core import Observable
 from meresco.components.sru.sruparser import SruMandatoryParameterNotSuppliedException
 from meresco.components.http import utils as httputils
-
 from cqlparser.cqlparser import parseString as CQLParseException
-#from meresco.components.web import WebQuery
 
 class BadRequestException(Exception):
     pass
@@ -68,7 +62,7 @@ class LoggerRSS(Observable):
 
         except (SruMandatoryParameterNotSuppliedException, BadRequestException, CQLParseException), e:
             yield '<title>ERROR %s</title>' % xmlEscape(self._title)
-#            yield '<link>%s</link>' % xmlEscape(self._link)
+            yield '<link>%s</link>' % xmlEscape(self._link)
             yield "<description>An error occurred '%s'</description>" % xmlEscape(str(e))
             yield """</channel></rss>"""
             raise StopIteration()
