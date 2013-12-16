@@ -384,7 +384,8 @@ class Normalize_nl_MODS(Observable):
 ## RelatedItem:
     def _tlRelateditem(self, childNode):
         #1: Remove all non-Edustandaard 'types':
-        if not childNode.get('type').strip() in ['preceding', 'host', 'succeeding', 'series', 'otherVersion']:
+        type_attr = childNode.get('type')
+        if type_attr is None or (type_attr is not None and not type_attr.strip() in ['preceding', 'host', 'succeeding', 'series', 'otherVersion']):
             return None
         
         #2: Check if <start>, <end> and <total> tags are integers:
@@ -395,7 +396,7 @@ class Normalize_nl_MODS(Observable):
                     ouder = child.getparent()
                     ouder.remove(child)
                     if len(ouder) == 0:
-                        ouder.getparent().remove(ouder)                    
+                        ouder.getparent().remove(ouder)
         
         
         #3: Normalize <part><date encoding=""> tag:
@@ -474,8 +475,8 @@ class Normalize_nl_MODS(Observable):
                 else:
                     #print "EduStandaard extension IS VALID", lxmlNode.tag 
                     return True
-        ## Looped over all allowed Edustandaard extensions types: None was found...
-        self.do.logMsg(self._identifier, 'No Extension recognized as EDUstandaard...', prefix=STR_MODS)
+        ## Looped over all allowed Edustandaard extensions types: None was found...        
+        self.do.logMsg(self._identifier, 'Found unknown extension (no EDUstandaard).', prefix=STR_MODS)
         return False
 
    

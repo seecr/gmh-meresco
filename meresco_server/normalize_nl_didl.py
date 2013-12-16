@@ -232,7 +232,7 @@ class Normalize_nl_DIDL(Observable):
         return """<didl:Item>
         <didl:Descriptor><didl:Statement mimeType="application/xml"><dii:Identifier>%s</dii:Identifier></didl:Statement></didl:Descriptor>
         <didl:Descriptor><didl:Statement mimeType="application/xml"><dcterms:modified>%s</dcterms:modified></didl:Statement></didl:Descriptor>
-        <didl:Component><didl:Resource mimeType="%s" ref="%s"/></didl:Component>""" % (escapeXml(pid), modified, escapeXml(mimetype), pidlocation)        
+        <didl:Component><didl:Resource mimeType="%s" ref="%s"/></didl:Component>""" % (escapeXml(pid), modified, escapeXml(mimetype), pidlocation.strip())        
 
 
     def _getDescriptiveMetadata(self, lxmlNode):
@@ -428,7 +428,9 @@ class Normalize_nl_DIDL(Observable):
 
     def _isURL(self, string):
         bln_isValid = False
-        m = self._patternURL.match(string)
+        if string is None:
+            return bln_isValid
+        m = self._patternURL.match(string.strip())
         if m:
             bln_isValid = True
         return bln_isValid
