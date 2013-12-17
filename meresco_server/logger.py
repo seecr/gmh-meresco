@@ -36,28 +36,29 @@ class Logger(Observable):
         Observable.__init__(self)
         self._enabled = enabled
         self._logfileDir = logfileDir           
-        self._logger = logging.getLogger('Logger')
-        self._logger.setLevel(logging.WARNING)        
-        self._formatter = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
+        #self._logger = logging.getLogger('Logger')
+        #self._logger.setLevel(logging.WARNING)
+        
+        #self._formatter = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
             
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
             
-        print "Logger directory:", self._logfileDir
+        print "ENABLED Logger directory:", self._logfileDir
 
 
     def logMsg(self, identifier, logmsg, prefix=None):
         if self._enabled:
             str_logline = identifier + " " + logmsg if prefix is None else identifier + " " + prefix +" "+ logmsg
             #print "LOGGER RECEIVED:", str_logline
-            LOG_FILENAME = join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0]))
+            #LOG_FILENAME = join(self._logfileDir, escapeFilename(identifier.split(':', 1 )[0]))
 
-            #Use python logging module:
-            handler = logging.handlers.RotatingFileHandler((LOG_FILENAME), maxBytes=MAXLOGSIZE, backupCount=BACKUPCOUNT)
-            handler.setFormatter(self._formatter)
-            self._logger.addHandler(handler)
-            self._logger.warning( str_logline )
-            self._logger.removeHandler(handler)
+            ## Use python logging module:
+            #handler = logging.handlers.RotatingFileHandler((LOG_FILENAME), maxBytes=MAXLOGSIZE, backupCount=BACKUPCOUNT)
+            #handler.setFormatter(self._formatter)
+            #self._logger.addHandler(handler)
+            #self._logger.warning( str_logline )
+            #self._logger.removeHandler(handler)
             
             ## OR -> create our own logfile...
             #with open(LOG_FILENAME, "a") as logFile:
@@ -68,6 +69,11 @@ class Logger(Observable):
             #        logFile.close()
             
             # OR -> Custom RotatedFile: http://www.snip2code.com/Snippet/4441/Rotating-file-implementation-for-python-/ 
+            
+            logger = getRssLogger(identifier.split(':', 1 )[0], self._logfileDir) #repositoryId, logfileDir
+            logger.warning( str_logline )
+            
+            
                                                        
     def getLogLinesAsRssItems(self, repositoryId, maxlines):
         """Geeft RSS <item> representatie van loglines terug"""
@@ -162,3 +168,25 @@ class Logger(Observable):
         #for v in sorted(log_dict.values()):
         #    print v
         return sorted(log_dict.values())
+
+
+def getRssLogger(repositoryId, logfileDir):
+    
+    logger = logging.getLogger(repositoryId)
+    
+    if len (logger.handlers) > 0:
+        #print "Logger Available..."
+        return logger
+    
+    # No handlers set yet, this is a new logger from the factory...
+    logger.setLevel(logging.WARNING)
+
+    LOG_FILENAME = join(logfileDir,  escapeFilename(repositoryId) )
+    rfh = logging.handlers.RotatingFileHandler((LOG_FILENAME), maxBytes=MAXLOGSIZE, backupCount=BACKUPCOUNT)
+    
+    formatter = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
+    rfh.setFormatter(formatter)
+    
+    logger.addHandler(rfh)
+    #print "Created new Logger..."
+    return logger
