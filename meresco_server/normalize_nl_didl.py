@@ -245,6 +245,18 @@ class Normalize_nl_DIDL(Observable):
             descriptiveMetadataItem = lxmlNode.xpath('//didl:DIDL/didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/descriptiveMetadata"]', namespaces=self._nsMap)
             if len(descriptiveMetadataItem) > 0: self.do.logMsg(self._identifier, "Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource", prefix=STR_DIDL)
         if len(descriptiveMetadataItem) > 0:
+            #look for first DMI containing MODS:
+            
+            dmi_mods = None
+            for dmi in descriptiveMetadataItem:
+                node = dmi.xpath('self::didl:Item//mods:mods', namespaces=self._nsMap)
+                if len(node) > 0:
+                    dmi_mods = node[0]
+                    break
+            else:
+                raise ValidateException(formatExceptionLine("Mandatory MODS in descriptiveMetadata element not found in DIDL record.", prefix=STR_DIDL))
+                
+            ####
             item_template = """<didl:Item>
                                     <didl:Descriptor>
                                         <didl:Statement mimeType="application/xml">
@@ -256,7 +268,7 @@ class Normalize_nl_DIDL(Observable):
                                            %s 
                                         </didl:Resource>
                                     </didl:Component>
-                                </didl:Item>""" % (self._getIdentifierDescriptor(descriptiveMetadataItem[0]), self._getDateModifiedDescriptor(descriptiveMetadataItem[0]), self._getMODSfromDMI(descriptiveMetadataItem[0]))
+                                </didl:Item>""" % (self._getIdentifierDescriptor(dmi_mods), self._getDateModifiedDescriptor(dmi_mods), tostring(dmi_mods))
         else:
             raise ValidateException(formatExceptionLine("Mandatory descriptiveMetadata item element not found!", prefix=STR_DIDL))
         return item_template
@@ -277,9 +289,12 @@ class Normalize_nl_DIDL(Observable):
         else:
             return ''
 
+    # NOT in use
     def _getMODSfromDMI(self, lxmlNodeDMI):    
         #1: Get MODS node from DIDL descr. metadata Item (DMI):
+        print "Getting MODS node from DIDL descr. metadata Item", tostring(lxmlNodeDMI)
         mods = lxmlNodeDMI.xpath('self::didl:Item//mods:mods', namespaces=self._nsMap)
+        print "LEN:", len(mods)
         if len(mods) > 0:
             return tostring(mods[0])
         else:

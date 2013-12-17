@@ -99,15 +99,14 @@ class IntegrationTest(SeecrTestCase):
 
 
     def testRSS(self):
-        body = self._doQuery({'repositoryId':'ut', 'maximumRecords':'3'}, path="/rss")
+        body = self._doQuery({'repositoryId':'kb_tst', 'maximumRecords':'10'}, path="/rss")
         items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
          
         #print 'RSS BODY:', body.xml()
 #        for item in items:
 #           print '\nRss ITEM:', item
-
-        self.assertEquals(2, len(items))
-        #print str(items)   
+        
+        self.assertEquals(3, len(items))
         
     def testOaiListMetadataFormats(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListMetadataFormats'})
@@ -130,41 +129,40 @@ class IntegrationTest(SeecrTestCase):
         #print 'ListSets:', body.xml()
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
         self.assertEquals(3, len(body.OAI_PMH.ListSets.set))
-        self.assertEquals('ut', body.OAI_PMH.ListSets.set[0].setSpec)
+        self.assertEquals('kb', body.OAI_PMH.ListSets.set[0].setSpec)
         #self.assertEquals('ir:repo_id', body.OAI_PMH.ListSets.set[1].setSpec)
         
-    def testOaiListRecords(self):
+    def testProvenanceMetaDataNamespace(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_norm'}) #, 'set': 'ir'
-        print 'ListRecords: AANTAL:', len(body.OAI_PMH.ListRecords.record)
-        print 'BODY:', body.xml()
+        #print 'ListRecords: AANTAL:', len(body.OAI_PMH.ListRecords.record)
+        #print 'BODY:', body.xml()
         
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
+        self.assertEquals(8, len(body.OAI_PMH.ListRecords.record))
+       
+        for record in body.OAI_PMH.ListRecords.record:
+            if not str(record.header.status) == 'deleted':
+                self.assertTrue('mods' in str(record.about.provenance.originDescription.metadataNamespace))
+            #print "PROV:", str(record.about.provenance.originDescription.metadataNamespace)        
         
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'ut'})
+    def testOaiSet(self):        
+        header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'kb:KB'})
         #print 'ListRecords:', body.xml()
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        self.assertEquals(1, len(body.OAI_PMH.ListRecords.record))
+        self.assertEquals(6, len(body.OAI_PMH.ListRecords.record))
+
         
     def testOaiGetRecord(self):
-        header, body = getRequest(reactor, port, '/oai', {'verb': 'GetRecord', 'metadataPrefix': 'metadata', 'identifier': 'ut:oai:doc.utwente.nl:9853'})
+        header, body = getRequest(reactor, port, '/oai', {'verb': 'GetRecord', 'metadataPrefix': 'metadata', 'identifier': 'kb_tst:GMH:04'})
         #print body.xml()
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
         self.assertEquals(1, len(body.OAI_PMH.GetRecord.record))
 
-#     def testDeleteRecord(self):
-#         # Record #3 should not exist...
-#         self.assertSruQuery(0, 'untokenized.oai_identifier exact "record:3"')
-#         # #2 should...
-#         self.assertSruQuery(1, 'untokenized.oai_identifier exact "record:2"')
-#         
-#         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListIdentifiers', 'metadataPrefix': 'oai_dc'})
-#         #print body.xml()
-#         self.assertEquals(8, len(body.OAI_PMH.ListIdentifiers.header))
-# 
-#         header, body = getRequest(reactor, port, '/oai', {'verb': 'GetRecord', 'identifier': 'meresco:record:3', 'metadataPrefix': 'oai_dc'})
-#         #print body.xml()        
-#         self.assertEquals('deleted', body.OAI_PMH.GetRecord.record[0].header.status)
+
+    def testDeleteRecord(self): 
+        header, body = getRequest(reactor, port, '/oai', {'verb': 'GetRecord', 'identifier': 'kb_tst:GMH:05', 'metadataPrefix': 'metadata'})
+        #print body.xml()
+        self.assertEquals('deleted', body.OAI_PMH.GetRecord.record[0].header.status)
       
 
     def _doQuery(self, arguments, path="/rss"):
@@ -182,7 +180,7 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/test/*.updateRequest__') #normalize/
+    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/integration/*.updateRequest') #normalize/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         

@@ -75,7 +75,7 @@ class LoggerRSS(Observable):
 
         yield """</channel>"""
         yield """</rss>"""
-            
+  
     def _yieldLogResults(self, rId=None, maxlines=10):
-        print "Yielding results for:", rId, maxlines
+        # print "Yielding results for:", rId, maxlines
         yield self.call.getLogLinesAsRssItems(rId, maxlines) #self.call.getLogLinesAsXml()
