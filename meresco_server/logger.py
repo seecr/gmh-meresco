@@ -44,7 +44,7 @@ class Logger(Observable):
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
             
-        print "ENABLED Logger directory:", self._logfileDir
+        print "Logger directory:", self._logfileDir
 
 
     def logMsg(self, identifier, logmsg, prefix=None):
@@ -153,9 +153,10 @@ class Logger(Observable):
         while len(log_dict) < maxlines and bckpcnt <= BACKUPCOUNT:
             #Check which file to open:
             file_name = repositoryId if bckpcnt == 0 else (repositoryId +'.'+ str(bckpcnt))
-            #print "Checking file...", file_name
+            #print "Check isfile...", file_name
             if isfile(join(self._logfileDir, file_name)):
                 #print "Opening log file...", file_name
+                # to open a file, process its contents, and make sure to close it, you can simply do:
                 with open(join(self._logfileDir, file_name), 'r') as file:
                     #print "LOGfile OPENED..."
                     for line in file:

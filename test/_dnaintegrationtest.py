@@ -122,7 +122,7 @@ class IntegrationTest(SeecrTestCase):
         #print 'Identify:', body.xml()
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
         self.assertEquals('Gemeenschappelijke Harvester DANS-KB', body.OAI_PMH.Identify.repositoryName)
-        self.assertEquals('martin.braaksma@dans.knaw.nl', body.OAI_PMH.Identify.adminEmail)
+        self.assertEquals('eko.indarto@dans.knaw.nl', body.OAI_PMH.Identify.adminEmail)
           
     def testOaiListSets(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListSets'})

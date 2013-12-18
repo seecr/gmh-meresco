@@ -338,6 +338,8 @@ class Normalize_nl_MODS(Observable):
 
     def _validateISO8601(self, datestring):
         ## See: http://labix.org/python-dateutil
+        if datestring is None: return False
+        
         try:
             parseDate(datestring, ignoretz=True, fuzzy=True)
         except ValueError:

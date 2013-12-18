@@ -190,7 +190,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),
                 (PathFilter('/oai'), #XWAIT: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='martin.braaksma@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
+                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='eko.indarto@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
                         (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written. TODO: Get metadatanamespace correct!
@@ -214,8 +214,8 @@ def dna(reactor, host, portNumber, databasePath):
                 ),             
                 (PathFilter('/rss'),
                     (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester21.dans.knaw.nl:8000', maximumRecords = 30),
-                        (loggerComponent, 
-                            (storageComponent,)
+                        (loggerComponent,
+                                (storageComponent,)                            
                         )
                     )
                 )
