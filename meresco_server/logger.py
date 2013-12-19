@@ -44,7 +44,7 @@ class Logger(Observable):
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
             
-        print "Logger directory:", self._logfileDir
+        print "RSS Logger directory:", self._logfileDir
 
 
     def logMsg(self, identifier, logmsg, prefix=None):

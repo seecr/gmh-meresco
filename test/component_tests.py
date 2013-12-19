@@ -12,9 +12,10 @@ path.insert(0, '..')
 
 from unittest import main
 
-#from storagesplittest import StorageSplitTest
+from storagesplittest import StorageSplitTest
 from norm_modstest import NormModsTest
-#from norm_didltest import NormDidlTest
+from addharvestdatetest import AddHarvestdateTest
+from norm_didltest import NormDIDLTest
 
 
 if __name__ == '__main__':

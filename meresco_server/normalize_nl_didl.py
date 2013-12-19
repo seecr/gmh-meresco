@@ -192,12 +192,23 @@ class Normalize_nl_DIDL(Observable):
             datedict = {}
             for date in all_modified:
                 if self._validateISO8601(date.strip()):
-                    datedict[parseDate(date.strip())] = date.strip()
+                    #datedict[parseDate(date.strip())] = date.strip()
+                    #NU:
+                    pd = parseDate(date.strip())
+                    
+                    #print "TIME:", str(pd.time()), str(pd.date()), str(pd)
+                    #print "Opgesplitst: ", pd.year, pd.month, pd.day, pd.hour, pd.minute, pd.second
+                    #print "Opgesplitst: ", "%s %s" % (str(pd.date()), str(pd.time()))
+                    
+                    datedict["%s %s" % (str(pd.date()), str(pd.time()))] = date.strip()
+                    
+                    #print parseDate(date.strip()), date.strip()
+            #print 'ready parsing dates'
             ## Get first sorted key:
             for key in reversed(sorted(datedict.iterkeys())):
                 modified = datedict[key]
                 break
-            
+        #print "Most recent", modified    
         if not tl_modified[0].strip() == modified:
             self.do.logMsg(self._identifier, "Top level Item date modified replaced by more recent child Item date modified.", prefix=STR_DIDL)
             #print "Top level Item date modified replaced by more recent child Item date modified."

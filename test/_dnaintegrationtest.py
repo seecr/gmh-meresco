@@ -130,7 +130,7 @@ class IntegrationTest(SeecrTestCase):
         self.assertEquals('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
         self.assertEquals(3, len(body.OAI_PMH.ListSets.set))
         self.assertEquals('kb', body.OAI_PMH.ListSets.set[0].setSpec)
-        #self.assertEquals('ir:repo_id', body.OAI_PMH.ListSets.set[1].setSpec)
+
         
     def testProvenanceMetaDataNamespace(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_norm'}) #, 'set': 'ir'
@@ -142,8 +142,7 @@ class IntegrationTest(SeecrTestCase):
        
         for record in body.OAI_PMH.ListRecords.record:
             if not str(record.header.status) == 'deleted':
-                self.assertTrue('mods' in str(record.about.provenance.originDescription.metadataNamespace))
-            #print "PROV:", str(record.about.provenance.originDescription.metadataNamespace)        
+                self.assertTrue('mods' in str(record.about.provenance.originDescription.metadataNamespace))       
         
     def testOaiSet(self):        
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'kb:KB'})
@@ -172,7 +171,6 @@ class IntegrationTest(SeecrTestCase):
         header, body = getRequest(reactor, port, path, queryArguments)
         #print 'HEADER:', header
         #print 'BODY:', body.xml()
-        #there are more terms than documents in field "untokenized.mutatiedatum", but it's impossible to sort on tokenized fields
         return body
 
 
@@ -180,18 +178,11 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/integration/*.updateRequest') #normalize/
+    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/integration/*.updateRequest') #integration/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         
-        #header, result = getRequest(self.harvesterInternalServerPortNumber, '/get', {'verb': 'GetStatus', 'domainId': DOMAIN, 'repositoryId': REPOSITORY}, parse='lxml')
-        #self.assertEquals(['0'], xpath(result, "/status:saharaget/status:GetStatus/status:status/status:total/text()"))
-
-        #postRequest(port, path, data, contentType='text/xml; charset="utf-8"', parse=True, timeOutInSeconds=None, additionalHeaders=None):
-        #header, body = postRequest(port, '/update', open(updateRequestFile).read(), parse=False)  #parse=False, 'lxml'
         header, body = postRequest(reactor, port, '/update', open(updateRequestFile).read(), parse=False)
-        #print 'postResponse HEADER:', header
-        #print 'postResponse BODY:', body
         
         if '200 Ok' not in header:
             print 'No 200 Ok response, but:'

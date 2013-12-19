@@ -4,64 +4,68 @@ import sys
 #
 sys.path.insert(0, "..")
 
-from cq2utils import CQ2TestCase, CallTrace
+from seecr.test import SeecrTestCase, CallTrace
 from lxml.etree import parse, tostring, XML, fromstring, dump, XMLSchema, parse as lxmlParse
 from StringIO import StringIO
-from narcis.harvestdate import AddHarvestDateToMetaPart
+from meresco_server.harvestdate import AddHarvestDateToMetaPart
 from os.path import abspath, dirname, join
 from difflib import unified_diff
 from meresco.core import Observable
 import time
+from weightless.core import be, compose
 from unittest import main
-
 
 metaNS = {'meta' : 'http://meresco.org/namespace/harvester/meta'}
 
-class AddHarvestdateTest(CQ2TestCase):
+class AddHarvestdateTest(SeecrTestCase):
 
     def setUp(self):        
-        CQ2TestCase.setUp(self)
-        self.startHere = Observable()
-        self.harvestdate = AddHarvestDateToMetaPart(verbose=True)
-        self.observer = CallTrace()
-        self.startHere.addObserver(self.harvestdate)
+        SeecrTestCase.setUp(self)
+        self.harvestdate = AddHarvestDateToMetaPart(verbose=False)
+        self.observer = CallTrace('observer')
         self.harvestdate.addObserver(self.observer)
 
     def tearDown(self):
-        CQ2TestCase.tearDown(self)
+        SeecrTestCase.tearDown(self)
             
     def testAddHarvestDate(self):
-        inputRecord = lxmlParse(open("data/anymetapart.xml"))
-        # Send some method with inputdata:
-        self.startHere.do.some_method('identifier', 'metapart', inputRecord)
-        # Assert number of methods being called:
+    
+        self.observer.methods['add'] = lambda *args, **kwargs: (x for x in [])
+        
+        list( compose(self.harvestdate.all_unknown('add', 'id', 'metadata', 'anotherone', lxmlNode=parse(open("data/anymetapart.xml")), identifier='oai:very:secret:09987' )))
+        
         self.assertEquals(1, len(self.observer.calledMethods))
-        # Assert footprint method called:
-        method = self.observer.calledMethods[0]
-        self.assertEquals('some_method', method.name)
-        self.assertEquals(('identifier', 'metapart'), method.args[:2])
-        # Get conversion result send to observer by knawlong2short:
-        result = method.args[2]
+        
+        #for m in self.observer.calledMethods:
+        #    print 'method name:',m.name, m.args, m.kwargs
+            
+        result = self.observer.calledMethods[0].kwargs.get('lxmlNode')
+        
+        self.assertEquals(3, len(self.observer.calledMethods[0].args))
+        
+        arguments = self.observer.calledMethods[0].args
+        
+        self.assertEquals("id", arguments[0])
+        self.assertEquals("metadata", arguments[1])
         #Zoek harvestDate:
         harvest_date = result.xpath('/meta:meta/meta:record/meta:harvestdate/text()', namespaces=metaNS)
         hdstring = 'to be replaced'
-        print tostring(result)
-        if len(harvest_date) > 0: hdstring = harvest_date[0]
-        self.assertTrue( len(harvest_date)==1 and hdstring.startswith( time.strftime("%Y-%m-%dT%H:", time.gmtime()) ))        
+        #print tostring(result)
+        if len(harvest_date) > 0: hdstring = harvest_date[0]        
+        self.assertTrue( len(harvest_date)==1 and hdstring.startswith( time.strftime("%Y-%m-%dT%H:", time.localtime()) )) 
+    
         
-    def testHasHarvestDate(self):
-        inputRecord = lxmlParse(open("data/anymetapart_harvestdate.xml"))
-        # Send some method with inputdata:
-        self.startHere.do.some_method('identifier', 'metapart', inputRecord)
-        # Assert footprint method called:
-        method = self.observer.calledMethods[0]
-        self.assertEquals('some_method', method.name)
-        self.assertEquals(('identifier', 'metapart'), method.args[:2])
-        # Get conversion result send to observer by knawlong2short:
-        result = method.args[2]        
+    def testKeepExistingHarvestDate(self):
+            
+        self.observer.methods['add'] = lambda *args, **kwargs: (x for x in [])        
+        list( compose(self.harvestdate.all_unknown('add', 'id', 'metadata', 'anotherone', lxmlNode=parse(open("data/anymetapart_harvestdate.xml")), identifier='oai:very:secret:09987' )))
+        result = self.observer.calledMethods[0].kwargs.get('lxmlNode')
+              
         #Zoek harvestDate:
         harvest_date = result.xpath('/meta:meta/meta:record/meta:harvestdate/text()', namespaces=metaNS)
+        #print "HDate:", harvest_date[0]
         self.assertTrue(len(harvest_date)==1)
+        self.assertTrue(harvest_date[0] == '2012-02-12T07:50:10Z')
         
 if __name__ == '__main__':
     main()
