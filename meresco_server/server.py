@@ -36,7 +36,7 @@ from meresco.core import TransactionScope, ResourceManager
 from meresco.core.observable import Observable
 
 from weightless.core import Transparent, be, compose
-from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, Amara2Lxml, RewritePartname, Lxml2Amara #, Rss, RssItem
+from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, RewritePartname#, Amara2Lxml, Lxml2Amara #, Rss, RssItem
 from meresco.components.facetindex.libfacetindex import libFacetIndex
 
 from meresco.components.drilldown import SRUTermDrilldown #, Drilldown #Bestaat uit constants:
@@ -184,9 +184,9 @@ def dna(reactor, host, portNumber, databasePath):
             (ObservableHttpServer(reactor, portNumber),
                 (PathFilter("/update"),
                     (SRURecordUpdate(),
-                        (Amara2Lxml(fromKwarg='amaraNode', toKwarg='lxmlNode'),
+                        #(Amara2Lxml(fromKwarg='amaraNode', toKwarg='lxmlNode'),
                             createUploadHelix(storageComponent, oaiJazz, loggerComponent)
-                        )
+                        #)
                     )
                 ),
                 (PathFilter('/oai'), #XWAIT: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
