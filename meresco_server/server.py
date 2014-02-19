@@ -36,8 +36,8 @@ from meresco.core import TransactionScope, ResourceManager
 from meresco.core.observable import Observable
 
 from weightless.core import Transparent, be, compose
-from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, RewritePartname, Amara2Lxml, Lxml2Amara #, Rss, RssItem
-#from meresco.components.facetindex.libfacetindex import libFacetIndex
+from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, Amara2Lxml, RewritePartname, Lxml2Amara #, Rss, RssItem
+from meresco.components.facetindex.libfacetindex import libFacetIndex
 
 from meresco.components.drilldown import SRUTermDrilldown #, Drilldown #Bestaat uit constants:
 from meresco.components.drilldown import DRILLDOWN_HEADER, DRILLDOWN_FOOTER, DEFAULT_MAXIMUM_TERMS

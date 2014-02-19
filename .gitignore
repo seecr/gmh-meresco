@@ -8,6 +8,7 @@ target/
 log/
 wcptarget/
 test/integration_temp_dir/
+/meresco_server.*
  
 *.svn
 
