@@ -37,10 +37,9 @@ from meresco.core.observable import Observable
 
 from weightless.core import Transparent, be, compose
 from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, Amara2Lxml, RewritePartname, Lxml2Amara #, Rss, RssItem
-from meresco.components.facetindex.libfacetindex import libFacetIndex
 
-from meresco.components.drilldown import SRUTermDrilldown #, Drilldown #Bestaat uit constants:
-from meresco.components.drilldown import DRILLDOWN_HEADER, DRILLDOWN_FOOTER, DEFAULT_MAXIMUM_TERMS
+#from meresco.components.drilldown import SRUTermDrilldown #, Drilldown #Bestaat uit constants:
+#from meresco.components.drilldown import DRILLDOWN_HEADER, DRILLDOWN_FOOTER, DEFAULT_MAXIMUM_TERMS
 
 from meresco.components.http import PathFilter, ObservableHttpServer
 from meresco.components.sru import SruParser, SruHandler, SRURecordUpdate
@@ -49,7 +48,7 @@ from oaiaddrecord_gh import OaiAddRecordWithDefaults#, OaiAddRecord
 from weightless.io import Reactor
 
 #DEBUG
-from tools.dnadebugger import DNADebug
+#from tools.dnadebugger import DNADebug
 
 from normalize_nl_didl import Normalize_nl_DIDL
 from normalize_nl_mods import Normalize_nl_MODS
@@ -213,7 +212,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),             
                 (PathFilter('/rss'),
-                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester21.dans.knaw.nl:8000', maximumRecords = 30),
+                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester.dans.knaw.nl', maximumRecords = 30),
                         (loggerComponent,
                                 (storageComponent,)                            
                         )

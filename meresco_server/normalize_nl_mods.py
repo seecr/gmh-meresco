@@ -8,10 +8,11 @@ from copy import deepcopy
 from StringIO import StringIO
 from meresco.components.xml_generic.validate import ValidateException
 from xml_validator import formatExceptionLine
-from re import compile, IGNORECASE
 from dateutil.parser import parse as parseDate
-from datetime import *;
+from datetime import *
 from normalize_nl_didl import XML_ENCODING
+
+import commons as comm
 
 #Schema validatie:
 from os.path import abspath, dirname, join
@@ -22,40 +23,56 @@ from os.path import abspath, dirname, join
 # Returns: xml-string!
 
 
-#Taken from: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
-ISO639 = ["aar", "abk", "ace", "ach", "ada", "ady", "afa", "afh", "afr", "ain", "aka", "akk", "alb", "ale", "alg", "alt", "amh", "ang", "anp", "apa", "ara", "arc", "arg", "arm", "arn", "arp", "art", "arw", "asm", "ast", "ath", "aus", "ava", "ave", "awa", "aym", "aze", "bad", "bai", "bak", "bal", "bam", "ban", "baq", "bas", "bat", "bej", "bel", "bem", "ben", "ber", "bho", "bih", "bik", "bin", "bis", "bla", "bnt", "bos", "bra", "bre", "btk", "bua", "bug", "bul", "bur", "byn", "cad", "cai", "car", "cat", "cau", "ceb", "cel", "cha", "chb", "che", "chg", "chi", "chk", "chm", "chn", "cho", "chp", "chr", "chu", "chv", "chy", "cmc", "cop", "cor", "cos", "cpe", "cpf", "cpp", "cre", "crh", "crp", "csb", "cus", "cze", "dak", "dan", "dar", "day", "del", "den", "dgr", "din", "div", "doi", "dra", "dsb", "dua", "dum", "dut", "dyu", "dzo", "efi", "egy", "eka", "elx", "eng", "enm", "epo", "est", "ewe", "ewo", "fan", "fao", "fat", "fij", "fil", "fin", "fiu", "fon", "fre", "frm", "fro", "frr", "frs", "fry", "ful", "fur", "gaa", "gay", "gba", "gem", "geo", "ger", "gez", "gil", "gla", "gle", "glg", "glv", "gmh", "goh", "gon", "gor", "got", "grb", "grc", "gre", "grn", "gsw", "guj", "gwi", "hai", "hat", "hau", "haw", "heb", "her", "hil", "him", "hin", "hit", "hmn", "hmo", "hrv", "hsb", "hun", "hup", "iba", "ibo", "ice", "ido", "iii", "ijo", "iku", "ile", "ilo", "ina", "inc", "ind", "ine", "inh", "ipk", "ira", "iro", "ita", "jav", "jbo", "jpn", "jpr", "jrb", "kaa", "kab", "kac", "kal", "kam", "kan", "kar", "kas", "kau", "kaw", "kaz", "kbd", "kha", "khi", "khm", "kho", "kik", "kin", "kir", "kmb", "kok", "kom", "kon", "kor", "kos", "kpe", "krc", "krl", "kro", "kru", "kua", "kum", "kur", "kut", "lad", "lah", "lam", "lao", "lat", "lav", "lez", "lim", "lin", "lit", "lol", "loz", "ltz", "lua", "lub", "lug", "lui", "lun", "luo", "lus", "mac", "mad", "mag", "mah", "mai", "mak", "mal", "man", "mao", "map", "mar", "mas", "may", "mdf", "mdr", "men", "mga", "mic", "min", "mis", "mkh", "mlg", "mlt", "mnc", "mni", "mno", "moh", "mon", "mos", "mul", "mun", "mus", "mwl", "mwr", "myn", "myv", "nah", "nai", "nap", "nau", "nav", "nbl", "nde", "ndo", "nds", "nep", "new", "nia", "nic", "niu", "nno", "nob", "nog", "non", "nor", "nqo", "nso", "nub", "nwc", "nya", "nym", "nyn", "nyo", "nzi", "oci", "oji", "ori", "orm", "osa", "oss", "ota", "oto", "paa", "pag", "pal", "pam", "pan", "pap", "pau", "peo", "per", "phi", "phn", "pli", "pol", "pon", "por", "pra", "pro", "pus", "que", "raj", "rap", "rar", "roa", "roh", "rom", "rum", "run", "rup", "rus", "sad", "sag", "sah", "sai", "sal", "sam", "san", "sas", "sat", "scn", "sco", "sel", "sem", "sga", "sgn", "shn", "sid", "sin", "sio", "sit", "sla", "slo", "slv", "sma", "sme", "smi", "smj", "smn", "smo", "sms", "sna", "snd", "snk", "sog", "som", "son", "sot", "spa", "srd", "srn", "srp", "srr", "ssa", "ssw", "suk", "sun", "sus", "sux", "swa", "swe", "syc", "syr", "tah", "tai", "tam", "tat", "tel", "tem", "ter", "tet", "tgk", "tgl", "tha", "tib", "tig", "tir", "tiv", "tkl", "tlh", "tli", "tmh", "tog", "ton", "tpi", "tsi", "tsn", "tso", "tuk", "tum", "tup", "tur", "tut", "tvl", "twi", "tyv", "udm", "uga", "uig", "ukr", "umb", "und", "urd", "uzb", "vai", "ven", "vie", "vol", "vot", "wak", "wal", "war", "was", "wel", "wen", "wln", "wol", "xal", "xho", "yao", "yap", "yid", "yor", "ypk", "zap", "zbl", "zen", "zha", "znd", "zul", "zun", "zxx", "zza", "bod", "ces", "cym", "deu", "ell", "eus", "fas", "fra", "hye", "isl", "kat", "mkd", "mri", "msa", "mya", "nld", "ron", "slk", "sqi", "zho", "aa", "ab", "ae", "af", "ak", "am", "an", "ar", "as", "av", "ay", "az", "ba", "be", "bg", "bh", "bi", "bm", "bn", "bo", "br", "bs", "ca", "ce", "ch", "co", "cr", "cs", "cu", "cv", "cy", "da", "de", "dv", "dz", "ee", "el", "en", "eo", "es", "et", "eu", "fa", "ff", "fi", "fj", "fo", "fr", "fy", "ga", "gd", "gl", "gn", "gu", "gv", "ha", "he", "hi", "ho", "hr", "ht", "hu", "hy", "hz", "ia", "id", "ie", "ig", "ii", "ik", "io", "is", "it", "iu", "ja", "jv", "ka", "kg", "ki", "kj", "kk", "kl", "km", "kn", "ko", "kr", "ks", "ku", "kv", "kw", "ky", "la", "lb","lg", "li", "ln", "lo", "lt", "lu", "lv", "mg", "mh", "mi", "mk", "ml", "mn", "mr", "ms", "mt", "my", "na", "nb", "nd", "ne", "ng", "nl", "nn", "no", "nr", "nv", "ny", "oc", "oj", "om", "or", "os", "pa", "pi", "pl", "ps", "pt", "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd", "se", "sg", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "ss", "st", "su", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk", "tl", "tn", "to", "tr", "ts", "tt", "tw", "ty", "ug", "uk", "ur", "uz", "ve", "vi", "vo", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zu"]
+#Taken from: EduStandaard Semantiek, tabel 1 en 2. 
+GENRES_SEMANTIEK = {
+    "article" : "info:eu-repo/semantics/article",
+    "bachelorthesis" : "info:eu-repo/semantics/bachelorThesis",
+    "masterthesis" : "info:eu-repo/semantics/masterThesis",
+    "doctoralthesis" : "info:eu-repo/semantics/doctoralThesis",
+    "book" : "info:eu-repo/semantics/book",
+    "bookpart" : "info:eu-repo/semantics/bookPart",
+    "review" : "info:eu-repo/semantics/review",
+    "conferenceobject" : "info:eu-repo/semantics/conferenceObject",
+    "lecture" : "info:eu-repo/semantics/lecture",
+    "workingpaper" : "info:eu-repo/semantics/workingPaper",
+    "preprint" : "info:eu-repo/semantics/preprint",
+    "report" : "info:eu-repo/semantics/report",
+    "annotation" : "info:eu-repo/semantics/annotation",
+    "contributiontoperiodical" : "info:eu-repo/semantics/contributionToPeriodical",
+    "patent" : "info:eu-repo/semantics/patent",
+    "other" : "info:eu-repo/semantics/other",
+    "reportpart" : "info:eu-repo/semantics/reportPart",
+    "bookreview" : "info:eu-repo/semantics/bookReview",
+    "researchproposal" : "info:eu-repo/semantics/researchProposal",
+    "studentthesis" : "info:eu-repo/semantics/studentThesis",
+    "technicaldocumentation" : "info:eu-repo/semantics/technicalDocumentation",
+    "conferenceposter" : "info:eu-repo/semantics/conferencePoster",
+    "conferenceproceedings" : "info:eu-repo/semantics/conferenceProceedings",
+    "conferenceitemnotinproceedings" : "info:eu-repo/semantics/conferenceItemNotInProceedings",
+    "semantics/conferencepaper" : "info:eu-repo/semantics/conferencePaper",
+    "conferenceitem" : "http://purl.org/eprint/type/ConferenceItem",
+    "conferenceposter" : "http://purl.org/eprint/type/ConferencePoster",
+    "type/conferencepaper" : "http://purl.org/eprint/type/ConferencePaper"
+    }
 
-GENRES = ['annotation','article','bachelorThesis','book','bookPart','bookReview','conferencePaper','contributionToPeriodical','doctoralThesis','researchProposal','lecture','masterThesis','patent','preprint','report','studentThesis','technicalDocumentation','workingPaper','conferenceObject','review','other', 'reportPart', 'conferenceProceedings','conferenceItem', 'conferenceItemNotInProceedings','conferencePoster','conferenceContribution']
-
-INFO_EU_REPO_SEMANTICS = "info:eu-repo/semantics/"
 
 MODS_VERSION = '3.4'
 STR_MODS = "MODS:"
 
+#Taken from: http://www.loc.gov/marc/relators/relacode.html
 MARC_ROLES=['act','adp','aft','ann','ant','app','aqt','arc','arr','art','asg','asn','att','auc','aud','aui','aus','aut','bdd','bjd','bkd','bkp','bnd','bpd','bsl','ccp','chr','clb','cli','cll','clt','cmm','cmp','cmt','cnd','cns','coe','col','com','cos','cot','cpc','cpe','cph','cpl','cpt','cre','crp','crr','csl','csp','cst','ctb','cte','ctg','ctr','cts','ctt','cur','cwt','dfd','dfe','dft','dgg','dis','dln','dnc','dnr','dpt','drm','drt','dsr','dst','dte','dto','dub','edt','egr','elt','eng','etr','exp','fac','flm','fmo','fnd','frg','-gr','hnr','hst','ill','ilu','ins','inv','itr','ive','ivr','lbt','lee','lel','len','let','lie','lil','lit','lsa','lse','lso','ltg','lyr','mdc','mod','mon','mte','mus','nrt','opn','org','orm','oth','own','pat','pbd','pbl','pfr','pht','plt','pop','ppm','prc','prd','prf','prg','pro','prt','pta','pte','ptf','pth','ptt','rbr','rce','rcp','red','ren','res','rev','rse','rsp','rst','rth','rtm','sad','sce','scr','scl','sec','sgn','sng','spk','spn','srv','stn','str','ths','trc','trl','tyd','tyg','voc','wam','wdc','wde','wit']
 
-##MODS root elements:
+LOGGER1 = " is not a valid RFC3066 language code."
+LOGGER2 = "Found unknown extension (no EDUstandaard)."
 
-#abstract
-#accessCondition
-#classification
-#extension
-#genre
-#identifier
-#language
-#location
-#name
-#note
-#originInfo
-#part
-#physicalDescription
-#recordInfo
-#relatedItem
-#subject
-#tableOfContents
-#targetAudience
-#titleInfo
-#typeOfResource
+EXCEPTION1 = "Mandatory MODS metadata NOT found in DIDL record."
+EXCEPTION2 = "Mandatory titleInfo not found."
+EXCEPTION3 = "titleInfo/title has empty text-node."
+EXCEPTION4 = "Invalid marcrelator role: "
+EXCEPTION5 = "Mandatory name element not found."
+EXCEPTION6 = "No valid genre found."
+EXCEPTION7 = "Missing mandatory valid originInfo/dateIssued element."
+
 
 mods_edu_extentions_ns = {
     'gal': "info:eu-repo/grantAgreement",
@@ -65,41 +82,37 @@ mods_edu_extentions_ns = {
 }
 
 # , ('hbo/hboMODSextension.xsd', 'self::hbo:hbo')
-mods_edu_extentions = [('dai/dai-extension.xsd', 'self::dai:daiList'), ('gal/gal-extension.xsd', 'self::gal:grantAgreementList'), ('wmp/wmp-extension.xsd', 'self::wmp:rights')]
+# ('xml-schema location', 'xpath to root', 'schema location'):
+mods_edu_extentions = [ ('dai/dai-extension.xsd', 'self::dai:daiList', 'info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd'), 
+                        ('gal/gal-extension.xsd', 'self::gal:grantAgreementList', 'info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd'),
+                        ('wmp/wmp-extension.xsd', 'self::wmp:rights', 'http://www.surfgroepen.nl/werkgroepmetadataplus http://purl.org/REP/standards/wmp-extension.xsd')]
 
 ## Do not list "extension" here. So it will be removed by default. <extension> is handeled by a different function. 
-mods_edu_tlelements = ["titleInfo", "relatedItem", "name", "language", "typeOfResource", "genre", "physicalDescription", "abstract", "location", "identifier", "classification", "subject", "originInfo"]
+mods_edu_tlelements = ["titleInfo", "relatedItem", "name", "language", "typeOfResource", "genre", "abstract", "identifier", "classification", "subject", "originInfo"]
+# Skipped tl elements because not part of EduStandaard: , ["location", "note", "physicalDescription", "recordInfo", "tableOfContents", "targetAudience"]
 
 
 class Normalize_nl_MODS(Observable):
-    """A class that normalizes MODS metadata to the Edustandaard applicationprofile"""
+    """A class that normalizes MODS metadata to the EduStandaard applicationprofile"""
     
     def __init__(self, nsMap={}):
         Observable.__init__(self)
-             
-        self._nsMap = mods_edu_extentions_ns.copy()
-        self._nsMap.update(nsMap or {})        
-        self._bln_success = False
         
-        self._patternURN = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL]:[uU][iI]:\d{1,3}-.*')
-        self._patternURL = compile(
-        r'^(?:http|ftp)s?://' # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        #r'localhost|' #localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        r'(?::\d+)?' # optional port
-        r'(?:/?|[/?]\S+)$', IGNORECASE)
+        self._nsMap = mods_edu_extentions_ns.copy()
+        self._nsMap.update(nsMap or {})
+        self._bln_success = False
         
         self._edu_extension_schemas = []
         
         ## Fill the schemas list for later use:
-        for schemaPath, xPad in mods_edu_extentions:
-            print 'schema init:' ,schemaPath, xPad
+        for schemaPath, xPad, s_loc in mods_edu_extentions:
+            print 'schema init:' ,schemaPath, xPad, s_loc
             try:
-                self._edu_extension_schemas.append((XMLSchema(parse(join(dirname(abspath(__file__)), 'xsd/'+ schemaPath) ) ), xPad))
+                self._edu_extension_schemas.append((XMLSchema(parse(join(dirname(abspath(__file__)), 'xsd/'+ schemaPath) ) ), xPad, s_loc ))
             except XMLSchemaParseError, e:
                 print 'XMLSchemaParseError.', e.error_log.last_error
                 raise
+        
         
     def _detectAndConvert(self, anObject):
         if type(anObject) == _ElementTree:
@@ -122,8 +135,7 @@ class Normalize_nl_MODS(Observable):
         if self._bln_success:
             yield self.all.unknown(method, *newArgs, **newKwargs)
 
-    def _normalizeRecord(self, lxmlNode):
-        
+    def _normalizeRecord(self, lxmlNode):        
         # MODS normalisation in 4 steps:
         # 1. Get Mods from the lxmlNode.
         # 2. Normalize it
@@ -137,19 +149,16 @@ class Normalize_nl_MODS(Observable):
         modsFunctions = [ self._convertFullMods2GHMods ]
         
         if len(lxmlMODS) > 0:
-            #print 'Found MODS, starting MODS normalization...'
         #2: Normalize it
             str_norm_mods = ''            
             for function in modsFunctions:
                 str_norm_mods += function(lxmlMODS[0])            
-            #print "MODS Element normalization succeeded."
             
-        #3: Put it back in place:        
+        #3: Put it back in DIDL/place:        
             lxmlMODS[0].getparent().replace(lxmlMODS[0], etree.fromstring(str_norm_mods) )
-            #print "BACK IN DIDL:", etree.tostring(lxmlNode, pretty_print=True)                 
 
         else: #This should never happen @runtime: record should have been validated up front...
-            raise ValidateException(formatExceptionLine("Mandatory MODS metadata NOT found in DIDL record.", prefix=STR_MODS))
+            raise ValidateException(formatExceptionLine(EXCEPTION1, prefix=STR_MODS))
 
         #4: Return the lxmlNode containing the normalized MODS:
         #print(etree.tostring(lxmlNode, pretty_print=True))
@@ -218,11 +227,9 @@ class Normalize_nl_MODS(Observable):
 
 ## mods version:
     def _normalizeModsVersion(self, e_modsroot):
-        version_orig = e_modsroot.get("version")
-        if version_orig != MODS_VERSION:
-            e_modsroot.set("version", MODS_VERSION)
-            e_modsroot.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation", "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-"+ MODS_VERSION.replace(".", "-") +".xsd")
-            #print "Normalized MODS version from", version_orig, "to", MODS_VERSION
+        #We'll always normalize to MODS_VERSION and proper schemalocation:
+        e_modsroot.set("version", MODS_VERSION)
+        e_modsroot.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation", "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-"+ MODS_VERSION.replace(".", "-") +".xsd")
         return e_modsroot
 
 ## titleInfo:
@@ -234,7 +241,7 @@ class Normalize_nl_MODS(Observable):
             if not self._isValidTitleInfoTag(child):
                 modsNode.remove(child)
         if not hasTitleInfo:
-            raise ValidateException(formatExceptionLine("Mandatory titleInfo not found.", prefix=STR_MODS))
+            raise ValidateException(formatExceptionLine(EXCEPTION2, prefix=STR_MODS))
 
     def _isValidTitleInfoTag(self, lxmlNode):
         #Correct @type:
@@ -244,7 +251,7 @@ class Normalize_nl_MODS(Observable):
         #Throw Exception if no or empty title tag:
         for title in lxmlNode.iterfind(('{%s}title') % self._nsMap['mods']):
             if not title.text:
-                raise ValidateException(formatExceptionLine("titleInfo/title has empty text-node.", prefix=STR_MODS))
+                raise ValidateException(formatExceptionLine(EXCEPTION3, prefix=STR_MODS))
         return True
 
     def _tlTitleinfo(self, childNode):
@@ -258,9 +265,9 @@ class Normalize_nl_MODS(Observable):
             if not role or len(role) < 1: ## Geen roleterm gevonden, of lege string voor type code en authority marcrelator: Verwijder dit name element:
                 modsNode.remove(name)
             elif len(role) > 0 and not self.__isValidRoleTerm(role[0]):
-                raise ValidateException(formatExceptionLine("Invalid marcrelator role: " + role[0], prefix=STR_MODS))        
+                raise ValidateException(formatExceptionLine( EXCEPTION4 + role[0], prefix=STR_MODS))        
         if len(modsNode.xpath("//mods:mods/mods:name", namespaces=self._nsMap)) <= 0:
-            raise ValidateException(formatExceptionLine("Mandatory name element not found! ", prefix=STR_MODS))
+            raise ValidateException(formatExceptionLine(EXCEPTION5, prefix=STR_MODS))
 
     def __isValidRoleTerm(self, str_roleTerm):
         return True if str_roleTerm.strip() in MARC_ROLES else False
@@ -271,16 +278,20 @@ class Normalize_nl_MODS(Observable):
 
 ## Language:
     def _tlLanguage(self, childNode):
-        ## SSDC mandates iso639-1, SSMODS mandates iso639-1 or iso639-2 if iso639-1 is not available, but we'll settle for either 2 or 3 chars.
-        rfc3066_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='code' and @authority='rfc3066']/text()", namespaces=self._nsMap)
+        ## SSDC mandates iso639-1, SSMODS mandates iso639-1 or iso639-2 if iso639-1 is not available, but we'll settle for either 2 or 3 chars. iso639-2b, rfc3066, iso639-3, iso639-1
+        rfc3066_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='code' and @authority]/text()", namespaces=self._nsMap)
         txt_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='text']/text()", namespaces=self._nsMap)
         if len(rfc3066_lang) > 0:
             #See also: ftp://ftp.rfc-editor.org/in-notes/rfc3066.txt
             #match = self._patternRFC3066.match(rfc3066_lang[0])
-            #if match and match.group(1).lower() in ISO639:
-            if rfc3066_lang[0].strip() in ISO639:
+            #if match and match.group(1).lower() in RFC3066:
+            if comm.isValidRFC3066(rfc3066_lang[0]):
+            #if rfc3066_lang[0].strip() in RFC3066:
+                #Set @authority to RFC3066 on child languageTerm, since that is what has been checked for:
+                for lt in childNode.iterfind('{'+self._nsMap.get('mods')+'}languageTerm'):
+                    lt.set('authority', 'rcf3066')
                 return childNode
-            self.do.logMsg(self._identifier, rfc3066_lang[0] + ' is not a valid RFC3066 language code.', prefix=STR_MODS)
+            self.do.logMsg(self._identifier, rfc3066_lang[0] + LOGGER1, prefix=STR_MODS)
             return None
         elif len(txt_lang) > 0:
             return childNode
@@ -292,28 +303,22 @@ class Normalize_nl_MODS(Observable):
     
         fqGenre = None
         bln_hasValid = False        
-        ## Select all 'genre' elements as separate nodes:
-        for genre in modsNode.iterfind('{'+self._nsMap.get('mods')+'}genre'):      
-            ## Check for valid Genre
-            prefixus = (genre.text.strip().rfind("/") + 1) if (genre.text.strip().rfind("/") > -1) else len(INFO_EU_REPO_SEMANTICS)
-            for i, value in enumerate(GENRES):
-                if genre.text.strip()[prefixus:]  == value:
-                    if genre.text.strip().startswith(INFO_EU_REPO_SEMANTICS):
-                        fqGenre = genre.text.strip() #Perfect Match, do nothing...
-                    else:
-                        fqGenre = INFO_EU_REPO_SEMANTICS+GENRES[i]
-                    break
-                elif genre.text.strip().lower() == value.lower() or genre.text.strip().lower()[prefixus:]  == value.lower():
-                    fqGenre = INFO_EU_REPO_SEMANTICS+GENRES[i]
-                    break
+        ## Loop all 'genre' elements as separate nodes:
+        for genre in modsNode.iterfind('{'+self._nsMap.get('mods')+'}genre'):
+        
+            for key, value in GENRES_SEMANTIEK.iteritems():
+                    if genre.text.strip().lower().find(key) >= 0: #found a (lowercased) genre
+                        fqGenre = value                           
+                        break
+        
             if fqGenre is not None and not bln_hasValid:
                 bln_hasValid = True
                 genre.text = fqGenre
             else:
                 modsNode.remove(genre)
+                
         if not bln_hasValid:
-            print 'Raise error: No valid genre was found... '
-            raise ValidateException(formatExceptionLine("No valid genre found!", prefix=STR_MODS))
+            raise ValidateException(formatExceptionLine(EXCEPTION6, prefix=STR_MODS))
 
     def _tlGenre(self, childNode):
         return childNode ## Genres have been normalised already by _validateGenre()
@@ -332,7 +337,7 @@ class Normalize_nl_MODS(Observable):
                 else:
                     child.getparent().remove(child)
         if not hasDateIssued:
-            raise ValidateException(formatExceptionLine("Missing mandatory valid originInfo/dateIssued element.", prefix=STR_MODS))
+            raise ValidateException(formatExceptionLine(EXCEPTION7, prefix=STR_MODS))
         return childNode if len(childNode) > 0 else None
 
 
@@ -363,14 +368,18 @@ class Normalize_nl_MODS(Observable):
             return ('%s-%s') % (di_1.date().year, di_1.date().month) # Only year and month have been parsed succesfully.
 
 ## Location:
-    def _tlLocation(self, childNode):
-        for url in childNode.iterfind(('{%s}url') % self._nsMap['mods']):
-            if not self._isURL(url.text): childNode.remove(url)
-        return childNode if len(childNode) > 0 else None
+#    def _tlLocation(self, childNode):
+#        for url in childNode.iterfind(('{%s}url') % self._nsMap['mods']):
+#            if not self._isURL(url.text): childNode.remove(url)
+#        return childNode if len(childNode) > 0 else None
 
 ## Abstract:
     def _tlAbstract(self, childNode):
         ## Pass thru all abstract nodes: xml-schema validation of MODS has already taken place...
+        #We need to remove all 'attributes' except xml:lang (EduStandaard)...
+        for k, v in childNode.attrib.iteritems():
+            if k != '{http://www.w3.org/XML/1998/namespace}lang':
+                del childNode.attrib[k]
         return childNode
 
 
@@ -387,14 +396,14 @@ class Normalize_nl_MODS(Observable):
     def _tlRelateditem(self, childNode):
         #1: Remove all non-Edustandaard 'types':
         type_attr = childNode.get('type')
-        if type_attr is None or (type_attr is not None and not type_attr.strip() in ['preceding', 'host', 'succeeding', 'series', 'otherVersion']):
+        if type_attr is None or (type_attr is not None and not type_attr.strip() in ['host']): #['preceding', 'host', 'succeeding', 'series', 'otherVersion']
             return None
         
         #2: Check if <start>, <end> and <total> tags are integers:
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:extent[@unit='page']/child::*", namespaces=self._nsMap)
         if len(children) > 0:
             for child in children: # <start>, <end>, <total> tags...
-                if child.tag in [('{%s}start') % self._nsMap['mods'], ('{%s}end') % self._nsMap['mods'], ('{%s}total') % self._nsMap['mods']] and not self._isInt(child.text):
+                if child.tag in [('{%s}start') % self._nsMap['mods'], ('{%s}end') % self._nsMap['mods'], ('{%s}total') % self._nsMap['mods']] and not comm.isInt(child.text):
                     ouder = child.getparent()
                     ouder.remove(child)
                     if len(ouder) == 0:
@@ -403,13 +412,11 @@ class Normalize_nl_MODS(Observable):
         
         #3: Normalize <part><date encoding=""> tag:
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:date", namespaces=self._nsMap)
-        # print "RELATED DATE:", len(children)
         if len(children) > 0:
             for child in children:
                 if self._validateISO8601( child.text ):                    
                     child.text = self._granulateDate(child.text)
                     child.set('encoding', 'w3cdtf')
-                    #if child.tag == ('{%s}dateIssued') % self._nsMap['mods']: hasDateIssued = True
                 else:
                     child.getparent().remove(child)
         
@@ -460,50 +467,37 @@ class Normalize_nl_MODS(Observable):
         e_rootExten = etree.Element(('{%s}extension') % self._nsMap['mods'])
         for extension in extensions:
             if self._isValidEduStandaardExtension(extension):
-                e_ext = etree.SubElement(e_rootExten, ('{%s}extension') % self._nsMap['mods']) #Create extension sub-element. 
+                e_ext = etree.SubElement(e_rootExten, ('{%s}extension') % self._nsMap['mods']) #Create extension sub-element.
+                #Normalize schemalocation:
+                #extension.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation", "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-"+ MODS_VERSION.replace(".", "-") +".xsd")
                 e_ext.append(extension)
                 e_rootExten.append(e_ext)
         return e_rootExten if len(e_rootExten) > 0 else None
 
     #TODO: Find out why HBO.xsd (lxml) doesnt validate, but Oxygen (Xerces) does?!?
     def _isValidEduStandaardExtension(self, lxmlNode):
-        for schema, xpad in self._edu_extension_schemas:
+        for schema, xpad, slocation in self._edu_extension_schemas:
             extent = lxmlNode.xpath(xpad, namespaces=self._nsMap)
             if len(extent) > 0: ## Validate found EduStandaard extension:
                 schema.validate(lxmlNode)
                 if schema.error_log:
-                    #print 'SchemaValidationError EduStandaard extension IS NOT VALID:', schema.error_log.last_error
                     return False
                 else:
-                    #print "EduStandaard extension IS VALID", lxmlNode.tag 
+                    #print "EduStandaard extension IS VALID", lxmlNode.tag
+                    lxmlNode.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation", slocation) 
                     return True
         ## Looped over all allowed Edustandaard extensions types: None was found...        
-        self.do.logMsg(self._identifier, 'Found unknown extension (no EDUstandaard).', prefix=STR_MODS)
+        self.do.logMsg(self._identifier, LOGGER2, prefix=STR_MODS)
         return False
 
-   
-## Helper methods:   
-    def _checkURNFormat(self, pid):
-        m = self._patternURN.match(pid)
-        if not m:
-            raise ValidateException(formatExceptionLine("Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: " + pid, prefix=STR_MODS))
-        return True     
 
-    def _isInt(self, s):
-        if s is None:
-            return False
-        try: 
-            int(s)            
-        except ValueError:
-            return False
-        return True
+## Helper methods:
+#    def _checkURNFormat(self, pid):
+#        m = comm.patternURNNBN.match(pid)
+#        if not m:
+#            raise ValidateException(formatExceptionLine(EXCEPTION8 + pid, prefix=STR_MODS))
+#        return True
 
-    def _isURL(self, string):
-        bln_isValid = False
-        m = self._patternURL.match(string)
-        if m:
-            bln_isValid = True
-        return bln_isValid
 
     def __str__(self):
         return 'Normalize_nl_MODS'
