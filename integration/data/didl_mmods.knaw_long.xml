@@ -1,0 +1,51 @@
+<knaw_long xmlns="http://www.knaw.nl/narcis/1.0/long/">
+ <humanStartPage>http://hdl.handle.net/1887/512</humanStartPage>
+ <persistentIdentifier>URN:NBN:NL:UI:26-1887/512</persistentIdentifier>
+ <modificationDate>2006-11-07T13:22:26Z</modificationDate>
+ <objectFiles>
+   <objectFile>
+     <resource mimeType="application/pdf" ref="https://openaccess.leidenuniv.nl/dspace/bitstream/1887/512/27/cover2.pdf"/>
+   </objectFile>
+   <objectFile>
+      <resource mimeType="application/pdf" ref="https://openaccess.leidenuniv.nl/dspace/bitstream/1887/512/25/01.pdf"/>
+    </objectFile>
+  </objectFiles>
+  <accessRights>openAccess</accessRights>
+  <metadata>
+    <titleInfo>
+      <title>MODS Late-type Giants in the Inner Galaxy</title>
+      <subtitle>Sub-je</subtitle>
+    </titleInfo>
+    <titleInfo xml:lang="en">
+      <title>MODS Late-type Giants in the Inner Galaxy</title>
+      <subtitle>Sub-je</subtitle>
+    </titleInfo>
+    <name>
+      <type>personal</type>
+      <family>Messineo</family>
+      <given>Maria</given>
+      <mcRoleTerm>aut</mcRoleTerm>
+      <dai>info:eu-repo/dai/nl/265573947</dai>
+    </name>
+    <rightsDescription>(c) Bal, M.P., 2006</rightsDescription>
+    <genre>doctoralthesis</genre>
+    <publisher>Leiden University, Faculty of Mathematics &amp;
+                            Natural Sciences, Observatory</publisher>
+    <subject>
+      <topic>Geneeskunde</topic>
+      <topic>glucocorticoid</topic>
+      <topic>dexamethasone</topic>
+      <topic>cellular hypertrophy</topic>
+      <topic>contractile proteins</topic>
+    </subject>
+    <abstract>The present thesis describes the issue of
+                                "neonatal glucocorticoid treatment and predisposition to
+                                cardiovascular disease in rats".</abstract>
+    <dateIssued>
+      <parsed>2004-06-30</parsed>
+      <unParsed>2004-06-30</unParsed>
+    </dateIssued>
+    <language>en</language>
+    <typeOfResource/>
+  </metadata>
+</knaw_long>

@@ -1,0 +1,37 @@
+<knaw_short xmlns="http://www.knaw.nl/narcis/1.0/short/">
+  <accessRights>openAccess</accessRights>
+  <metadata>
+    <titleInfo>
+      <title>Kroniek van Afrika: vol. 5, no. 1</title>
+    </titleInfo>
+    <titleInfo xml:lang="en">
+      <title>Kroniek van Afrika: vol. 5, no. 1</title>
+    </titleInfo>
+    <name>
+      <type>personal</type>
+      <unstructured>African Studies Centre, Leiden</unstructured>
+      <mcRoleTerm>aut</mcRoleTerm>
+    </name>
+    <name>
+      <type>personal</type>
+      <unstructured>Arnoud Jippes</unstructured>
+      <mcRoleTerm>aut</mcRoleTerm>
+    </name>
+    <name>
+      <type>personal</type>
+      <unstructured>E. Dijk</unstructured>
+      <mcRoleTerm>aut</mcRoleTerm>
+    </name>
+    <name>
+      <type>personal</type>
+      <unstructured>Wee. Es</unstructured>
+      <mcRoleTerm>ths</mcRoleTerm>
+    </name>
+    <genre>doctoralthesis</genre>
+    <abstract>Leiden : African Studies Centre, 1965.</abstract>
+    <dateIssued>
+      <parsed/>
+      <unParsed>Opgegraven 200 jaar voor Christus</unParsed>
+    </dateIssued>
+  </metadata>
+</knaw_short>

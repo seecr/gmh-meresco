@@ -1,0 +1,95 @@
+<metadata>
+    <nl_didl:DIDL xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:nl_didl="urn:mpeg:mpeg21:2002:02-DIDL-NS"
+        xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS"
+        xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd">
+        <nl_didl:Item>
+            <nl_didl:Descriptor>
+                <nl_didl:Statement mimeType="application/xml">
+                    <dii:Identifier>urn:NBN:nl:ui:18-2271</dii:Identifier>
+                </nl_didl:Statement>
+            </nl_didl:Descriptor>
+            <nl_didl:Descriptor>
+                <nl_didl:Statement mimeType="application/xml">
+                    <dcterms:modified>2005-03-17T00:00:00</dcterms:modified>
+                </nl_didl:Statement>
+            </nl_didl:Descriptor>
+            <nl_didl:Component>
+                <nl_didl:Resource mimeType="application/xml" ref="http://oai.cwi.nl/oai?verb=GetRecord&amp;metadataPrefix=nl_didl&amp;identifier=oai:cwi.nl:2271"/>
+            </nl_didl:Component>
+            <nl_didl:Item>
+                <nl_didl:Descriptor>
+                    <nl_didl:Statement mimeType="application/xml">
+                        <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+                    </nl_didl:Statement>
+                </nl_didl:Descriptor>
+                <nl_didl:Component>
+                    <nl_didl:Resource mimeType="application/xml">
+                        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd">
+                            <mods:location>
+                                <mods:url>http://repository.cwi.nl/search/fullrecord.php?publnr=2271</mods:url>
+                            </mods:location>
+                            <mods:titleInfo xml:lang="en">
+                                <mods:title>Paths and flows---a historical survey</mods:title>
+                            </mods:titleInfo>
+                            <mods:name type="personal" ID="_2271_10">
+                                <mods:displayForm>Schrijver, A.</mods:displayForm>
+                                <mods:namePart type="family">Schrijver</mods:namePart>
+                                <mods:namePart type="given">A.</mods:namePart>
+                                <mods:role>
+                                    <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+                                </mods:role>
+                            </mods:name>
+                            <mods:extension>
+                                <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemalocation="info:eu-repo/dai http://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd">
+                                    <dai:identifier IDref="_2271_10" authority="info:eu-repo/dai/nl">29806278</dai:identifier>
+                                </dai:daiList>
+                            </mods:extension>
+                            <mods:language>
+                                <mods:languageTerm type="code" authority="rfc3066">en</mods:languageTerm>
+                            </mods:language>
+                            <mods:originInfo>
+                                <mods:publisher>cwi</mods:publisher>
+                                <mods:dateIssued encoding="iso8601">1993-01-01</mods:dateIssued>
+                            </mods:originInfo>
+                            <mods:typeOfResource>text</mods:typeOfResource>
+                            <mods:genre>info:eu-repo/semantics/article</mods:genre>
+                            <mods:classification authority="msc">05C38</mods:classification>
+                            <mods:classification authority="msc">05C90</mods:classification>
+                            <mods:classification authority="msc">90B10</mods:classification>
+                            <mods:classification authority="msc">90C35</mods:classification>
+                        </mods:mods>
+                    </nl_didl:Resource>
+                </nl_didl:Component>
+            </nl_didl:Item>
+            <nl_didl:Item>
+                <nl_didl:Descriptor>
+                    <nl_didl:Statement mimeType="application/xml">
+                        <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+                    </nl_didl:Statement>
+                </nl_didl:Descriptor>
+                <nl_didl:Descriptor>
+                    <nl_didl:Statement mimeType="application/xml">
+                        <dcterms:accessRights>http://purl.org/eprint/accessRights/OpenAccess</dcterms:accessRights>
+                    </nl_didl:Statement>
+                </nl_didl:Descriptor>
+                <nl_didl:Component>
+                    <nl_didl:Resource mimeType="application/pdf" ref="http://oai.cwi.nl/oai/asset/2271/2271A.pdf"/>
+                </nl_didl:Component>
+            </nl_didl:Item>
+            <nl_didl:Item>
+                <nl_didl:Descriptor>
+                    <nl_didl:Statement mimeType="application/xml">
+                        <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+                    </nl_didl:Statement>
+                </nl_didl:Descriptor>
+                <nl_didl:Component>
+                    <nl_didl:Resource mimeType="text/html" ref="http://repository.cwi.nl/search/fullrecord.php?publnr=2271"/>
+                </nl_didl:Component>
+            </nl_didl:Item>
+        </nl_didl:Item>
+    </nl_didl:DIDL>
+</metadata>

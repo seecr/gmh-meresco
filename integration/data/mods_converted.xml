@@ -1,0 +1,58 @@
+<mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:dai="info:eu-repo/dai" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns="http://www.openarchives.org/OAI/2.0/" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+    <mods:originInfo>
+        <mods:dateIssued encoding="w3cdtf">1999-09-09</mods:dateIssued>
+    </mods:originInfo>
+    <mods:identifier type="local">info:doi/00282162</mods:identifier>
+    <mods:titleInfo>
+        <mods:title>Appositie en de interne struktuur van de NP</mods:title>
+    </mods:titleInfo>
+    <mods:abstract xml:lang="fr">Frans Heeelllang</mods:abstract>
+    <mods:abstract xml:lang="en">Engels DDD</mods:abstract>
+    <mods:name type="corporate" ID="n565-aut2">
+        <mods:namePart type="given">Uni</mods:namePart>
+        <mods:namePart type="family">Versiteit</mods:namePart>
+        <mods:role>
+            <mods:roleTerm type="code" authority="marcrelator">dgg</mods:roleTerm>
+        </mods:role>
+    </mods:name>
+    <mods:name type="personal" ID="n565-aut0">
+        <mods:namePart type="given">prof.dr. H.J.</mods:namePart>
+        <mods:namePart type="family">Bennis&amp;Bennis</mods:namePart>
+        <mods:namePart type="termsOfAddress"/>
+        <mods:role>
+            <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+        </mods:role>
+    </mods:name>
+    <mods:name type="personal" ID="n565-aut1">
+        <mods:namePart type="given">Lorum</mods:namePart>
+        <mods:namePart type="family">Ipsum</mods:namePart>
+        <mods:namePart type="termsOfAddress">Jr.</mods:namePart>                                
+        <mods:role>
+            <mods:roleTerm type="code" authority="marcrelator">rev</mods:roleTerm>
+        </mods:role>
+    </mods:name>
+    <mods:typeOfResource>text</mods:typeOfResource>
+    <mods:relatedItem type="host">                                
+        <mods:titleInfo>
+            <mods:title>Spektator</mods:title>
+        </mods:titleInfo>
+        <mods:part>
+            <mods:detail type="volume">
+                <mods:number>8</mods:number>
+            </mods:detail>
+            <mods:detail type="issue">
+                <mods:number>5</mods:number>
+            </mods:detail>
+            <mods:extent unit="page">
+                <mods:start>209</mods:start>
+                <mods:end>228</mods:end>
+            </mods:extent>
+        </mods:part>
+        <mods:identifier type="uri">urn:issn:00282162:wilko</mods:identifier>
+    </mods:relatedItem>
+    <mods:genre>info:eu-repo/semantics/article</mods:genre>
+    <mods:location><mods:url>http://www.dds.nl/semantics/article</mods:url><mods:url>ftp://www.dds.nl/semantics/article</mods:url></mods:location>
+    <mods:extension><dai:daiList xsi:schemaLocation="info:eu-repo/dai https://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd">
+        <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/be">071792279666</dai:identifier><dai:identifier IDref="n565-aut2" authority="info:eu-repo/dai/nl">666</dai:identifier>
+    </dai:daiList>
+    </mods:extension></mods:mods>

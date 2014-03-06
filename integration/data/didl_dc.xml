@@ -1,0 +1,80 @@
+<metadata xmlns="http://www.openarchives.org/OAI/2.0/">
+    <didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="   urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd    urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd   urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd">
+        <didl:Item>
+            <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                    <dii:Identifier xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS">URN:NBN:NL:UI:17-562</dii:Identifier>
+                </didl:Statement>
+            </didl:Descriptor>
+            <didl:Descriptor>
+                <didl:Statement mimeType="text/xml">
+                    <dcterms:modified xmlns:dcterms="http://purl.org/dc/terms/">2009-02-13T16:15:44Z</dcterms:modified>
+                </didl:Statement>
+            </didl:Descriptor>
+            <didl:Component>
+                <didl:Resource mimeType="text/html" ref="http://depot.knaw.nl/562/"/>
+            </didl:Component>
+            <didl:Item>
+                <didl:Descriptor>
+                    <didl:Statement mimeType="application/xml">
+                        <dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS">info:eu-repo/semantics/humanStartPage</dip:ObjectType>
+                    </didl:Statement>
+                </didl:Descriptor>
+                <didl:Component>
+                    <didl:Resource mimeType="text/html" ref="http://depot.knaw.nl/562/"/>
+                </didl:Component>
+            </didl:Item>
+            <didl:Item>
+                <didl:Descriptor>
+                    <didl:Statement mimeType="application/xml">
+                        <dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS">info:eu-repo/semantics/descriptiveMetadata</dip:ObjectType>
+                    </didl:Statement>
+                </didl:Descriptor>
+                <didl:Component>
+                    <didl:Resource mimeType="application/xml">
+                        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                            <dc:title>Late-type Giants in the Inner Galaxy</dc:title>
+                            <dc:creator>Messineo, Maria</dc:creator>
+                            <dc:creator>Bal, M.P.</dc:creator>
+                            <dc:subject>Geneeskunde</dc:subject>
+                            <dc:subject>glucocorticoid</dc:subject>
+                            <dc:subject>dexamethasone</dc:subject>
+                            <dc:subject>cellular hypertrophy</dc:subject>
+                            <dc:subject>contractile proteins</dc:subject>
+                            <dc:publisher>Leiden University, Faculty of Mathematics &amp;
+                                Natural Sciences, Observatory</dc:publisher>
+                            <dc:description>The present thesis describes the issue of
+                                "neonatal glucocorticoid treatment and predisposition to
+                                cardiovascular disease in rats". </dc:description>
+                            <dc:date>2004-06-30</dc:date>
+                            <dc:type>Doctoral thesis</dc:type>
+                            <dc:format>application/pdf</dc:format>
+                            <dc:format>application/pdf</dc:format>
+                            <dc:format>image/jpeg</dc:format>
+                            <dc:format>image/pdf</dc:format>
+                            <dc:format>image/pdf</dc:format>
+                            <dc:identifier>http://hdl.handle.net/1887/512</dc:identifier>
+                            <dc:language>en</dc:language>
+                            <dc:rights>(c) Bal, M.P., 2006</dc:rights>
+                        </oai_dc:dc>
+                    </didl:Resource>
+                </didl:Component>
+            </didl:Item>
+            <didl:Item>
+                <didl:Descriptor>
+                    <didl:Statement mimeType="application/xml">
+                        <dip:ObjectType xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS">info:eu-repo/semantics/objectFile</dip:ObjectType>
+                    </didl:Statement>
+                </didl:Descriptor>
+                <didl:Descriptor>
+                    <didl:Statement mimeType="text/xml">
+                        <dcterms:modified xmlns:dcterms="http://purl.org/dc/terms/">2009-02-13T15:52:07Z</dcterms:modified>
+                    </didl:Statement>
+                </didl:Descriptor>
+                <didl:Component>
+                    <didl:Resource mimeType="application/pdf" ref="http://depot.knaw.nl/562/1/14804.pdf"/>
+                </didl:Component>
+            </didl:Item>
+        </didl:Item>
+    </didl:DIDL>
+</metadata>
