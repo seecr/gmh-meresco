@@ -65,13 +65,13 @@ MARC_ROLES=['act','adp','aft','ann','ant','app','aqt','arc','arr','art','asg','a
 LOGGER1 = " is not a valid RFC3066 language code."
 LOGGER2 = "Found unknown extension (no EDUstandaard)."
 
-EXCEPTION1 = "Mandatory MODS metadata NOT found in DIDL record."
-EXCEPTION2 = "Mandatory titleInfo not found."
-EXCEPTION3 = "titleInfo/title has empty text-node."
-EXCEPTION4 = "Invalid marcrelator role: "
-EXCEPTION5 = "Mandatory name element not found."
-EXCEPTION6 = "No valid genre found."
-EXCEPTION7 = "Missing mandatory valid originInfo/dateIssued element."
+EXCEPTION1 = "Mandatory MODS metadata not found in DIDL Item."
+EXCEPTION2 = "Mandatory MODS titleInfo not found."
+EXCEPTION3 = "MODS titleInfo/title has empty value."
+EXCEPTION4 = "MODS invalid role macrelator: "
+EXCEPTION5 = "Mandatory MODS name  not found."
+EXCEPTION6 = "No valid MODS genre found."
+EXCEPTION7 = "Mandatory MODS originInfo/dateIssued not found."
 
 
 mods_edu_extentions_ns = {
@@ -394,7 +394,7 @@ class Normalize_nl_MODS(Observable):
 
 ## RelatedItem:
     def _tlRelateditem(self, childNode):
-        #1: Remove all non-Edustandaard 'types':
+        #1: Remove all non-Edustandaard 'types' (only type=host):
         type_attr = childNode.get('type')
         if type_attr is None or (type_attr is not None and not type_attr.strip() in ['host']): #['preceding', 'host', 'succeeding', 'series', 'otherVersion']
             return None
@@ -414,10 +414,10 @@ class Normalize_nl_MODS(Observable):
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:date", namespaces=self._nsMap)
         if len(children) > 0:
             for child in children:
-                if self._validateISO8601( child.text ):                    
-                    child.text = self._granulateDate(child.text)
-                    child.set('encoding', 'w3cdtf')
-                else:
+                #if self._validateISO8601( child.text ):                    
+                #    child.text = self._granulateDate(child.text)
+                #    child.set('encoding', 'w3cdtf')
+                #else:
                     child.getparent().remove(child)
         
         return childNode if len(childNode) > 0 else None
