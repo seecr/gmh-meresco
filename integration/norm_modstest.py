@@ -72,7 +72,7 @@ class NormModsTest(SeecrTestCase):
         
         # Check if expected result:        
         expectedResult = open("data/mods_converted.xml").read()
-        #print "EXPECTED:", expectedResult        
+        #print "EXPECTED MODS:", tostring(mods[0], pretty_print = True, encoding='utf-8')      
         self.assertEqualsWithDiff(expectedResult, tostring(mods[0], pretty_print = True, encoding='utf-8'))
 
 

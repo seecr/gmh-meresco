@@ -96,6 +96,11 @@
                                         &lt;rdf:type rdf:resource=&quot;info:eu-repo/semantics/objectFile&quot;/&gt;
                                     &lt;/didl:Statement&gt;
                                 &lt;/didl:Descriptor&gt;
+                                &lt;didl:Descriptor&gt;
+                                    &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                                        &lt;dcterms:accessRights&gt;http://purl.org/eprint/accessRights/openaccess&lt;/dcterms:accessRights&gt;
+                                    &lt;/didl:Statement&gt;
+                                &lt;/didl:Descriptor&gt;
                                 &lt;didl:Component&gt;
                                     &lt;didl:Resource mimeType=&quot;application/pdf&quot; ref=&quot;https://openaccess.leidenuniv.nl/bitstream/1887/12275/1/heerma%20Pubnr328.pdf&quot;/&gt;
                                 &lt;/didl:Component&gt;

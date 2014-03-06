@@ -417,7 +417,7 @@ class Normalize_nl_DIDL(Observable):
                     <didl:Component>
                         <didl:Resource ref="%s" mimeType="%s"/>
                     </didl:Component>
-                </didl:Item>""" % (uriref[0], mimetype[0])
+                </didl:Item>""" % (escapeXml(uriref[0]), escapeXml(mimetype[0]))
     
         
     def _findAndBindFirst(self, node, template, *xpaths):

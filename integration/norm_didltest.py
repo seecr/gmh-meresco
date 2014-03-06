@@ -55,7 +55,8 @@ class NormDIDLTest(SeecrTestCase):
         
         self.assertEquals("oai:very:secret:09987", arguments[0])
         #Test logMessage:
-        self.assertEquals("Found descriptiveMetadata in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource", arguments[1])
+        self.assertEquals("Found objectFile in depricated dip:ObjectType. This should have been: rdf:type/@rdf:resource", arguments[1])
+        
         
         #Get DIDL from record:
         didl = result.xpath("//didl:DIDL", namespaces=namespacesMap)
@@ -73,7 +74,7 @@ class NormDIDLTest(SeecrTestCase):
         
         # Check if expected result:        
         expectedResult = open("data/didl_converted.xml").read()
-        #print "EXPECTED:", expectedResult        
+        #print "EXPECTED DIDL:", tostring(didl[0], pretty_print = True, encoding='utf-8')       
         self.assertEqualsWithDiff(expectedResult, tostring(didl[0], pretty_print = True, encoding='utf-8'))
 
 

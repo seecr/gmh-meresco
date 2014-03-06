@@ -51,8 +51,7 @@
         <mods:identifier type="uri">urn:issn:00282162:wilko</mods:identifier>
     </mods:relatedItem>
     <mods:genre>info:eu-repo/semantics/article</mods:genre>
-    <mods:location><mods:url>http://www.dds.nl/semantics/article</mods:url><mods:url>ftp://www.dds.nl/semantics/article</mods:url></mods:location>
-    <mods:extension><dai:daiList xsi:schemaLocation="info:eu-repo/dai https://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd">
+    <mods:extension><dai:daiList xsi:schemaLocation="info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd">
         <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/be">071792279666</dai:identifier><dai:identifier IDref="n565-aut2" authority="info:eu-repo/dai/nl">666</dai:identifier>
     </dai:daiList>
     </mods:extension></mods:mods>

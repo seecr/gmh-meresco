@@ -125,6 +125,11 @@
                             &lt;rdf:type rdf:resource=&quot;info:eu-repo/semantics/objectFile&quot;/&gt;
                         &lt;/didl:Statement&gt;
                     &lt;/didl:Descriptor&gt;
+                    &lt;didl:Descriptor&gt;
+                        &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                            &lt;dcterms:accessRights&gt;closedAccess&lt;/dcterms:accessRights&gt;
+                        &lt;/didl:Statement&gt;
+                    &lt;/didl:Descriptor&gt;
                     &lt;didl:Component&gt;
                         &lt;didl:Resource mimeType=&quot;application/pdf&quot; ref=&quot;http://repository.tudelft.nl/assets/uuid:86513f19-0e70-4927-bc43-462e154d72dd/otb_bontekoning_20060206.pdf&quot;/&gt;
                     &lt;/didl:Component&gt;

@@ -2,7 +2,7 @@
     <didl:Item>
         <didl:Descriptor>
             <didl:Statement mimeType="application/xml">
-                <dii:Identifier>urn:nbn:nl:ui:17-565</dii:Identifier>
+                <dii:Identifier>URN:NBN:NL:UI:17-565</dii:Identifier>
             </didl:Statement>
         </didl:Descriptor>
         <didl:Descriptor>
@@ -96,6 +96,11 @@
             <didl:Descriptor>
                 <didl:Statement mimeType="application/xml">
                     <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+                </didl:Statement>
+            </didl:Descriptor>
+            <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                    <dcterms:accessRights>http://purl.org/eprint/accessRights/ClosedAccess</dcterms:accessRights>
                 </didl:Statement>
             </didl:Descriptor>
             <didl:Descriptor>

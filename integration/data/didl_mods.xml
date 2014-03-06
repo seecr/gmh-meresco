@@ -107,6 +107,11 @@
                         <dcterms:modified xmlns:dcterms="http://purl.org/dc/terms/">2009-02-13T15:52:09Z</dcterms:modified>
                     </didl:Statement>
                 </didl:Descriptor>
+                <didl:Descriptor>
+                    <didl:Statement mimeType="application/xml">
+                        <dcterms:accessRights xmlns:dcterms="http://purl.org/dc/terms/">http://purl.org/eprint/accessRights/ClosedAccess</dcterms:accessRights>
+                    </didl:Statement>
+                </didl:Descriptor>                
                 <didl:Component>
                     <didl:Resource mimeType="application/pdf" ref="http://depot.knaw.nl/565/1/14807.pdf"/>
                 </didl:Component>

@@ -91,7 +91,11 @@
                                         &lt;dii:Identifier&gt;urn:nbn:nl:ui:11-dbi/50910693bd9b7&lt;/dii:Identifier&gt;
                                     &lt;/didl:Statement&gt;
                                 &lt;/didl:Descriptor&gt;
-                                
+                                &lt;didl:Descriptor&gt;
+                                    &lt;didl:Statement mimeType=&quot;application/xml&quot;&gt;
+                                        &lt;dcterms:accessRights&gt;http://purl.org/eprint/accessRights/OpenAccess&lt;/dcterms:accessRights&gt;
+                                    &lt;/didl:Statement&gt;
+                                &lt;/didl:Descriptor&gt;
                                 &lt;didl:Descriptor&gt;
                                     &lt;didl:Statement mimeType=&quot;text/xml&quot;&gt;
                                         &lt;dcterms:modified&gt;2012-10-31T11:08:04Z&lt;/dcterms:modified&gt;

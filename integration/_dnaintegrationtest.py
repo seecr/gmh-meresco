@@ -64,7 +64,7 @@ from cq2utils import getRequest, postRequest
 #Dit werkt:
 #from meresco.harvester.oairequest import OaiRequest
 
-integrationTempdir = '/home/meresco/gharvester/test/integration_temp_dir'
+integrationTempdir = '/home/meresco/gharvester/integration/integration_temp_dir'
 reactor = Reactor()
 
 
@@ -106,7 +106,7 @@ class IntegrationTest(SeecrTestCase):
 #        for item in items:
 #           print '\nRss ITEM:', item
         
-        self.assertEquals(3, len(items))
+        self.assertEquals(4, len(items))
         
     def testOaiListMetadataFormats(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListMetadataFormats'})
@@ -178,7 +178,7 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/test/updaterequests/integration/*.updateRequest') #integration/
+    sourceFiles = glob('/home/meresco/gharvester/integration/updaterequests/integration/*.updateRequest') #integration/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         
