@@ -64,7 +64,7 @@ from cq2utils import getRequest, postRequest
 #Dit werkt:
 #from meresco.harvester.oairequest import OaiRequest
 
-integrationTempdir = '/home/meresco/gharvester/integration/integration_temp_dir'
+integrationTempdir = './integration_temp_dir'
 reactor = Reactor()
 
 
@@ -178,7 +178,7 @@ def createDatabase(port):
     recordPacking = 'xml'
     start = time()
     print "Creating database in", integrationTempdir
-    sourceFiles = glob('/home/meresco/gharvester/integration/updaterequests/integration/*.updateRequest') #integration/
+    sourceFiles = glob('updaterequests/*/*.updateRequest') #integration/
     for updateRequestFile in sorted(sourceFiles):
         print 'Sending:', updateRequestFile
         
