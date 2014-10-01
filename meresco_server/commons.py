@@ -2,6 +2,8 @@
 # encoding: utf-8
 from re import compile, IGNORECASE
 from dateutil.parser import parse as parseDate
+import urllib
+from urlparse import urlparse, urlunparse
 
 #RegEx:
 REG_URNNBN = r'^[uU][rR][nN]:[nN][bB][nN]:[nN][lL]:[uU][iI]:\d{1,3}-.*'
@@ -35,13 +37,33 @@ def isURNNBN(pid):
     return True
 
 
-def isURL(string):
+def isURL(st_url, doQuoting=True):
+    '''
+    Checks if given url is valid against a RegEx.
+    It decodes before it encodes to prevent double encoding.
+    :param str_url: The url to be quoted.
+    :param doQuoting: boolean, if str_url needs to be unquoted and quoted before testing. Default is True.
+    '''
+    if doQuoting:
+        st_url = urlQuote(st_url)
     bln_isValid = False
-    m = patternURL.match(string)
+    m = patternURL.match(st_url)
     if m:
         bln_isValid = True
     return bln_isValid    
-    
+
+
+def urlQuote(str_url):
+    '''
+    Url Quotes the path part of a URL.
+    It decodes before it encodes to prevent double encoding.
+    :param str_url: The url to be quoted.
+    '''
+    o = urlparse(str_url)
+    _pad = o.path
+    _pad = urllib.quote(urllib.unquote(_pad))
+    return urlunparse((o.scheme, o.netloc, _pad, o.params, o.query, o.fragment))
+
     
 def isValidRFC3066(string):
     bln_isValid = False

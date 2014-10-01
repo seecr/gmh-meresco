@@ -225,7 +225,7 @@ class Normalize_nl_DIDL(Observable):
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@resource="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref', #fallback DIDL 3.0, without @rdf:resource
         '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref' #fallback DIDL 2.3.1
-        )
+        ).strip()
 
         if pidlocation == '':
             raise ValidateException(formatExceptionLine(EXCEPTION4, prefix=STR_DIDL))
@@ -235,7 +235,7 @@ class Normalize_nl_DIDL(Observable):
         return """<didl:Item>
         <didl:Descriptor><didl:Statement mimeType="application/xml"><dii:Identifier>%s</dii:Identifier></didl:Statement></didl:Descriptor>
         <didl:Descriptor><didl:Statement mimeType="application/xml"><dcterms:modified>%s</dcterms:modified></didl:Statement></didl:Descriptor>
-        <didl:Component><didl:Resource mimeType="%s" ref="%s"/></didl:Component>""" % (escapeXml(pid), modified, escapeXml(mimetype), pidlocation.strip())
+        <didl:Component><didl:Resource mimeType="%s" ref="%s"/></didl:Component>""" % (escapeXml(pid), modified, escapeXml(mimetype), comm.urlQuote(pidlocation))
 
     def _getDescriptiveMetadata(self, lxmlNode):
     ## This always normalizes to rdf namespace, without warning/message
@@ -368,8 +368,8 @@ class Normalize_nl_DIDL(Observable):
                     if not comm.isMimeType(mimeType[0]):
                         self.do.logMsg(self._identifier, LOGGER8 + mimeType[0], prefix=STR_DIDL)
                     if comm.isURL(uri[0]):
-                        resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(uri[0].strip()))
-                        _url_list.append("""<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(uri[0].strip())))
+                        resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(comm.urlQuote(uri[0].strip())))
+                        _url_list.append("""<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(comm.urlQuote(uri[0].strip()))))
                     else:
                         raise ValidateException(formatExceptionLine(EXCEPTION9 + uri[0], prefix=STR_DIDL))
                         
@@ -417,7 +417,7 @@ class Normalize_nl_DIDL(Observable):
                     <didl:Component>
                         <didl:Resource ref="%s" mimeType="%s"/>
                     </didl:Component>
-                </didl:Item>""" % (escapeXml(uriref[0]), escapeXml(mimetype[0]))
+                </didl:Item>""" % (escapeXml(comm.urlQuote(uriref[0].strip())), escapeXml(mimetype[0]))
     
         
     def _findAndBindFirst(self, node, template, *xpaths):
