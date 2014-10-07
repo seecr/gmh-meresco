@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+
 from re import compile, IGNORECASE
 from dateutil.parser import parse as parseDate
 import urllib
@@ -17,7 +18,7 @@ REG_URL =  (r'^(?:http|ftp|sftp)s?://' # http:// or https://
             r'(?:/?|[/?]\S+)$')
 
 REG_MIMETYPE = r'^(application|audio|example|image|message|model|multipart|text|video)/.{2,}$'
-            
+
 
 # Compile RegEx's:
 patternURL = compile(REG_URL, IGNORECASE)
@@ -61,10 +62,15 @@ def urlQuote(str_url):
     '''
     o = urlparse(str_url)
     _pad = o.path
-    _pad = urllib.quote(urllib.unquote(_pad))
+    _pad = urllib.unquote(_pad)
+    _pad = urllib.quote(_pad.encode('utf-8', "xmlcharrefreplace")) #We'll not ignore or throw errors here, but use xml encodng instead.
+    # _pad.encode('utf-8', "xmlcharrefreplace") Wait, what happens here?
+    # _pad might already be a utf-8 byte string. If, so, Python implicit decodes _pad to unicode (using sys.getdefaultencoding(), which should be utf-8), and then we encode it back to utf-8 byte string...
+    # _pad might be unicode string. If, so, we explicitly encode/convert it to utf-8 byte string, and encode all characters not available in utf-8, to xml-chars, which will be available in utf-8...
+    # http://nedbatchelder.com/text/unipain.html
     return urlunparse((o.scheme, o.netloc, _pad, o.params, o.query, o.fragment))
 
-    
+
 def isValidRFC3066(string):
     bln_isValid = False
     if string is not None and string.strip().split('-', 1)[0] in RFC3066:
