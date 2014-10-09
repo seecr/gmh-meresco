@@ -35,6 +35,7 @@ LOGGER9 = "HumanStartPage descriptor found in resource attribute not in rdf name
 LOGGER10 = "HumanStartPage descriptor found in depricated dip namespace."
 LOGGER11 = "No HumanStartPage found."
 LOGGER12 = "Invalid mimeType found for humanstartpage Resource: "
+LOGGER13 = "No mimeType found for humanstartpage."
 
 EXCEPTION0 = "Invalid format for mandatory persistent identifier (urn:nbn) in top level Item: "
 EXCEPTION1 = "Mandatory persistent identifier (urn:nbn) in top level DIDL Item not found."
@@ -401,8 +402,10 @@ class Normalize_nl_DIDL(Observable):
         uriref  =  didl_hsp_item[0].xpath('self::didl:Item/didl:Component/didl:Resource/@ref', namespaces=self._nsMap)
         mimetype = didl_hsp_item[0].xpath('self::didl:Item/didl:Component/didl:Resource/@mimeType', namespaces=self._nsMap)
                 
+        if len(mimetype) == 0:
+            self.do.logMsg(self._identifier, LOGGER13, prefix=STR_DIDL)
         
-        if len(mimetype) == 0 or not comm.isMimeType(mimetype[0]):
+        if len(mimetype) > 0 and not comm.isMimeType(mimetype[0]):
             self.do.logMsg(self._identifier, LOGGER12 + mimetype[0], prefix=STR_DIDL)
         
         if len(uriref) == 0 or not comm.isURL(uriref[0]):
