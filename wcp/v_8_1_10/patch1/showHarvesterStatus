@@ -1,0 +1,150 @@
+<%
+domainId = args.domainId
+originalArgs = dict(domainId=domainId, repositoryGroupId=args.repositoryGroupId, repositoryId=args.repositoryId)
+args = urlencode(originalArgs)
+theUrl = url('/getStatus?%s' % args)
+loggedIn = bool(session.get('username', ''))
+
+statuses = asxml(theUrl).saharaget.GetStatus.status
+
+statusUrl = url('%s/get?verb=GetStatus&%s' % (req.get_options()['internalServer'], args))
+invalid = {}
+for status in asxml(statusUrl).saharaget.GetStatus.status:
+    invalid[status.repositoryId] = status
+#
+%>
+<p class="head">Harvester Status</p>
+<p>Domain: <%=domainId%> <a href="/running.rss?<%= urlencode(dict(domainId=domainId)) %>"><img src="/images/rss.png"/></a></p>
+<%
+if originalArgs['repositoryGroupId']:
+    %><p>RepositoryGroup: <%=originalArgs['repositoryGroupId']%></p><%
+#
+%>
+<%
+if originalArgs['repositoryId']:
+    %><p>Repository: <%=originalArgs['repositoryId']%></p><%
+#
+%>
+<table class="event">
+<tr class="eventheader">
+<td>RepositoryGroup</td>
+<td>Repository</td>
+<td>Last successful harvest</td>
+<td>Total records</td>
+<td>Harvested<br/>Uploaded<br/>Deleted</td>
+<td>#Validation<br/>Errors</td>
+<td>#Errors</td>
+<td>RSS</td>
+</tr>
+<%
+for status in sorted(statuses, key=lambda s: (str(s.repositoryGroupId).lower(),str(s.repositoryId))):
+  total = 0
+  total += int(str(status.total) or '0')
+  errorsnr = int(str(status.totalerrors))
+  style = errorsnr and 'style="font-weight:bold"' or ''
+%>
+<tr>
+<td <%=style%> class="link"><%='<a href="/page/repositoryGroup.edit/%s.%s.repositoryGroup">' % (domainId, status.repositoryGroupId) if loggedIn else ''%><% escape_html(status.repositoryGroupId) %><%='</a>' if loggedIn else ''%></td>
+<td <%=style%> class="link"><%='<a href="/page/repository.edit/%s.%s.repository?%s">' % (domainId, status.repositoryId, urlencode(dict(referrerGroup=status.repositoryGroupId))) if loggedIn else ''%><% escape_html(status.repositoryId) %><%='</a>' if loggedIn else ''%></td>
+<td <%=style%>><% escape_html(status.lastHarvestDate) %></td>
+<td><% escape_html(status.total) %></td>
+<td><% escape_html(status.harvested) %>/<% escape_html(status.uploaded) %>/<% escape_html(status.deleted) %></td>
+<td class="link">
+<% 
+  nrOfValidationErrors = int(invalid[status.repositoryId].invalid) if status.repositoryId in invalid else 0
+  args = urlencode(dict(domainId=domainId, repositoryId=status.repositoryId))
+  if nrOfValidationErrors > 0:
+%>
+    <a href="/page/invalid/?<%= args %>"><%=nrOfValidationErrors%> error<%='s' if nrOfValidationErrors != 1 else ''%></a>
+<%
+  #
+%>
+</td>
+<td class="error">
+<%
+  if errorsnr:
+%>
+    <a name="top_<%= status.repositoryId %>" href="#<%= status.repositoryId %>"><%=errorsnr%> error<%='s' if errorsnr != 1 else ''%></a>
+<% 
+  #
+%>
+</td>
+<td class="link">
+<a href="/rss?<%= args %>"><img src="/images/rss.png"/></a>
+</td>
+</tr>
+<%
+#
+%>
+</table>
+<br/>
+
+<p class="head">Harvester Errors</p>
+<table class="event">
+<%
+for status in statuses:
+  repositoryId = status.repositoryId
+  errorsnr = int(str(status.totalerrors))
+  if errorsnr:
+    #
+%>
+<tr class="eventinfo">
+<td><a name="<%= repositoryId %>" href="#top_<%= repositoryId %>"><%= repositoryId %></a></td>
+<td>Last successful harvest</td>
+<td><%= status.lastHarvestDate %></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>Nr. of errors since:</td>
+<td><b><%= errorsnr %></b></td>
+</tr>
+<%
+    if hasattr(status.recenterrors, 'error'):
+      for error in status.recenterrors.error:
+        #
+%>
+  <tr class="eventerror">
+    <td>&nbsp;</td>
+    <td class="alt"><%= error.date %></td>
+    <td class="alt"><% escape_html(error.split('|')[-1]) %></td>
+  </tr>
+<%
+#
+%>
+</table>
+
+<p class="head">Validatie Errors</p>
+<table class="event">
+<%
+for status in statuses:
+  repositoryId = status.repositoryId
+  invalidnr = int(str(status.invalid))
+  if invalidnr:
+    #
+%>
+<tr class="eventinfo">
+<td><a name="<%= repositoryId %>" href="#top_<%= repositoryId %>"><%= repositoryId %></a></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>Nr. of validation errors: </td>
+<td><strong><%= invalidnr %></strong></td>
+</tr>
+<%
+    if hasattr(status.recentinvalids, 'invalidId'):
+      for invalidId in status.recentinvalids.invalidId:
+        recordId = invalidId.split(":", 1)[-1]
+        newArgs = {'recordId': recordId, 'repositoryId': repositoryId, 'domainId': domainId}
+        #
+%>
+        <tr>
+          <td class="link">
+            <a href="/page/invalidRecord/?<%= urlencode(newArgs)%>"><%= recordId%></a>
+          </td>
+          <td>          
+          <% include(req.get_options()['internalServer'] + '/invalidRecord_gmh?' + urlencode(newArgs)) %>
+          </td>
+        </tr>
+<%
+#
+%>
+</table>
