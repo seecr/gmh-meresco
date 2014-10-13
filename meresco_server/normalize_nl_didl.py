@@ -368,7 +368,7 @@ class Normalize_nl_DIDL(Observable):
                 if len(mimeType) > 0 and len(uri) > 0:
                     if not comm.isMimeType(mimeType[0]):
                         self.do.logMsg(self._identifier, LOGGER8 + mimeType[0], prefix=STR_DIDL)
-                    if comm.isURL(uri[0]):
+                    if comm.isURL(uri[0].strip()):
                         resources += """<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(comm.urlQuote(uri[0].strip())))
                         _url_list.append("""<didl:Resource mimeType="%s" ref="%s"/>""" % (escapeXml(mimeType[0].strip()), escapeXml(comm.urlQuote(uri[0].strip()))))
                     else:
