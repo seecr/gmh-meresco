@@ -38,21 +38,20 @@ from meresco.core.observable import Observable
 from weightless.core import Transparent, be, compose
 from meresco.components import StorageComponent, FilterField, RenameField, XmlParseLxml, XmlXPath, XmlPrintLxml, Xml2Fields, Venturi, FilterMessages, Amara2Lxml, RewritePartname, Lxml2Amara #, Rss, RssItem
 
-#from meresco.components.drilldown import SRUTermDrilldown #, Drilldown #Bestaat uit constants:
-#from meresco.components.drilldown import DRILLDOWN_HEADER, DRILLDOWN_FOOTER, DEFAULT_MAXIMUM_TERMS
-
 from meresco.components.http import PathFilter, ObservableHttpServer
 from meresco.components.sru import SruParser, SruHandler, SRURecordUpdate
-from meresco.oai import OaiPmh, OaiJazz, OaiProvenance #OaiAddRecordWithDefaults, OaiAddRecord
+from meresco.oai import OaiPmh, OaiJazz #, OaiProvenance #OaiAddRecordWithDefaults, OaiAddRecord
 from oaiaddrecord_gh import OaiAddRecordWithDefaults#, OaiAddRecord
 from weightless.io import Reactor
+
+# 'Overridden' from meresco.components package:
+from meresco_components.oaiprovenance import OaiProvenance
 
 #DEBUG
 #from tools.dnadebugger import DNADebug
 
 from normalize_nl_didl import Normalize_nl_DIDL
 from normalize_nl_mods import Normalize_nl_MODS
-
 
 from nl_didl_combined import NL_DIDL_combined
 from meresco.components import FilterPartByName
@@ -192,18 +191,21 @@ def dna(reactor, host, portNumber, databasePath):
                     (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='ishan.sital@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
-                        (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written. TODO: Get metadatanamespace correct!
+                        (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written.
                                 nsMap=namespacesMap,                                                          
-                                baseURL = ('meta', '//*[local-name() = "baseurl"]/text()'),                                                                
-                                harvestDate = ('meta', '//*[local-name() = "harvestdate"]/text()'),   
-                                
+                                baseURL = ('meta', '//*[local-name() = "baseurl"]/text()'),
+                                harvestDate = ('meta', '//*[local-name() = "harvestdate"]/text()'),                                                                
+
+
                                 #See: http://www.openarchives.org/OAI/2.0/guidelines-provenance.htm
-                                #NOGO: metadataNamespace = ('metadata', 'if ( boolean(count(//oai_dc:*)) ) then namespace-uri(//oai_dc:*) else namespace-uri(//mods:*)'),
-                                # | string("http://www.loc.gov/mods/v3")  //*[local-name()='mods']/namespace::node()[contains(.,'mods') or name()=""]                                
-                                #metadataNamespace = ('metadata', '//mods:mods/@xsi:schemaLocation'), #TODO: Juiste metadataNamespace meegeven!
-                                #metadataNamespace = 'MODS versie 3',
-                                metadataNamespace = (NL_DIDL_NORMALISED_PREFIX, '//mods:mods/namespace::node()[name()="" or name()="mods" or contains(.,"mods")]'), #TODO: Juiste metadataNamespace meegeven!
-                                
+                                metadataNamespace = (NL_DIDL_NORMALISED_PREFIX, '//mods:mods/namespace::node()[name()="" or name()="mods" or contains(.,"mods")]'),                                
+                                # Some 'magic' here: xpath() function may return different types.
+                                # (Namespace) nodes return tuple's instead of an Element Object. (string) Functions return strings, etc...
+                                # Since meresco.oai.OaiProvenance handles all return objects from xpath() the same, the results were unpredictable.
+                                # This is why we have overriden the XmlCompose.
+                                # See: http://lxml.de/xpathxslt.html#xpath-return-values
+
+                                                                
                                 identifier = ('header', '/oai:header/oai:identifier/text()'),                                
                                 datestamp = ('header', '/oai:header/oai:datestamp/text()')
                             ),

@@ -141,7 +141,9 @@ class IntegrationTest(SeecrTestCase):
 
         for record in body.OAI_PMH.ListRecords.record:
             if not str(record.header.status) == 'deleted':
-                self.assertTrue('mods' in str(record.about.provenance.originDescription.metadataNamespace))       
+                # print 'metadataNamespace:', str(record.about.provenance.originDescription.metadataNamespace)
+                self.assertTrue('mods' in str(record.about.provenance.originDescription.metadataNamespace))
+                
 
     def testOaiSet(self):        
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListRecords', 'metadataPrefix': 'nl_didl_combined', 'set': 'kb:KB'})
