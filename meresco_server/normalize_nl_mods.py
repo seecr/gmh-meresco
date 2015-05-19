@@ -46,12 +46,12 @@ GENRES_SEMANTIEK = {
     "researchproposal" : "info:eu-repo/semantics/researchProposal",
     "studentthesis" : "info:eu-repo/semantics/studentThesis",
     "technicaldocumentation" : "info:eu-repo/semantics/technicalDocumentation",
-    "conferenceposter" : "info:eu-repo/semantics/conferencePoster",
+    "semantics/conferenceposter" : "info:eu-repo/semantics/conferencePoster",
     "conferenceproceedings" : "info:eu-repo/semantics/conferenceProceedings",
     "conferenceitemnotinproceedings" : "info:eu-repo/semantics/conferenceItemNotInProceedings",
     "semantics/conferencepaper" : "info:eu-repo/semantics/conferencePaper",
     "conferenceitem" : "http://purl.org/eprint/type/ConferenceItem",
-    "conferenceposter" : "http://purl.org/eprint/type/ConferencePoster",
+    "type/conferenceposter" : "http://purl.org/eprint/type/ConferencePoster",
     "type/conferencepaper" : "http://purl.org/eprint/type/ConferencePaper"
     }
 
