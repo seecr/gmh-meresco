@@ -58,7 +58,7 @@ class LoggerRSS(Observable):
             maximumRecords = int(arguments.get('maximumRecords', [self._maximumRecords])[0])
             rId = arguments.get('repositoryId', [''])[0] #['']
             if rId =='' or not rId:
-                raise BadRequestException('Invalid repository (rid) parameter.') 
+                raise BadRequestException('Invalid repositoryId parameter.') 
 
         except (SruMandatoryParameterNotSuppliedException, BadRequestException, CQLParseException), e:
             yield '<title>ERROR %s</title>' % xmlEscape(self._title)
