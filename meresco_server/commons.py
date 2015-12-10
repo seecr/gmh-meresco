@@ -7,7 +7,7 @@ import urllib
 from urlparse import urlparse, urlunparse
 
 #RegEx:
-REG_URNNBN = r'^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([uU][iI]|[kK][bB]|[hH][sS]))?:\d{2}-.+'
+REG_URNNBN = r'^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\d{2}-.+'
 
 REG_RFC3066 = r'^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{2,8})*$'
 
