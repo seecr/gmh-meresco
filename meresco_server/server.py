@@ -188,7 +188,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),
                 (PathFilter('/oai'), #XWAIT: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='ishan.sital@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
+                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='harvester@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
                         (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written.
