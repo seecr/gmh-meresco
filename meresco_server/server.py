@@ -40,12 +40,13 @@ from meresco.components import StorageComponent, FilterField, RenameField, XmlPa
 
 from meresco.components.http import PathFilter, ObservableHttpServer
 from meresco.components.sru import SruParser, SruHandler, SRURecordUpdate
-from meresco.oai import OaiPmh, OaiJazz #, OaiProvenance #OaiAddRecordWithDefaults, OaiAddRecord
+from meresco.oai import OaiJazz #, OaiProvenance #OaiAddRecordWithDefaults, OaiAddRecord, OaiPmh
 from oaiaddrecord_gh import OaiAddRecordWithDefaults#, OaiAddRecord
 from weightless.io import Reactor
 
 # 'Overridden' from meresco.components package:
 from meresco_components.oaiprovenance import OaiProvenance
+from meresco_components.oaipmh import OaiPmh
 
 #DEBUG
 #from tools.dnadebugger import DNADebug
@@ -188,7 +189,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),
                 (PathFilter('/oai'), #XWAIT: (OaiPmh(repositoryName='repositoryName', adminEmail='adminEmail', batchSize=2, supportXWait=True)
-                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='harvester@dans.knaw.nl', batchSize=100), ## batchSize = number of records before issueing a resumptionToken...
+                    (OaiPmh(repositoryName='Gemeenschappelijke Harvester DANS-KB', adminEmail='harvester@dans.knaw.nl', batchSize=100, fixIdentifyBaseURL=True), ## batchSize = number of records before issueing a resumptionToken...
                         (oaiJazz,),
                         (storageComponent,),
                         (OaiProvenance( ## NOTE: If one of the following fields lacks, provenance will NOT be written.
