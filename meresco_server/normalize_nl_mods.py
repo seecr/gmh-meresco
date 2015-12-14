@@ -68,7 +68,7 @@ EXCEPTION1 = "Mandatory MODS metadata not found in DIDL Item."
 EXCEPTION2 = "Mandatory MODS titleInfo not found."
 EXCEPTION3 = "MODS titleInfo/title has empty value."
 EXCEPTION4 = "MODS invalid role macrelator: "
-EXCEPTION5 = "Mandatory MODS name  not found."
+EXCEPTION5 = "Mandatory MODS name not found."
 EXCEPTION6 = "No valid MODS genre found."
 EXCEPTION7 = "Mandatory MODS originInfo/dateIssued not found."
 
