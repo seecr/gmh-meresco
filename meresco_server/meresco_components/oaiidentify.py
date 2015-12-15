@@ -91,7 +91,7 @@ The response may include multiple instances of the following optional elements:
         descriptionRepositoryIdentifier = '' if not self._repositoryIdentifier else DESCRIPTION_REPOSITORY_IDENTIFIER % { 'repositoryIdentifier': escapeXml(self._repositoryIdentifier)}
 
         baseurl_from_host = requestUrl(**httpkwargs)
-        baseurl_from_host_no_port = baseurl_from_host.replace(":" + str(httpkwargs["port"]), "")
+        baseurl_from_host_no_port = baseurl_from_host[:baseurl_from_host.rfind(":" + str(httpkwargs["port"]))] # Ignore local port and path!!
         if baseurl_from_host.startswith("http://oai.") and not self._hasNumber(baseurl_from_host_no_port) and self._fixIdentifyBaseURL == True: # Inet address: remove port number; we might be behind a proxy.
             baseurl_from_host = baseurl_from_host_no_port
         #else: # local (server) address, leave 'as is':
