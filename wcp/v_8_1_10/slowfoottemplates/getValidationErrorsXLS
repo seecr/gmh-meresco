@@ -1,0 +1,39 @@
+<%
+from meresco.harvester.repositorystatus import RepositoryStatus
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
+from openpyxl.compat import range
+
+domainId = args.domainId
+repositoryId = args.repositoryId
+repositoryGroupId = args.repositoryGroupId
+
+loggedIn = True
+
+stateDir = req.get_options()['stateDir']
+logDir = req.get_options()['logDir']
+
+type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+req.headers_out['Content-Disposition'] = 'attachment;filename="%s.xlsx"' % repositoryId
+
+wb = Workbook()
+ws = wb.worksheets[0]
+ws.title = '%s Invald OAI-PMH records' % repositoryId
+
+repo_xml = asxml(url('/xml/%s.%s.repository' % (domainId, repositoryId))).repository
+repostatus = RepositoryStatus(logDir, stateDir)
+invalidrecordIds = repostatus.invalidRecords(domainId, repositoryId)
+max_col = 0
+for idx, recId in enumerate(invalidrecordIds):
+  recordId = recId.split(":", 1)[-1]
+  if len(recordId) > max_col: max_col = len(recordId)
+  etree = repostatus.getInvalidRecord(domainId, str(repositoryId), str(recordId))
+  juicydetail = etree.xpath('//diag:diagnostic/diag:details/text()', namespaces={'diag':'http://www.loc.gov/zing/srw/diagnostic/'})
+  basisurl = "%(baseurl)s?verb=GetRecord&identifier=%(oai_id)s&metadataPrefix=%(mdpf)s" % {'baseurl': repo_xml.baseurl, 'oai_id': recordId, 'mdpf': repo_xml.metadataPrefix}
+  firstcell = ws.cell(column=1, row=(idx+1), value=recordId)
+  firstcell.hyperlink = "%(baseurl)s?verb=GetRecord&identifier=%(oai_id)s&metadataPrefix=%(mdpf)s" % {'baseurl': repo_xml.baseurl, 'oai_id': recordId, 'mdpf': repo_xml.metadataPrefix}
+  ws.cell(column=2, row=(idx+1), value=juicydetail[0])
+#
+ws.column_dimensions['A'].width = max_col
+req.write(save_virtual_workbook(wb))
+%>
