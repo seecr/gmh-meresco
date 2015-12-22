@@ -205,7 +205,6 @@ def dna(reactor, host, portNumber, databasePath):
                                 # Since meresco.oai.OaiProvenance handles all return objects from xpath() the same, the results were unpredictable.
                                 # This is why we have overriden the XmlCompose.
                                 # See: http://lxml.de/xpathxslt.html#xpath-return-values
-
                                                                 
                                 identifier = ('header', '/oai:header/oai:identifier/text()'),                                
                                 datestamp = ('header', '/oai:header/oai:datestamp/text()')
@@ -215,7 +214,7 @@ def dna(reactor, host, portNumber, databasePath):
                     )
                 ),             
                 (PathFilter('/rss'),
-                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://gharvester.dans.knaw.nl', maximumRecords = 30),
+                    (LoggerRSS( title = 'Gemeenschappelijke Harvester DANS-KB', description = 'Harvester normalisation log for: ', link = 'http://rss.gharvester.dans.knaw.nl/rss', maximumRecords = 30),
                         (loggerComponent,
                                 (storageComponent,)                            
                         )
