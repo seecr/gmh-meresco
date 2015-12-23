@@ -1,9 +1,10 @@
 <%
-domainId = 'EduStandaard'
+domainId = args.domainId
 originalArgs = dict(domainId=domainId, repositoryGroupId=args.repositoryGroupId, repositoryId=args.repositoryId)
 args = urlencode(originalArgs)
 theUrl = url('/getStatus?%s' % args)
 loggedIn = True
+
 
 statuses = asxml(theUrl).saharaget.GetStatus.status
 
