@@ -1,8 +1,13 @@
 <%
 from meresco.harvester.repositorystatus import RepositoryStatus
 from openpyxl.writer.excel import save_virtual_workbook
+from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.compat import range
+from os.path import join, isfile, isdir
+import os
+import tempfile
+import zipfile
 
 domainId = args.domainId
 repositoryId = args.repositoryId
@@ -13,8 +18,12 @@ loggedIn = True
 stateDir = req.get_options()['stateDir']
 logDir = req.get_options()['logDir']
 
-type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-req.headers_out['Content-Disposition'] = 'attachment;filename="%s.xlsx"' % repositoryId
+#type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+#req.headers_out['Content-Disposition'] = 'attachment;filename="%s.xlsx"' % repositoryId
+
+type('application/octet-stream')
+req.headers_out['Content-Disposition'] = 'attachment;filename="%s.zip"' % repositoryId
+
 
 wb = Workbook()
 ws = wb.worksheets[0]
@@ -35,5 +44,34 @@ for idx, recId in enumerate(invalidrecordIds):
   ws.cell(column=2, row=(idx+1), value=juicydetail[0])
 #
 ws.column_dimensions['A'].width = max_col
-req.write(save_virtual_workbook(wb))
+
+temp_dir = tempfile.mkdtemp()
+xlsPath = join(temp_dir, "%s.xlsx" % repositoryId)
+zipPath = join(temp_dir, "%s.zip" % repositoryId)
+
+wb.save(xlsPath)
+
+zf = zipfile.ZipFile(zipPath, mode='w')
+try:
+  zf.write(xlsPath, "%s.xlsx" % repositoryId)
+finally:
+  zf.close()
+
+fIn = open(zipPath, 'rb')
+req.write(fIn.read())
+fIn.close()
+os.removedirs(temp_dir)
+
+
+#xlsPath = join('/var/lib/python-meresco-harvester/fileupload', "%s.xlsx" % repositoryId)
+#wb.save(xlsPath)
+#zf = zipfile.ZipFile('/var/lib/python-meresco-harvester/fileupload/tempzip_%s.zip' % repositoryId, mode='w')
+#try:
+#  zf.write(xlsPath, os.path.basename(xlsPath))
+#finally:
+#  zf.close()
+#fIn = open('/var/lib/python-meresco-harvester/fileupload/tempzip_%s.zip' % repositoryId, 'rb')
+#req.write(fIn.read())
+#fIn.close()
+##req.write(save_virtual_workbook(wb))
 %>
