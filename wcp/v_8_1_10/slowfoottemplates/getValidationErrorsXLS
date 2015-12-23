@@ -1,77 +1,97 @@
 <%
-from meresco.harvester.repositorystatus import RepositoryStatus
-from openpyxl.writer.excel import save_virtual_workbook
-from io import BytesIO
-from openpyxl import Workbook
-from openpyxl.compat import range
-from os.path import join, isfile, isdir
-import os
-import tempfile
-import zipfile
-
 domainId = args.domainId
-repositoryId = args.repositoryId
-repositoryGroupId = args.repositoryGroupId
-
+originalArgs = dict(domainId=domainId, repositoryGroupId=args.repositoryGroupId, repositoryId=args.repositoryId)
+args = urlencode(originalArgs)
+theUrl = url('/getStatus?%s' % args)
 loggedIn = True
 
-stateDir = req.get_options()['stateDir']
-logDir = req.get_options()['logDir']
 
-#type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-#req.headers_out['Content-Disposition'] = 'attachment;filename="%s.xlsx"' % repositoryId
+statuses = asxml(theUrl).saharaget.GetStatus.status
 
-type('application/octet-stream')
-req.headers_out['Content-Disposition'] = 'attachment;filename="%s.zip"' % repositoryId
-
-
-wb = Workbook()
-ws = wb.worksheets[0]
-ws.title = '%s Invald OAI-PMH records' % repositoryId
-
-repo_xml = asxml(url('/xml/%s.%s.repository' % (domainId, repositoryId))).repository
-repostatus = RepositoryStatus(logDir, stateDir)
-invalidrecordIds = repostatus.invalidRecords(domainId, repositoryId)
-max_col = 0
-for idx, recId in enumerate(invalidrecordIds):
-  recordId = recId.split(":", 1)[-1]
-  if len(recordId) > max_col: max_col = len(recordId)
-  etree = repostatus.getInvalidRecord(domainId, str(repositoryId), str(recordId))
-  juicydetail = etree.xpath('//diag:diagnostic/diag:details/text()', namespaces={'diag':'http://www.loc.gov/zing/srw/diagnostic/'})
-  basisurl = "%(baseurl)s?verb=GetRecord&identifier=%(oai_id)s&metadataPrefix=%(mdpf)s" % {'baseurl': repo_xml.baseurl, 'oai_id': recordId, 'mdpf': repo_xml.metadataPrefix}
-  firstcell = ws.cell(column=1, row=(idx+1), value=recordId)
-  firstcell.hyperlink = "%(baseurl)s?verb=GetRecord&identifier=%(oai_id)s&metadataPrefix=%(mdpf)s" % {'baseurl': repo_xml.baseurl, 'oai_id': recordId, 'mdpf': repo_xml.metadataPrefix}
-  ws.cell(column=2, row=(idx+1), value=juicydetail[0])
+statusUrl = url('%s/get?verb=GetStatus&%s' % (req.get_options()['internalServer'], args))
+invalid = {}
+for status in asxml(statusUrl).saharaget.GetStatus.status:
+    invalid[status.repositoryId] = status
 #
-ws.column_dimensions['A'].width = max_col
-
-temp_dir = tempfile.mkdtemp()
-xlsPath = join(temp_dir, "%s.xlsx" % repositoryId)
-zipPath = join(temp_dir, "%s.zip" % repositoryId)
-
-wb.save(xlsPath)
-
-zf = zipfile.ZipFile(zipPath, mode='w')
-try:
-  zf.write(xlsPath, "%s.xlsx" % repositoryId)
-finally:
-  zf.close()
-
-fIn = open(zipPath, 'rb')
-req.write(fIn.read())
-fIn.close()
-os.removedirs(temp_dir)
+%>
+<p class="head">Gemeenschappelijke Metadata Harvester Validation Report</p>
+<p>Domain: <%=domainId%> </p>
+<%
+if originalArgs['repositoryGroupId']:
+    %><p>RepositoryGroup: <%=originalArgs['repositoryGroupId']%></p><%
+#
+%>
+<%
+if originalArgs['repositoryId']:
+    %><p>Repository: <%=originalArgs['repositoryId']%></p><%
+#
+%>
 
 
-#xlsPath = join('/var/lib/python-meresco-harvester/fileupload', "%s.xlsx" % repositoryId)
-#wb.save(xlsPath)
-#zf = zipfile.ZipFile('/var/lib/python-meresco-harvester/fileupload/tempzip_%s.zip' % repositoryId, mode='w')
-#try:
-#  zf.write(xlsPath, os.path.basename(xlsPath))
-#finally:
-#  zf.close()
-#fIn = open('/var/lib/python-meresco-harvester/fileupload/tempzip_%s.zip' % repositoryId, 'rb')
-#req.write(fIn.read())
-#fIn.close()
-##req.write(save_virtual_workbook(wb))
+<table class="event">
+<tr class="eventheader">
+<td>Repository</td>
+<td>Last successful harvest</td>
+<td>Total records</td>
+<td>#Validation<br/>Errors</td>
+<td>Normalisation RSS</td>
+<td>Download validation errors</td>
+</tr>
+<%
+for status in sorted(statuses, key=lambda s: (str(s.repositoryGroupId).lower(),str(s.repositoryId))):
+  total = 0
+  total += int(str(status.total) or '0')
+  errorsnr = int(str(status.totalerrors))
+  style = errorsnr and 'style="font-weight:bold"' or ''
+  nrOfValidationErrors = int(invalid[status.repositoryId].invalid) if status.repositoryId in invalid else 0
+%>
+<tr>
+<td <%=style%> class="link"><%='<a href="#%s">' % (status.repositoryId) if (nrOfValidationErrors > 0) else ''%><% escape_html(status.repositoryId) %><%='</a>' if (nrOfValidationErrors > 0) else ''%></td>
+<td <%=style%>><% escape_html(status.lastHarvestDate) %></td>
+<td><% escape_html(status.total) %></td>
+<td class="link">
+<% 
+  args = urlencode(dict(domainId=domainId, repositoryId=status.repositoryId))
+  if nrOfValidationErrors >= 0:
+%>
+    <%='<a href="#%s">' % (status.repositoryId) if (nrOfValidationErrors > 0) else ''%><%=nrOfValidationErrors%> error<%='s' if nrOfValidationErrors != 1 else ''%><%='</a>' if (nrOfValidationErrors > 0) else ''%>
+<%
+  #
+%>
+</td>
+<td class="link">
+<a target="_blank" href="http://rss.gharvester.dans.knaw.nl/rss?repositoryId=<%=status.repositoryId%>"><img src="/images/rss.png"/></a>
+</td>
+<td class="link">
+<% 
+  nrOfValidationErrors = int(invalid[status.repositoryId].invalid) if status.repositoryId in invalid else 0
+  args = urlencode(dict(domainId=domainId, repositoryId=status.repositoryId))
+  if nrOfValidationErrors > 0:
+%>
+    <a href="/getValidationErrorsXLS?<%= args %>">XLS-sheet</a>
+<%
+  #
+%>
+</td>
+</tr>
+<%
+#
+%>
+</table>
+
+<br />
+
+<%
+for status in statuses:
+
+  repositoryId = status.repositoryId
+  invalidnr = int(str(status.invalid))
+  if invalidnr:
+    xml = asxml(url('/xml/EduStandaard.%s.repository' % repositoryId))
+    repo = xml.repository
+    #
+%>
+<%
+    newArgs = {'repositoryId': repositoryId, 'domainId': domainId, 'totalErrors' : invalidnr, 'mdp': repo.metadataPrefix, 'burl':repo.baseurl }
+    include(req.get_options()['internalServer'] + '/reports_gmh?' + urlencode(newArgs))
 %>
