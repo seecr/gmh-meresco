@@ -74,7 +74,7 @@ class NormDIDLTest(SeecrTestCase):
         
         # Check if expected result:        
         expectedResult = open("data/didl_converted.xml").read()
-        #print "EXPECTED DIDL:", tostring(didl[0], pretty_print = True, encoding='utf-8')       
+        # print "EXPECTED DIDL:", tostring(didl[0], pretty_print = True, encoding='utf-8')       
         self.assertEqualsWithDiff(expectedResult, tostring(didl[0], pretty_print = True, encoding='utf-8'))
 
 

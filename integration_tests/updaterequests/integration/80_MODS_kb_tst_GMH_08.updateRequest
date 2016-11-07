@@ -68,6 +68,14 @@
                   &lt;identifier IDref=&quot;twips.dans.knaw.nl-833486382286886219-1174311206456-070016992&quot; authority=&quot;info:eu-repo/dai/nl&quot;&gt;070016992&lt;/identifier&gt;
                 &lt;/daiList&gt;
               &lt;/extension&gt;
+              &lt;extension&gt;
+                  &lt;wmp:rights xmlns:wmp=&quot;http://www.surfgroepen.nl/werkgroepmetadataplus&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot;&gt;
+                      &lt;dc:description&gt;© 2008 Royal Tropical Institute. This work is licensed under a
+                          Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 Unported
+                          License.&lt;/dc:description&gt;
+                      &lt;dc:rights&gt;http://creativecommons.org/licenses/by-nc-nd/3.0/&lt;/dc:rights&gt;
+                  &lt;/wmp:rights&gt;
+              &lt;/extension&gt;
               &lt;genre&gt;info:eu-repo/semantics/report&lt;/genre&gt;
             &lt;/mods&gt;
           &lt;/didl:Resource&gt;

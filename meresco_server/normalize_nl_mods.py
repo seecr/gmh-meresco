@@ -56,13 +56,14 @@ GENRES_SEMANTIEK = {
     }
 
 
-MODS_VERSION = '3.4'
+MODS_VERSION = '3.6'
 STR_MODS = "MODS:"
 
 #Taken from: http://www.loc.gov/marc/relators/relacode.html (Updated: 2015-12-10)
 MARC_ROLES=['abr','acp','act','adi','adp','aft','anl','anm','ann','ant','ape','apl','app','aqt','arc','ard','arr','art','asg','asn','ato','att','auc','aud','aui','aus','aut','bdd','bjd','bkd','bkp','blw','bnd','bpd','brd','brl','bsl','cas','ccp','chr','clb','cli','cll','clr','clt','cmm','cmp','cmt','cnd','cng','cns','coe','col','com','con','cor','cos','cot','cou','cov','cpc','cpe','cph','cpl','cpt','cre','crp','crr','crt','csl','csp','cst','ctb','cte','ctg','ctr','cts','ctt','cur','cwt','dbp','dfd','dfe','dft','dgg','dgs','dis','dln','dnc','dnr','dpc','dpt','drm','drt','dsr','dst','dtc','dte','dtm','dto','dub','edc','edm','edt','egr','elg','elt','eng','enj','etr','evp','exp','fac','fds','fld','flm','fmd','fmk','fmo','fmp','fnd','fpy','frg','gis','grt','his','hnr','hst','ill','ilu','ins','inv','isb','itr','ive','ivr','jud','jug','lbr','lbt','ldr','led','lee','lel','len','let','lgd','lie','lil','lit','lsa','lse','lso','ltg','lyr','mcp','mdc','med','mfp','mfr','mod','mon','mrb','mrk','msd','mte','mtk','mus','nrt','opn','org','orm','osp','oth','own','pan','pat','pbd','pbl','pdr','pfr','pht','plt','pma','pmn','pop','ppm','ppt','pra','prc','prd','pre','prf','prg','prm','prn','pro','prp','prs','prt','prv','pta','pte','ptf','pth','ptt','pup','rbr','rcd','rce','rcp','rdd','red','ren','res','rev','rpc','rps','rpt','rpy','rse','rsg','rsp','rsr','rst','rth','rtm','sad','sce','scl','scr','sds','sec','sgd','sgn','sht','sll','sng','spk','spn','spy','srv','std','stg','stl','stm','stn','str','tcd','tch','ths','tld','tlp','trc','trl','tyd','tyg','uvp','vac','vdg','voc','wac','wal','wam','wat','wdc','wde','win','wit','wpr','wst']
 LOGGER1 = " is not a valid RFC3066 language code."
 LOGGER2 = "Found unknown extension (no EDUstandaard)."
+LOGGER3 = "Unknown identifier authority: %s in /mods:extension/dai:daiList; Identifier for this authority will not be processed."
 
 EXCEPTION1 = "Mandatory MODS metadata not found in DIDL Item."
 EXCEPTION2 = "Mandatory MODS titleInfo not found."
@@ -173,7 +174,7 @@ class Normalize_nl_MODS(Observable):
         self._normalizeModsVersion(e_modsroot_copy)
         
         ## Valideer en normaliseer alle extension tags in 1 tag en bewaar deze voor later....
-        e_extensions = self._getValidModsExtension(e_modsroot_copy)
+        e_temp_extensions = self._getValidModsExtension(e_modsroot_copy)
         ## LET OP: Alle <extension> tags worden hieronder verwijdert doordat _tlExtension() 'None' terug geeft.       
         
         ## Valideer en normaliseer alle titleInfo tags:
@@ -203,9 +204,15 @@ class Normalize_nl_MODS(Observable):
                 e_modsroot_copy.remove(child)
                 
         ## Append our <extension> child elements to the root:
-        if e_extensions is not None:
-            for child in e_extensions.iterfind(('{%s}extension') % self._nsMap['mods']):
-                e_modsroot_copy.append(child)
+        if e_temp_extensions is not None:
+            for child in e_temp_extensions.iterfind(('{%s}extension') % self._nsMap['mods']):
+                
+                if child.xpath("boolean(count(self::mods:extension/dai:daiList))", namespaces=self._nsMap): # = daiList extension:
+                    for daiid in child.iterfind(('.//{%s}identifier') % self._nsMap['dai']):
+                        self._addDaiFromModExtension(e_modsroot_copy, daiid.get("IDref"), daiid.get("authority"), daiid.text)
+                else:
+                    e_modsroot_copy.append(child)
+
         
         ## Append one typeOfResource to root, if it does not exist:
         if not self._bln_hasTypOfResource:
@@ -489,6 +496,23 @@ class Normalize_nl_MODS(Observable):
         self.do.logMsg(self._identifier, LOGGER2, prefix=STR_MODS)
         return False
 
+## add possible dai identifiers from daiList if Mods Extension, if Dai is not already given in the name tag
+## this function is needed as long as the repositories still deliver dai identifiers in Mods Extension tag
+    def _addDaiFromModExtension(self, mods_node, name_id, identifier_authority, identifier_text):
+    
+        if identifier_authority is not None and "dai" not in identifier_authority:
+            # print LOGGER3 % (identifier_authority)
+            self.do.logMsg(self._identifier, LOGGER3 % (identifier_authority), prefix=STR_MODS)
+            return
+
+        for name in mods_node.iterfind(('.//{%s}name') % self._nsMap['mods']):
+            if name.get("ID") == name_id:
+                name_identifier = name.xpath("self::mods:name/mods:nameIdentifier[@type='dai-nl']", namespaces=self._nsMap)
+                if name_identifier is None or len(name_identifier) == 0:
+                    new_identifier = etree.SubElement(name, ('{%s}nameIdentifier') % self._nsMap['mods'])
+                    new_identifier.text = identifier_text
+                    new_identifier.attrib["type"] = "dai-nl"
+                    new_identifier.attrib["typeURI"] = "info:eu-repo/dai/nl"
 
 ## Helper methods:
 #    def _checkURNFormat(self, pid):

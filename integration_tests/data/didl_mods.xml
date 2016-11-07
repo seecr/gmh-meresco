@@ -32,24 +32,17 @@
                 </didl:Descriptor>
                 <didl:Component>
                     <didl:Resource mimeType="application/xml">
-                        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.0" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
+                        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.6" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd">
                             <mods:originInfo>
                                 <mods:dateIssued encoding="iso8601">1999/09/09</mods:dateIssued>
                             </mods:originInfo>
-							<mods:language><mods:languageTerm type="code" authority="rfc3066">NL-01234</mods:languageTerm></mods:language>
-							<mods:identifier type="local">info:doi/00282162</mods:identifier>
+                            <mods:language><mods:languageTerm type="code" authority="rfc3066">NL-01234</mods:languageTerm></mods:language>
+                            <mods:identifier type="local">info:doi/00282162</mods:identifier>
                             <mods:titleInfo>
                                 <mods:title>Appositie en de interne struktuur van de NP</mods:title>
                             </mods:titleInfo>
                             <mods:abstract xml:lang="fr">Frans Heeelllang</mods:abstract>
                             <mods:abstract xml:lang="en">Engels DDD</mods:abstract>
-                            <mods:name type="corporate" ID="n565-aut2">
-                                <mods:namePart type="given">Uni</mods:namePart>
-                                <mods:namePart type="family">Versiteit</mods:namePart>
-                                <mods:role>
-                                    <mods:roleTerm type="code" authority="marcrelator">dgg</mods:roleTerm>
-                                </mods:role>
-                            </mods:name>
                             <mods:name type="personal" ID="n565-aut0">
                                 <mods:namePart type="given">prof.dr. H.J.</mods:namePart>
                                 <mods:namePart type="family">Bennis&amp;Bennis</mods:namePart>
@@ -57,19 +50,55 @@
                                 <mods:role>
                                     <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
                                 </mods:role>
+                                <mods:nameIdentifier type="isni" typeURI="http://id.loc.gov/vocabulary/identifiers/isni">http://isni.org/isni/000133334444555X</mods:nameIdentifier>
+                                <mods:nameIdentifier type="orcid" typeURI="http://id.loc.gov/vocabulary/identifiers/orcid">http://orcid.org/0000-0002-1825-0097</mods:nameIdentifier>
                             </mods:name>
                             <mods:name type="personal" ID="n565-aut1">
                                 <mods:namePart type="given">Lorum</mods:namePart>
                                 <mods:namePart type="family">Ipsum</mods:namePart>
-								<mods:namePart type="termsOfAddress">Jr.</mods:namePart>                                
+                                <mods:namePart type="termsOfAddress">Jr.</mods:namePart>                                
                                 <mods:role>
                                     <mods:roleTerm type="code" authority="marcrelator">rev</mods:roleTerm>
                                 </mods:role>
                             </mods:name>
+                            <mods:name type="corporate" ID="n565-aut2">
+                                <mods:namePart type="given">Uni</mods:namePart>
+                                <mods:namePart type="family">Versiteit</mods:namePart>
+                                <mods:role>
+                                    <mods:roleTerm type="code" authority="marcrelator">dgg</mods:roleTerm>
+                                </mods:role>
+                                <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">987654321</mods:nameIdentifier>
+                            </mods:name>
                             <mods:extension>
                                 <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai https://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd">
-                                    <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/be">071792279666</dai:identifier><dai:identifier IDref="n565-aut2" authority="info:eu-repo/dai/nl">666</dai:identifier>
+                                    <dai:identifier IDref="n565-aut0" authority="ISNI.org">http://isni.org/isni/1234223432344234</dai:identifier>
+                                    <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/nl">071792279</dai:identifier>
+                                    <dai:identifier IDref="n565-aut2" authority="info:eu-repo/dai/nl">123456789</dai:identifier>
+                                    <dai:identifier IDref="n565-aut3" authority="info:eu-repo/dai/nl">234567890</dai:identifier>
+                                    <dai:identifier IDref="n565-aut1" authority="info:eu-repo/dai/nl">358163587</dai:identifier>
                                 </dai:daiList>
+                            </mods:extension>
+                            <mods:extension>
+                                <grantAgreementList xmlns="info:eu-repo/grantAgreement" xsi:schemaLocation="info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd">
+                                    <grantAgreement code="info:eu-repo/grantAgreement/EC/FP5/654321">
+                                        <funder IDref="n565-aut2"/>
+                                        <title>EERA Design Tools for Offshore Wind Farm Cluster (EERA-DTOC)</title>
+                                        <description>The European Energy Research Alliance (EERA) together with some
+                                            high-impact industry partners addresses the call proposing an integrated and
+                                            validated design tool combining the state-of-the-art wake, yield and electrical
+                                            models available in the consortium, as a plug-in architecture with possibility for
+                                            third party models.</description>
+                                    </grantAgreement>
+                                    <grantAgreement code="info:eu-repo/grantAgreement/EC/FP7/282797"/>
+                                </grantAgreementList>
+                            </mods:extension>
+                            <mods:extension>
+                                <wmp:rights xmlns:wmp="http://www.surfgroepen.nl/werkgroepmetadataplus" xmlns:dc="http://purl.org/dc/elements/1.1/">
+                                    <dc:description>© 2008 Royal Tropical Institute. This work is licensed under a
+                                        Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 Unported
+                                        License.</dc:description>
+                                    <dc:rights>http://creativecommons.org/licenses/by-nc-nd/3.0/</dc:rights>
+                                </wmp:rights>
                             </mods:extension>
                             <mods:typeOfResource>text</mods:typeOfResource>
                             <mods:relatedItem type="host">                                
@@ -88,7 +117,7 @@
                                         <mods:end>228</mods:end>
                                     </mods:extent>
                                 </mods:part>
-								<mods:identifier type="uri">urn:issn:00282162:wilko</mods:identifier>
+                                <mods:identifier type="uri">urn:issn:00282162:wilko</mods:identifier>
                             </mods:relatedItem>
                             <mods:genre>info:eu-repo/semantics/article</mods:genre>
                             <mods:location><mods:url>http://www.dds.nl/semantics/article</mods:url><mods:url>nbn:urn:www.dds.nl/semantics/article</mods:url><mods:url>ftp://www.dds.nl/semantics/article</mods:url></mods:location>

@@ -125,7 +125,7 @@ def createUploadHelix(storageComponent, oaiJazz, loggerComponent):
                         (FilterPartByName(included=['metadata']), # Normalize 'metadata' part:
                             #(DNADebug(enabled=False, prefix='add metadata'),
                                 # Validate DIDL and MODS part against their xsd-schema:
-                                (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-4.xsd')], nsMap=namespacesMap), 
+                                (Validate([('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-6.xsd')], nsMap=namespacesMap), 
                                     (Normalize_nl_DIDL(nsMap=namespacesMap), # Normalize DIDL in metadataPart
                                         (loggerComponent,),
                                         (Normalize_nl_MODS(nsMap=namespacesMap), # Normalize MODS in metadataPart.
