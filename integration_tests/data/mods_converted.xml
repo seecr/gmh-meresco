@@ -17,7 +17,8 @@
                                 </mods:role>
                                 <mods:nameIdentifier type="isni" typeURI="http://id.loc.gov/vocabulary/identifiers/isni">http://isni.org/isni/000133334444555X</mods:nameIdentifier>
                                 <mods:nameIdentifier type="orcid" typeURI="http://id.loc.gov/vocabulary/identifiers/orcid">http://orcid.org/0000-0002-1825-0097</mods:nameIdentifier>
-                            <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">071792279</mods:nameIdentifier></mods:name>
+                                <mods:nameIdentifier type="dai-nl">071792279</mods:nameIdentifier>
+                            <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">171792279</mods:nameIdentifier></mods:name>
                             <mods:name type="personal" ID="n565-aut1">
                                 <mods:namePart type="given">Lorum</mods:namePart>
                                 <mods:namePart type="family">Ipsum</mods:namePart>
@@ -33,7 +34,7 @@
                                     <mods:roleTerm type="code" authority="marcrelator">dgg</mods:roleTerm>
                                 </mods:role>
                                 <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">987654321</mods:nameIdentifier>
-                            </mods:name>
+                            <mods:nameIdentifier type="dai-nl" typeURI="info:eu-repo/dai/nl">123456789</mods:nameIdentifier></mods:name>
                             <mods:typeOfResource>text</mods:typeOfResource>
                             <mods:relatedItem type="host">                                
                                 <mods:titleInfo>

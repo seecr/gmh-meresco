@@ -52,6 +52,7 @@
                                 </mods:role>
                                 <mods:nameIdentifier type="isni" typeURI="http://id.loc.gov/vocabulary/identifiers/isni">http://isni.org/isni/000133334444555X</mods:nameIdentifier>
                                 <mods:nameIdentifier type="orcid" typeURI="http://id.loc.gov/vocabulary/identifiers/orcid">http://orcid.org/0000-0002-1825-0097</mods:nameIdentifier>
+                                <mods:nameIdentifier type="dai-nl">071792279</mods:nameIdentifier>
                             </mods:name>
                             <mods:name type="personal" ID="n565-aut1">
                                 <mods:namePart type="given">Lorum</mods:namePart>
@@ -72,7 +73,8 @@
                             <mods:extension>
                                 <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai https://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd">
                                     <dai:identifier IDref="n565-aut0" authority="ISNI.org">http://isni.org/isni/1234223432344234</dai:identifier>
-                                    <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/nl">071792279</dai:identifier>
+                                    <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/nl">171792279</dai:identifier>
+                                    <dai:identifier IDref="n565-aut0" authority="info:eu-repo/dai/nl">info:eu-repo/dai/nl/071792279</dai:identifier>
                                     <dai:identifier IDref="n565-aut2" authority="info:eu-repo/dai/nl">123456789</dai:identifier>
                                     <dai:identifier IDref="n565-aut3" authority="info:eu-repo/dai/nl">234567890</dai:identifier>
                                     <dai:identifier IDref="n565-aut1" authority="info:eu-repo/dai/nl">358163587</dai:identifier>

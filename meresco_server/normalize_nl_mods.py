@@ -499,28 +499,26 @@ class Normalize_nl_MODS(Observable):
 ## Add possible dai identifiers from daiList in Mods Extension, if some dai is not already given in the mods:name tag (as a nameIdentifier).
 ## This function is needed as long as the repositories still deliver dai identifiers in Mods Extension tag.
 ## We do NOT VALIDE the identifier, since all other nameIdentifiers are also transferred "as they are".
-    def _addDaiFromModExtension(self, mods_node, name_id, identifier_authority, identifier_text):
+    def _addDaiFromModExtension(self, mods_node, xml_id, dailist_authority, dailist_dai_text):
     
-        if identifier_authority is not None and "dai" not in identifier_authority:
-            # print LOGGER3 % (identifier_authority)
-            self.do.logMsg(self._identifier, LOGGER3 % (identifier_authority), prefix=STR_MODS)
+        if dailist_authority is not None and "dai" not in dailist_authority:
+            self.do.logMsg(self._identifier, LOGGER3 % (dailist_authority), prefix=STR_MODS)
             return
-
-        for name in mods_node.iterfind(('.//{%s}name') % self._nsMap['mods']):
-            if name.get("ID") == name_id:
-                name_identifier = name.xpath("self::mods:name/mods:nameIdentifier[@type='dai-nl']", namespaces=self._nsMap)
-                if name_identifier is None or len(name_identifier) == 0:
-                    new_identifier = etree.SubElement(name, ('{%s}nameIdentifier') % self._nsMap['mods'])
-                    new_identifier.text = identifier_text
-                    new_identifier.attrib["type"] = "dai-nl"
-                    new_identifier.attrib["typeURI"] = "info:eu-repo/dai/nl"
-
-## Helper methods:
-#    def _checkURNFormat(self, pid):
-#        m = comm.patternURNNBN.match(pid)
-#        if not m:
-#            raise ValidateException(formatExceptionLine(EXCEPTION8 + pid, prefix=STR_MODS))
-#        return True
+#         Find dais from referring name element by ID:
+        name = mods_node.xpath("//mods:mods/mods:name[@ID='"+xml_id+"']", namespaces=self._nsMap)
+        if len(name) > 0:
+            daais = name[0].xpath("self::mods:name/mods:nameIdentifier[@type='dai-nl' or @type='dai']/text()", namespaces=self._nsMap)
+            # Check if dailist_dai exists in name_nameIdentifier:
+            bln_bestaatal = False
+            for daai in daais:
+                if (dailist_dai_text.endswith(daai) or daai.endswith(dailist_dai_text)):
+                    bln_bestaatal = True
+                    break
+            if not bln_bestaatal:
+                new_identifier = etree.SubElement(name[0], ('{%s}nameIdentifier') % self._nsMap['mods'])
+                new_identifier.text = dailist_dai_text
+                new_identifier.attrib["type"] = "dai-nl"
+                new_identifier.attrib["typeURI"] = "info:eu-repo/dai/nl"
 
 
     def __str__(self):
