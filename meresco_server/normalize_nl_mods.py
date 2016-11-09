@@ -135,7 +135,7 @@ class Normalize_nl_MODS(Observable):
         if self._bln_success:
             yield self.all.unknown(method, *newArgs, **newKwargs)
 
-    def _normalizeRecord(self, lxmlNode):        
+    def _normalizeRecord(self, lxmlNode):
         # MODS normalisation in 4 steps:
         # 1. Get Mods from the lxmlNode.
         # 2. Normalize it
@@ -496,8 +496,9 @@ class Normalize_nl_MODS(Observable):
         self.do.logMsg(self._identifier, LOGGER2, prefix=STR_MODS)
         return False
 
-## add possible dai identifiers from daiList if Mods Extension, if Dai is not already given in the name tag
-## this function is needed as long as the repositories still deliver dai identifiers in Mods Extension tag
+## Add possible dai identifiers from daiList in Mods Extension, if some dai is not already given in the mods:name tag (as a nameIdentifier).
+## This function is needed as long as the repositories still deliver dai identifiers in Mods Extension tag.
+## We do NOT VALIDE the identifier, since all other nameIdentifiers are also transferred "as they are".
     def _addDaiFromModExtension(self, mods_node, name_id, identifier_authority, identifier_text):
     
         if identifier_authority is not None and "dai" not in identifier_authority:
