@@ -295,7 +295,7 @@ class Normalize_nl_MODS(Observable):
             #if rfc3066_lang[0].strip() in RFC3066:
                 #Set @authority to RFC3066 on child languageTerm, since that is what has been checked for:
                 for lt in childNode.iterfind('{'+self._nsMap.get('mods')+'}languageTerm'):
-                    lt.set('authority', 'rcf3066')
+                    lt.set('authority', 'rfc3066')
                 return childNode
             self.do.logMsg(self._identifier, rfc3066_lang[0] + LOGGER1, prefix=STR_MODS)
             return None
