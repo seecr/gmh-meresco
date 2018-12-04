@@ -54,7 +54,7 @@ local.properties
 /src/main/resources/rebel.xml
 # External tool builders
 .externalToolBuilders/
- 
+.idea
 # Locally stored "Eclipse launch configurations"
 *.launch
  
