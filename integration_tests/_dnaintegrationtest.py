@@ -101,12 +101,12 @@ class IntegrationTest(SeecrTestCase):
     def testRSS(self):
         body = self._doQuery({'repositoryId':'kb_tst', 'maximumRecords':'10'}, path="/rss")
         items = [(str(item.guid), str(item.description), str(item.pubDate)) for item in body.rss.channel.item]
-         
-        #print 'RSS BODY:', body.xml()
-#        for item in items:
-#           print '\nRss ITEM:', item
+    
+        # print 'RSS BODY:', body.xml()
+        # for item in items:
+        #     print '\nRss ITEM:', item
         
-        self.assertEquals(4, len(items))
+        self.assertEquals(6, len(items))
         
     def testOaiListMetadataFormats(self):
         header, body = getRequest(reactor, port, '/oai', {'verb': 'ListMetadataFormats'})

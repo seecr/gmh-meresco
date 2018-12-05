@@ -284,25 +284,19 @@ class Normalize_nl_MODS(Observable):
 
 ## Language:
     def _tlLanguage(self, childNode):
-        ## SSDC mandates iso639-1, SSMODS mandates iso639-1 or iso639-2 if iso639-1 is not available, but we'll settle for either 2 or 3 chars. iso639-2b, rfc3066, iso639-3, iso639-1
-        rfc3066_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='code' and @authority]/text()", namespaces=self._nsMap)
-        txt_lang = childNode.xpath("self::mods:language/mods:languageTerm[@type='text']/text()", namespaces=self._nsMap)
-        if len(rfc3066_lang) > 0:
-            #See also: ftp://ftp.rfc-editor.org/in-notes/rfc3066.txt
-            #match = self._patternRFC3066.match(rfc3066_lang[0])
-            #if match and match.group(1).lower() in RFC3066:
-            if comm.isValidRFC3066(rfc3066_lang[0]):
-            #if rfc3066_lang[0].strip() in RFC3066:
-                #Set @authority to RFC3066 on child languageTerm, since that is what has been checked for:
-                for lt in childNode.iterfind('{'+self._nsMap.get('mods')+'}languageTerm'):
-                    lt.set('authority', 'rfc3066')
-                return childNode
-            self.do.logMsg(self._identifier, rfc3066_lang[0] + LOGGER1, prefix=STR_MODS)
+        for langterm_node in childNode.iterfind("{"+self._nsMap.get('mods')+"}languageTerm"): # Check if languageTerm element is valid orelse remove it.
+            if langterm_node.get("type") == "code": # Do not check for authority: we'll set it fot you if you provided a valid rfc3066 code.
+                if comm.isValidRFC3066(langterm_node.text):
+                    langterm_node.set('authority', 'rfc3066')
+                else:
+                    self.do.logMsg(self._identifier, langterm_node.text + LOGGER1, prefix=STR_MODS)
+                    childNode.remove(langterm_node)
+            elif langterm_node.get("type") == "text":
+                langterm_node.attrib.pop('authority', None)
+        if len(list(childNode)) == 0:
             return None
-        elif len(txt_lang) > 0:
-            return childNode
         else:
-            return None
+            return childNode
 
 ## Genre:
     def _validateGenre(self, modsNode):
