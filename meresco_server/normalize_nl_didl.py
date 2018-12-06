@@ -49,6 +49,7 @@ EXCEPTION8 = "No accessRights found for objectfile."
 EXCEPTION9 = "Mandatory resource location for objectfile is not a valid URL: "
 EXCEPTION10 = "Mandatory Resource not found in DIDL objectFile Item."
 EXCEPTION11 = "Mandatory Resource URL not found in humanstartpage Item."
+EXCEPTION12 = " is an invalid accessRights term for an objectfile. Use: Open, Closed or RestrictedAccess."
 
 
 ## Translation maps (key needs to be found somewhere in textvalues to be mapped):
@@ -318,6 +319,8 @@ class Normalize_nl_DIDL(Observable):
                     if arights[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<dcterms:accessRights>'+value+'</dcterms:accessRights>')                        
                         break
+                else:
+                    raise ValidateException(formatExceptionLine(arights[0] + EXCEPTION12, prefix=STR_DIDL))
             else:
                 raise ValidateException(formatExceptionLine(EXCEPTION8, prefix=STR_DIDL))
                                                 
