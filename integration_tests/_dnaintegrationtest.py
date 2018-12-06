@@ -29,15 +29,14 @@
 #
 ## end license ##
 from os import getuid
-#WST
+
 import sys
-#
 assert getuid() != 0, "Do not run tests as 'root'"
-#WST:
+
 sys.path.insert(0, "..")
 
 import pdb
-#
+
 from os import system
 from sys import exit, exc_info, stdout
 
@@ -59,10 +58,6 @@ from utils_local import sleepWheel
 #Gebruik oude package voor get/postRequest met reactor.
 #Voor loose coupling, zonder Reactor gebruik ze uit de seecr.test package.
 from cq2utils import getRequest, postRequest
-
-
-#Dit werkt:
-#from meresco.harvester.oairequest import OaiRequest
 
 integrationTempdir = './integration_temp_dir'
 reactor = Reactor()
@@ -187,9 +182,8 @@ def createDatabase(port):
             print header
             exit(123)
         if "srw:diagnostics" in body:
-            print 'ERROR: "srw:diagnostics"'
-            print body
-            #exit(1234)
+            print 'ERROR: Previous .updateRequest caused a "srw:diagnostics". Record has not been processed.'
+            # print body
     print "Finished creating database in %s seconds" % (time() - start)
 
 if __name__ == '__main__':
