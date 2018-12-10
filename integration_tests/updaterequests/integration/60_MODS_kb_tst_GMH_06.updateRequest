@@ -92,6 +92,15 @@
                                                     &lt;mods:roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt;opn&lt;/mods:roleTerm&gt;
                                                 &lt;/mods:role&gt;
                                             &lt;/mods:name&gt;
+                                            &lt;mods:name type=&quot;personal&quot;&gt;
+                                                &lt;mods:displayForm&gt;F.J. Clay (Fiona)&lt;/mods:displayForm&gt;
+                                                &lt;mods:namePart type=&quot;family&quot;/&gt;
+                                                &lt;mods:namePart type=&quot;given&quot;/&gt;
+                                                &lt;mods:role&gt;
+                                                    &lt;mods:roleTerm type=&quot;code&quot; authority=&quot;marcrelator&quot;&gt;aut&lt;/mods:roleTerm&gt;
+                                                    &lt;mods:roleTerm type=&quot;text&quot; authority=&quot;marcrelator&quot;&gt;author&lt;/mods:roleTerm&gt;
+                                                &lt;/mods:role&gt;
+                                            &lt;/mods:name&gt;
                                             &lt;mods:extension&gt;
                                                 &lt;dai:daiList xmlns:dai=&quot;info:eu-repo/dai&quot; xsi:schemaLocation=&quot;info:eu-repo/dai https://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd&quot;&gt;
                                                     &lt;dai:identifier authority=&quot;info:eu-repo/dai/nl&quot; IDref=&quot;idp62160&quot;&gt;31462709X&lt;/dai:identifier&gt;
