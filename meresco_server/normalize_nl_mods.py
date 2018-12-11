@@ -271,7 +271,7 @@ class Normalize_nl_MODS(Observable):
             for namepart in name.iterfind(('{%s}namePart') % self._nsMap['mods']):
                 if not namepart.text: # Remove empty namaparts
                     name.remove(namepart)
-            if not role or len(role) < 1: ## Geen roleterm gevonden, of lege string voor type code en authority marcrelator: Verwijder dit name element:
+            if not role or len(role) < 1 or name.find(('{%s}namePart') % self._nsMap['mods']) is None: ## Geen roleterm gevonden, of lege string voor type code en authority marcrelator, of geen nameParts: Verwijder dit name element:
                 modsNode.remove(name)
             elif len(role) > 0 and not self.__isValidRoleTerm(role[0]):
                 raise ValidateException(formatExceptionLine( EXCEPTION4 + role[0], prefix=STR_MODS))        
