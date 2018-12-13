@@ -56,7 +56,7 @@
                                                 &lt;namePart type=&quot;family&quot;&gt;Glandorf&lt;/namePart&gt;
                                                 &lt;namePart type=&quot;given&quot;&gt; D.C.M.&lt;/namePart&gt;
                                                 &lt;role&gt;
-                                                    &lt;roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt;aut&lt;/roleTerm&gt;
+                                                    &lt;roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt; aut &lt;/roleTerm&gt;
                                                 &lt;/role&gt;
                                             &lt;/name&gt;
                                             &lt;name type=&quot;personal&quot; ID=&quot;n1170_aut_2&quot;&gt;

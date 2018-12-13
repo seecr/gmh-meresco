@@ -260,6 +260,8 @@ class Normalize_nl_MODS(Observable):
 ## Name:
     def _validateNames(self, modsNode): 
         for name in modsNode.iterfind(('{%s}name') % self._nsMap['mods']):
+            for roleterm in name.iterfind(('.//{%s}roleTerm') % self._nsMap['mods']):                
+                if roleterm.text: roleterm.text = roleterm.text.strip()
             role = name.xpath("self::mods:name/mods:role/mods:roleTerm[@type='code' and @authority='marcrelator']/text()", namespaces=self._nsMap)
             for namepart in name.iterfind(('{%s}namePart') % self._nsMap['mods']):
                 if not namepart.text: # Remove empty nameparts
