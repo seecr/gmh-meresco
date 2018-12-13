@@ -395,6 +395,10 @@ class Normalize_nl_MODS(Observable):
             return None
         return childNode
 
+
+    def _removeNamespace(self, tagName):
+        return '}' in tagName and tagName.split('}')[1] or tagName
+
 ## RelatedItem:
     def _tlRelateditem(self, childNode):
         #1: Remove all non-Edustandaard 'types' (only type=host):
@@ -402,7 +406,15 @@ class Normalize_nl_MODS(Observable):
         if type_attr is None or (type_attr is not None and not type_attr.strip() in ['host']): #['preceding', 'host', 'succeeding', 'series', 'otherVersion']
             return None
         
-        #2: Check if <start>, <end> and <total> tags are integers:
+        #2: Remove all NON-eduStandaard top-level elements:
+        allowedlist = list(mods_edu_tlelements)
+        allowedlist.append("part")
+        for relitem_child in childNode.iterchildren():
+            if not self._removeNamespace(relitem_child.tag) in allowedlist:
+                childNode.remove(relitem_child)
+
+
+        #3: Check if <start>, <end> and <total> tags are integers:
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:extent[@unit='page']/child::*", namespaces=self._nsMap)
         if len(children) > 0:
             for child in children: # <start>, <end>, <total> tags...
@@ -412,12 +424,12 @@ class Normalize_nl_MODS(Observable):
                     if len(ouder) == 0:
                         ouder.getparent().remove(ouder)
 
-        # 3: Normalize <part><date encoding=""> tag:
+        # 4: Normalize <part><date encoding=""> tag:
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:date", namespaces=self._nsMap)
         if len(children) > 0:
             for child in children: child.getparent().remove(child)
         
-        #4: Normalize date (see also originInfo)
+        #5: Normalize date (see also originInfo)
         # Select all children from originInfo having 'encoding' attribute:
         children = childNode.xpath("self::mods:relatedItem/mods:originInfo/child::*[@encoding='w3cdtf' or @encoding='iso8601']", namespaces=self._nsMap)
         if len(children) > 0:

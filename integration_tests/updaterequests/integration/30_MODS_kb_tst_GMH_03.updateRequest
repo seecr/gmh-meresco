@@ -184,6 +184,9 @@
                                                         &lt;placeTerm&gt;Institute of Biology, Utrecht University, Utrecht, The Netherlands&lt;/placeTerm&gt;
                                                     &lt;/place&gt;
                                                 &lt;/originInfo&gt;
+                                                &lt;physicalDescription&gt;
+                                                    &lt;form&gt;Film&lt;/form&gt;
+                                                &lt;/physicalDescription&gt;
                                                 &lt;part&gt;
                                                     &lt;detail type=&quot;volume&quot;&gt;
                                                         &lt;number&gt;67&lt;/number&gt;
