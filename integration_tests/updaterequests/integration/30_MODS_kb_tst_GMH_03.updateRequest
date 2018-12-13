@@ -50,6 +50,7 @@
                                             &lt;titleInfo&gt;
                                                 &lt;title&gt;Effect of Genetically Modified Pseudomonas putida WCS358r on&amp;#13;
                                                     the Fungal Rhizosphere Microflora of Field-Grown Wheat&lt;/title&gt;
+                                                    &lt;subTitle&gt;Sub-title&lt;/subTitle&gt;
                                             &lt;/titleInfo&gt;
                                             &lt;name type=&quot;personal&quot; ID=&quot;n1170_aut_1&quot;&gt;
                                                 &lt;namePart type=&quot;family&quot;&gt;Glandorf&lt;/namePart&gt;
@@ -139,6 +140,7 @@
                                             &lt;genre&gt;info:eu-repo/semantics/Article&lt;/genre&gt;
                                             &lt;originInfo&gt;
                                                 &lt;dateCreated encoding=&quot;iso8601&quot;&gt;2001-05-15&lt;/dateCreated&gt;
+                                                &lt;dateCreated encoding=&quot;iso8601&quot;&gt;2001-05-15&lt;/dateCreated&gt;
                                                 &lt;dateIssued encoding=&quot;iso8601&quot;&gt;2001-12-20&lt;/dateIssued&gt;
                                             &lt;/originInfo&gt;
                                             &lt;language&gt;
@@ -173,6 +175,7 @@
                                             &lt;relatedItem type=&quot;host&quot;&gt;
                                                 &lt;titleInfo&gt;
                                                     &lt;title&gt;Applied and environmental microbiology&lt;/title&gt;
+                                                    &lt;subTitle&gt;&lt;/subTitle&gt;
                                                 &lt;/titleInfo&gt;
                                                 &lt;originInfo&gt;
                                                     &lt;publisher&gt;American Society for Microbiology&lt;/publisher&gt;
@@ -185,6 +188,7 @@
                                                     &lt;detail type=&quot;volume&quot;&gt;
                                                         &lt;number&gt;67&lt;/number&gt;
                                                     &lt;/detail&gt;
+                                                    &lt;date encoding=&quot;iso8601&quot;&gt;2018-02-02&lt;/date&gt;
                                                     &lt;detail type=&quot;issue&quot;&gt;
                                                         &lt;number&gt;8&lt;/number&gt;
                                                     &lt;/detail&gt;

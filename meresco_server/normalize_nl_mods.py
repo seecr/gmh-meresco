@@ -83,7 +83,7 @@ mods_edu_extentions_ns = {
 
 # , ('hbo/hboMODSextension.xsd', 'self::hbo:hbo')
 # ('xml-schema location', 'xpath to root', 'schema location'):
-mods_edu_extentions = [ ('dai/dai-extension.xsd', 'self::dai:daiList', 'info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd'), 
+mods_edu_extentions = [ ('dai/dai-extension.xsd', 'self::dai:daiList', 'info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd'),
                         ('gal/gal-extension.xsd', 'self::gal:grantAgreementList', 'info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd'),
                         ('wmp/wmp-extension.xsd', 'self::wmp:rights', 'http://www.surfgroepen.nl/werkgroepmetadataplus http://purl.org/REP/standards/wmp-extension.xsd')]
 
@@ -94,16 +94,16 @@ mods_edu_tlelements = ["titleInfo", "relatedItem", "name", "language", "typeOfRe
 
 class Normalize_nl_MODS(Observable):
     """A class that normalizes MODS metadata to the EduStandaard applicationprofile"""
-    
+
     def __init__(self, nsMap={}):
         Observable.__init__(self)
-        
+
         self._nsMap = mods_edu_extentions_ns.copy()
         self._nsMap.update(nsMap or {})
         self._bln_success = False
-        
+
         self._edu_extension_schemas = []
-        
+
         ## Fill the schemas list for later use:
         for schemaPath, xPad, s_loc in mods_edu_extentions:
             print 'schema init:' ,schemaPath, xPad, s_loc
@@ -112,8 +112,8 @@ class Normalize_nl_MODS(Observable):
             except XMLSchemaParseError, e:
                 print 'XMLSchemaParseError.', e.error_log.last_error
                 raise
-        
-        
+
+
     def _detectAndConvert(self, anObject):
         if type(anObject) == _ElementTree:
             return self.convert(anObject)
@@ -124,13 +124,13 @@ class Normalize_nl_MODS(Observable):
         self._bln_hasTypOfResource = False
         result_tree = self._normalizeRecord(lxmlNode)
         if result_tree != None:
-            self._bln_success = True            
+            self._bln_success = True
         return result_tree
 
     def all_unknown(self, method, *args, **kwargs):
-        self._identifier = kwargs.get('identifier')        
+        self._identifier = kwargs.get('identifier')
         
-        newArgs = [self._detectAndConvert(arg) for arg in args]     
+        newArgs = [self._detectAndConvert(arg) for arg in args]
         newKwargs = dict((key, self._detectAndConvert(value)) for key, value in kwargs.items())
         if self._bln_success:
             yield self.all.unknown(method, *newArgs, **newKwargs)
@@ -141,20 +141,20 @@ class Normalize_nl_MODS(Observable):
         # 2. Normalize it
         # 3. Put it back in place.
         # 4. return the lxmlNode containing the normalized MODS.
-        
+
         #1: Get Mods from the lxmlNode:
         lxmlMODS = lxmlNode.xpath('(//mods:mods)[1]', namespaces=self._nsMap)
-        
+
         ## Our normalisation functions to call:
         modsFunctions = [ self._convertFullMods2GHMods ]
-        
+
         if len(lxmlMODS) > 0:
         #2: Normalize it
-            str_norm_mods = ''            
+            str_norm_mods = ''
             for function in modsFunctions:
-                str_norm_mods += function(lxmlMODS[0])            
-            
-        #3: Put it back in DIDL/place:        
+                str_norm_mods += function(lxmlMODS[0])
+
+        #3: Put it back in DIDL/place:
             lxmlMODS[0].getparent().replace(lxmlMODS[0], etree.fromstring(str_norm_mods) )
 
         else: #This should never happen @runtime: record should have been validated up front...
@@ -169,14 +169,14 @@ class Normalize_nl_MODS(Observable):
         returnxml = ''
         ## We need a deepcopy, otherwise we'll modify the lxmlnode by reference!!
         e_modsroot_copy = deepcopy(lxmlMODSNode)
-        
+
         ## Check if version 3.4 was supplied: correct otherwise.
         self._normalizeModsVersion(e_modsroot_copy)
-        
+
         ## Valideer en normaliseer alle extension tags in 1 tag en bewaar deze voor later....
         e_temp_extensions = self._getValidModsExtension(e_modsroot_copy)
         ## LET OP: Alle <extension> tags worden hieronder verwijdert doordat _tlExtension() 'None' terug geeft.       
-        
+
         ## Valideer en normaliseer alle titleInfo tags:
         self._normalizeTitleinfo(e_modsroot_copy)
 
@@ -189,12 +189,10 @@ class Normalize_nl_MODS(Observable):
 
         ## Itereer over ALLE toplevel elementen:
         for child in e_modsroot_copy.iterchildren():
-            
             for tlelement in mods_edu_tlelements: ## Iterate over all top level elements...
                 if child.tag == ('{%s}'+tlelement) % self._nsMap['mods']:
                     ## Call normalisation function on current child:
                     returnChild = eval("self._tl" + tlelement.capitalize())(child)
-                    
                     if returnChild is None:
                         e_modsroot_copy.remove(child)
                     else:
@@ -202,18 +200,15 @@ class Normalize_nl_MODS(Observable):
                     break
             else: #Wordt alleen geskipped als ie uit 'break' komt...
                 e_modsroot_copy.remove(child)
-                
         ## Append our <extension> child elements to the root:
         if e_temp_extensions is not None:
             for child in e_temp_extensions.iterfind(('{%s}extension') % self._nsMap['mods']):
-                
                 if child.xpath("boolean(count(self::mods:extension/dai:daiList))", namespaces=self._nsMap): # = daiList extension:
                     for daiid in child.iterfind(('.//{%s}identifier') % self._nsMap['dai']):
                         self._addDaiFromModExtension(e_modsroot_copy, daiid.get("IDref"), daiid.get("authority"), daiid.text)
                 else:
                     e_modsroot_copy.append(child)
 
-        
         ## Append one typeOfResource to root, if it does not exist:
         if not self._bln_hasTypOfResource:
             self._addTypeOfResource(e_modsroot_copy)
@@ -221,7 +216,7 @@ class Normalize_nl_MODS(Observable):
         ## We'll add the MODS node to a new custom element and remove it again, so that lxml will use the mods prefix used in the namespacemap.
         ## Otherwise default namespaces may be used for MODS...
         root = etree.Element('{'+self._nsMap['mods']+'}temp', nsmap=self._nsMap)
-        root.append(e_modsroot_copy)       
+        root.append(e_modsroot_copy)
                 
         ## Some namespaces may not be in use anymore after normalisation: remove them...
         etree.cleanup_namespaces(root)
@@ -250,14 +245,12 @@ class Normalize_nl_MODS(Observable):
             raise ValidateException(formatExceptionLine(EXCEPTION2, prefix=STR_MODS))
 
     def _isValidTitleInfoTag(self, lxmlNode):
-        #Correct @type:
-        #if lxmlNode.get('type') != 'translated':
-        #    if lxmlNode.attrib.has_key('type'):
-        #        del lxmlNode.attrib['type'] # Remove 'type' attribute if value other than 'translated'...
-        #Throw Exception if no or empty title tag:
         for title in lxmlNode.iterfind(('{%s}title') % self._nsMap['mods']):
             if not title.text:
                 raise ValidateException(formatExceptionLine(EXCEPTION3, prefix=STR_MODS))
+        for subtitle in lxmlNode.iterfind(('{%s}subTitle') % self._nsMap['mods']):
+            if not subtitle.text:
+                subtitle.getparent().remove(subtitle)
         return True
 
     def _tlTitleinfo(self, childNode):
@@ -269,7 +262,7 @@ class Normalize_nl_MODS(Observable):
         for name in modsNode.iterfind(('{%s}name') % self._nsMap['mods']):
             role = name.xpath("self::mods:name/mods:role/mods:roleTerm[@type='code' and @authority='marcrelator']/text()", namespaces=self._nsMap)
             for namepart in name.iterfind(('{%s}namePart') % self._nsMap['mods']):
-                if not namepart.text: # Remove empty namaparts
+                if not namepart.text: # Remove empty nameparts
                     name.remove(namepart)
             if not role or len(role) < 1 or name.find(('{%s}namePart') % self._nsMap['mods']) is None: ## Geen roleterm gevonden, of lege string voor type code en authority marcrelator, of geen nameParts: Verwijder dit name element:
                 modsNode.remove(name)
@@ -305,13 +298,13 @@ class Normalize_nl_MODS(Observable):
     def _validateGenre(self, modsNode):
     
         fqGenre = None
-        bln_hasValid = False        
+        bln_hasValid = False
         ## Loop all 'genre' elements as separate nodes:
         for genre in modsNode.iterfind('{'+self._nsMap.get('mods')+'}genre'):
         
             for key, value in GENRES_SEMANTIEK.iteritems():
                     if genre.text.strip().lower().find(key) >= 0: #found a (lowercased) genre
-                        fqGenre = value                           
+                        fqGenre = value
                         break
         
             if fqGenre is not None and not bln_hasValid:
@@ -333,7 +326,7 @@ class Normalize_nl_MODS(Observable):
         children = childNode.xpath("self::mods:originInfo/child::*[@encoding='w3cdtf' or @encoding='iso8601']", namespaces=self._nsMap)
         if len(children) > 0:
             for child in children:
-                if self._validateISO8601( child.text ):                    
+                if self._validateISO8601( child.text ):
                     child.text = self._granulateDate(child.text)
                     child.set('encoding', 'w3cdtf')
                     if child.tag == ('{%s}dateIssued') % self._nsMap['mods']: hasDateIssued = True
@@ -341,6 +334,11 @@ class Normalize_nl_MODS(Observable):
                     child.getparent().remove(child)
         if not hasDateIssued:
             raise ValidateException(formatExceptionLine(EXCEPTION7, prefix=STR_MODS))
+
+        for child in childNode.xpath("self::mods:originInfo/mods:publisher", namespaces=self._nsMap):
+            if not child.text:
+                child.getparent().remove(child)
+
         return childNode if len(childNode) > 0 else None
 
 
@@ -411,18 +409,31 @@ class Normalize_nl_MODS(Observable):
                     ouder.remove(child)
                     if len(ouder) == 0:
                         ouder.getparent().remove(ouder)
-        
-        
-        #3: Normalize <part><date encoding=""> tag:
+
+        # 3: Normalize <part><date encoding=""> tag:
         children = childNode.xpath("self::mods:relatedItem/mods:part/mods:date", namespaces=self._nsMap)
         if len(children) > 0:
-            for child in children:
-                #if self._validateISO8601( child.text ):                    
-                #    child.text = self._granulateDate(child.text)
-                #    child.set('encoding', 'w3cdtf')
-                #else:
-                    child.getparent().remove(child)
+            for child in children: child.getparent().remove(child)
         
+        #4: Normalize date (see also originInfo)
+        # Select all children from originInfo having 'encoding' attribute:
+        children = childNode.xpath("self::mods:relatedItem/mods:originInfo/child::*[@encoding='w3cdtf' or @encoding='iso8601']", namespaces=self._nsMap)
+        if len(children) > 0:
+            for child in children:
+                if self._validateISO8601( child.text ):
+                    child.text = self._granulateDate(child.text)
+                    child.set('encoding', 'w3cdtf')
+                else:
+                    child.getparent().remove(child)
+
+        for child in childNode.xpath("self::mods:relatedItem/mods:originInfo/mods:publisher", namespaces=self._nsMap):
+            if not child.text:
+                child.getparent().remove(child)
+
+        for subtitle in childNode.xpath("self::mods:relatedItem/mods:titleInfo/mods:subTitle", namespaces=self._nsMap):
+            if not subtitle.text:
+                subtitle.getparent().remove(subtitle)
+
         return childNode if len(childNode) > 0 else None
 
 ## Part (relatedItem):
@@ -447,7 +458,7 @@ class Normalize_nl_MODS(Observable):
             return None
         return childNode ## Transfer 'as is'.
 
-## Classification:        
+## Classification:
     def _tlClassification(self, childNode):
         if not (childNode.attrib.has_key('authority') or childNode.attrib.has_key('authorityURI') ) or childNode.text is None:
             return None
@@ -456,7 +467,7 @@ class Normalize_nl_MODS(Observable):
 ## Subject:
     def _tlSubject(self, childNode):
         if len(childNode.xpath('mods:topic', namespaces=self._nsMap)) < 1:
-            return None      
+            return None
         return childNode ## Transfer 'as is'.
 
 ## Extension:
@@ -465,7 +476,7 @@ class Normalize_nl_MODS(Observable):
         return None
 
     def _getValidModsExtension(self, modsNode):
-        ## Select all 'extension' child elements as separate nodes:        
+        ## Select all 'extension' child elements as separate nodes:
         extensions = modsNode.xpath('self::mods:mods/mods:extension/child::*', namespaces=self._nsMap)
         e_rootExten = etree.Element(('{%s}extension') % self._nsMap['mods'])
         for extension in extensions:
@@ -497,7 +508,6 @@ class Normalize_nl_MODS(Observable):
 ## This function is needed as long as the repositories still deliver dai identifiers in Mods Extension tag.
 ## We do NOT VALIDE the identifier, since all other nameIdentifiers are also transferred "as they are".
     def _addDaiFromModExtension(self, mods_node, xml_id, dailist_authority, dailist_dai_text):
-    
         if dailist_authority is not None and "dai" not in dailist_authority:
             self.do.logMsg(self._identifier, LOGGER3 % (dailist_authority), prefix=STR_MODS)
             return
