@@ -77,6 +77,9 @@
                   &lt;/wmp:rights&gt;
               &lt;/extension&gt;
               &lt;genre&gt;info:eu-repo/semantics/report&lt;/genre&gt;
+              &lt;originInfo&gt;
+                  &lt;dateIssued encoding=&quot;iso8601&quot;&gt;2009&lt;/dateIssued&gt;
+              &lt;/originInfo&gt;
             &lt;/mods&gt;
           &lt;/didl:Resource&gt;
         &lt;/didl:Component&gt;

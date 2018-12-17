@@ -184,8 +184,11 @@ class Normalize_nl_MODS(Observable):
         self._validateNames(e_modsroot_copy)
         ## LET OP: Alle <name> tags worden hieronder verwijderd doordat _tlNames() 'None' terug geeft.
         
-        #N Normaliseer alle Genre tags...       
+        ## Normaliseer alle Genre tags...       
         self._validateGenre(e_modsroot_copy)
+
+        ## Check for EduStandaard mandatory originInfo tag:
+        self._checkOriginInfoDateIssued(e_modsroot_copy)
 
         ## Itereer over ALLE toplevel elementen:
         for child in e_modsroot_copy.iterchildren():
@@ -243,6 +246,11 @@ class Normalize_nl_MODS(Observable):
                 modsNode.remove(child)
         if not hasTitleInfo:
             raise ValidateException(formatExceptionLine(EXCEPTION2, prefix=STR_MODS))
+
+## Checks if element exists: it is not checked for if completely missing from mods.
+    def _checkOriginInfoDateIssued(self, modsNode):
+        if len(modsNode.xpath("//mods:mods/mods:originInfo/mods:dateIssued", namespaces=self._nsMap)) <= 0:
+            raise ValidateException(formatExceptionLine(EXCEPTION7, prefix=STR_MODS))
 
     def _isValidTitleInfoTag(self, lxmlNode):
         for title in lxmlNode.iterfind(('{%s}title') % self._nsMap['mods']):
