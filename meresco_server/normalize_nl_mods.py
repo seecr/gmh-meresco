@@ -212,6 +212,18 @@ class Normalize_nl_MODS(Observable):
                 else:
                     e_modsroot_copy.append(child)
 
+        ## Nornmalize xml:ID and xml:IDref: Combined format will not validate if xml:ID's are not unique:
+        for idname in e_modsroot_copy.findall( (".//{%s}name[@ID]") % self._nsMap['mods'] ):            
+            origID = idname.get("ID")
+            #Check if this ID is in use by a mods:extension:
+            extensions = e_modsroot_copy.xpath("//mods:extension/descendant::*[@IDref='"+origID+"']", namespaces=self._nsMap)
+            if len(extensions) > 0:
+                for extension in extensions: # if so, rename both ID and IDref:
+                    extension.attrib['IDref'] = 'gmh_'+origID
+                idname.attrib['ID'] = 'gmh_'+origID
+            else: # Remove name@ID reference not in use (any more).
+                idname.attrib.pop('ID', None)
+
         ## Append one typeOfResource to root, if it does not exist:
         if not self._bln_hasTypOfResource:
             self._addTypeOfResource(e_modsroot_copy)
@@ -226,7 +238,7 @@ class Normalize_nl_MODS(Observable):
         
         returnxml = tostring(root.find( ('{%s}mods') % self._nsMap['mods'] ) , pretty_print=True, encoding=XML_ENCODING)
         #returnxml = etree.tostring(e_modsroot_copy, pretty_print=True, encoding=XML_ENCODING)
-        
+        # print returnxml
         return returnxml
 
 ## mods version:

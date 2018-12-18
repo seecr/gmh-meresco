@@ -62,7 +62,7 @@
                                                     &lt;mods:roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt;aut&lt;/mods:roleTerm&gt;
                                                 &lt;/mods:role&gt;
                                             &lt;/mods:name&gt;
-                                            &lt;mods:name type=&quot;corporate&quot;&gt;
+                                            &lt;mods:name type=&quot;corporate&quot; ID=&quot;idp62170&quot;&gt;
                                                 &lt;mods:namePart&gt;WUR Wageningen UR&lt;/mods:namePart&gt;
                                                 &lt;mods:role&gt;
                                                     &lt;mods:roleTerm authority=&quot;marcrelator&quot; type=&quot;code&quot;&gt;dgg&lt;/mods:roleTerm&gt;
@@ -106,6 +106,22 @@
                                                     &lt;dai:identifier authority=&quot;info:eu-repo/dai/nl&quot; IDref=&quot;idp62160&quot;&gt;31462709X&lt;/dai:identifier&gt;
                                                 &lt;/dai:daiList&gt;
                                             &lt;/mods:extension&gt;
+
+                                            &lt;mods:extension&gt; 
+                                                &lt;gal:grantAgreementList xmlns:gal=&quot;info:eu-repo/grantAgreement&quot; xsi:schemaLocation=&quot;info:eu-repo/grantAgreement http://purl.org/REP/standards/gal-extension.xsd&quot;&gt;
+                                                    &lt;gal:grantAgreement code=&quot;info:eu-repo/grantAgreement/EC/FP5/654321&quot;&gt;
+                                                        &lt;gal:funder IDref=&quot;idp62170&quot;/&gt;
+                                                        &lt;gal:title&gt;EERA Design Tools for Offshore Wind Farm Cluster (EERA-DTOC)&lt;/gal:title&gt;
+                                                        &lt;gal:description&gt;The European Energy Research Alliance (EERA) together with some
+                                                            high-impact industry partners addresses the call proposing an integrated and
+                                                            validated design tool combining the state-of-the-art wake, yield and electrical
+                                                            models available in the consortium, as a plug-in architecture with possibility for
+                                                            third party models.&lt;/gal:description&gt;
+                                                    &lt;/gal:grantAgreement&gt;
+                                                    &lt;gal:grantAgreement code=&quot;info:eu-repo/grantAgreement/EC/FP7/282797&quot;/&gt;
+                                                &lt;/gal:grantAgreementList&gt;
+                                            &lt;/mods:extension&gt;
+
                                             &lt;mods:typeOfResource&gt;text&lt;/mods:typeOfResource&gt;
                                             &lt;mods:genre&gt;info:eu-repo/semantics/doctoralThesis&lt;/mods:genre&gt;
                                             &lt;mods:originInfo&gt;
