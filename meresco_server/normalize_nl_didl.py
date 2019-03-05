@@ -90,7 +90,14 @@ class Normalize_nl_DIDL(Observable):
         return anObject
 
     def convert(self, lxmlNode):
-        self._bln_success = False       
+        self._bln_success = False
+
+        ## Remove all XML-comments from the (normalized) DIDL/MODS tree. Cannot supply parser options to Venturi: XML-Comments will also be read by iterchildren().
+        comments = lxmlNode.xpath('//comment()')    
+        for c in comments:
+            p = c.getparent()
+            p.remove(c)
+
         result_tree = self._normalizeRecord(lxmlNode)
         if result_tree != None:
             self._bln_success = True            
