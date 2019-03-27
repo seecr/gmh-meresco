@@ -1,0 +1,24 @@
+--- oailistsets.py	2013-04-10 10:19:28.000000000 +0100
++++ oailistsets_new.py	2019-03-27 19:24:17.000000000 +0100
+@@ -32,6 +32,10 @@
+ from oaiutils import checkNoRepeatedArguments, checkNoMoreArguments, checkArgument, oaiFooter, oaiHeader, oaiRequestArgs, OaiException, zuluTime
+ from oaierror import oaiError
+ from meresco.core.observable import Observable
++# WST: https://github.com/seecr/meresco-oai/blob/aefd75fcdd7c75205faf090bd1037a6ff8182faa/meresco/oai/oailistsets.py
++# /usr/lib/python2.6/site-packages/meresco/oai
++from xml.sax.saxutils import escape as xmlEscape
++##
+ 
+ class OaiListSets(Observable):
+     """4.6 ListSets
+@@ -74,8 +78,8 @@
+         yield '<%s>' % verb
+         for setSpec in sets:
+             yield '<set>'
+-            yield '<setSpec>%s</setSpec>' % setSpec
+-            yield '<setName>set %s</setName>' % setSpec
++            yield '<setSpec>%s</setSpec>' % xmlEscape(setSpec)
++            yield '<setName>set %s</setName>' % xmlEscape(setSpec)
+             yield '</set>'
+         yield '</%s>' % verb
+         yield oaiFooter()
