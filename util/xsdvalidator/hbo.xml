@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<hbo:hbo xmlns:hbo="info:eu-repo/xmlns/hboMODSextension" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns="http://www.loc.gov/mods/v3" 
-    xsi:schemaLocation="info:eu-repo/xmlns/hboMODSextension http://wiki.surf.nl/download/attachments/11600294/hboMODSextension.xsd">
-    <hbo:name ID="nameID_1" type="corporate">
-        <hbo:namePart type="organisation"> Hogeschool van Amsterdam</hbo:namePart>
-    </hbo:name>
-</hbo:hbo>

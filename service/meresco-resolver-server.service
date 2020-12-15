@@ -1,0 +1,12 @@
+[Unit]
+Description=Meresco NBN Resolver Server
+After=mariadb.service
+Requires=mariadb.service
+
+[Service]
+User=meresco
+ExecStart=<path to:> start-resolver --port=<portnumber> --gatewayPort=<gatewayPortnumber> --dbConfig=<path to:> /conf/config.ini'
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

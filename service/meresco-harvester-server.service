@@ -1,0 +1,10 @@
+[Unit]
+Description=Meresco Harvester Server
+
+[Service]
+User=harvester
+ExecStart=/usr/bin/meresco-harvester-server --port=<port> --dataPath=<data path> --logPath=<log path> --statePath=<state path> --externalUrl=http://<domain>:<port>  --customerLogoUrl=<logo url>
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
