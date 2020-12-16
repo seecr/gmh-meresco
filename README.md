@@ -2,7 +2,7 @@
 Code repository of the DANS-KB [Gemeenschappelijke Metadata Harvester](https://harvester.dans.knaw.nl) (GMH)
 
 ### BRIGHM
-In this version, the national 'URN:NBN' resolver (Basic Resolver Infrastructuure (BRI)) will be integrated into the BRI: BRIGHM.
+In this version, the national 'URN:NBN' resolver (Basic Resolver Infrastructuure (BRI)) is integrated into the BRI: BRIGHM.
 
 
 ### $ yum list installed|grep seecr
