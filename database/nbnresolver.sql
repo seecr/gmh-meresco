@@ -140,7 +140,7 @@ CREATE TABLE `registrant` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping routines for database 'tst_nbnresolver'
+-- Dumping routines for database 'nbnresolver'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `deleteNbnLocationsByRegistrant` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
