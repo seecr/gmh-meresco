@@ -53,7 +53,7 @@ class ResolverStorageComponent(object):
         The locations-list is added in reversed order.
         Therefore the highest priority-location will be inserted last and will resolve first.
 
-        :param identifier: meresco uploadid of this record
+        :param identifier: Meresco uploadid of this record (Meresco => repoId:OAI-PMH-identifier)
         :param locations: prioritized list of locations
         :param urnnbn: urn:nbn persistent identifier
         :param rgid: meresco repository group identifier
@@ -65,40 +65,26 @@ class ResolverStorageComponent(object):
 
         if not urnnbnRegex.match(urnnbn): # DIDL normalisation rejects records with invalid urn:nbn identifiers. So this check is overhead, for this situation.
             return
-
-        try: #TODO: Move all into one transaction.
+        #TODO: Check if NBN needs to be "unfragmented"...
+        #TODO: Move all into one transaction.
+        try:
             registrant_id = self._selectOrInsertRegistrantId_pl(rgid)
             # print "registrant_id:", registrant_id
-            identifier_id = self._selectOrInsertIdentifierId_pl(registrant_id, urnnbn)
+            # identifier_id = self._selectOrInsertIdentifierId_pl(registrant_id, urnnbn)
             # print "identifier_id:", identifier_id
             # Delete all identifier/location pairs from identifier_location table linked to this registrant and identifier...
-            self._deletePairsByRegId_pl(registrant_id, identifier_id)
-            location_ids = self._selectOrInsertLocationsId_pl(registrant_id, locations)
-            # print "location_ids:", location_ids
-            self._insertIdentifierLocations_pl(identifier_id, location_ids, isfailover)
+            # self._deletePairsByRegId_pl(registrant_id, identifier_id)
+            self._deleteNbnLocationsByRegId_pl(registrant_id, urnnbn)
+            self._insertNbnLocations(registrant_id, urnnbn, locations)
+            # # Upsert the locations into the location table:
+            # location_ids = self._selectOrInsertLocationsId_pl(registrant_id, locations)
+            # # print "location_ids:", location_ids
+            # # Insert identifier/location pairs with LTP indication:
+            # self._insertIdentifierLocations_pl(identifier_id, location_ids, isltp)
 
         except mysql.connector.Error as e:
             print("Error from SQL-db: ", e)
-
         return
-
-
-    # def _getDBLocationsByNBN_pl(self, nbn_id):
-    #     try:
-    #         conn = self._cnxpool.get_connection()
-    #         cursor = conn.cursor()
-    #         sql = """SELECT L.location_url, IL.isFailover
-    #                 FROM identifier I 
-    #                 JOIN identifier_location IL ON I.identifier_id = IL.identifier_id
-    #                 JOIN location L ON L.location_id = IL.location_id
-    #                 WHERE I.identifier_value= '{}'
-    #                 ORDER BY IL.isFailover, IL.last_modified DESC;""".format(nbn_id)
-    #         cursor.execute(sql)
-    #         res = cursor.fetchall()
-    #         self.close(conn, cursor)
-    #         return res
-    #     except mysql.connector.Error as err:
-    #         print "Error while execute'ing SQL-query: {}: {}".format(sql, err)
 
 
     def _insertIdentifierLocations_pl(self, identifier_id, location_ids, isFailover=False):
@@ -118,20 +104,50 @@ class ResolverStorageComponent(object):
         except mysql.connector.Error as err:
             print "Error while execute'ing SQL-query: {}".format(err)
 
-    def _deletePairsByRegId_pl(self, registrant_id, identifier_id):
+    def _insertNbnLocations(self, registrant_id, urnnbn, locations):
+        """
+         Upserts all locations for this identifier and registrantId
+        """
         try:
             conn = self._cnxpool.get_connection()
             cursor = conn.cursor()
-            sql = """DELETE identifier_location
-                FROM identifier_location
-                INNER JOIN location_registrant ON identifier_location.location_id = location_registrant.location_id
-                WHERE location_registrant.registrant_id = '{}' AND identifier_location.identifier_id = '{}'""".format(registrant_id, identifier_id)
-            # print sql
-            cursor.execute(sql)
+            for location in locations:
+                cursor.callproc('insertNbnLocation', (urnnbn, location, registrant_id))
+                conn.commit()
+            self.close(conn, cursor)
+        except mysql.connector.Error as err:
+            print "Error while execute'ing storedprocedure: {}".format(err)
+
+    # def _deletePairsByRegId_pl(self, registrant_id, identifier_id):
+    #     try:
+    #         conn = self._cnxpool.get_connection()
+    #         cursor = conn.cursor()
+    #         sql = """DELETE identifier_location
+    #             FROM identifier_location
+    #             INNER JOIN location_registrant ON identifier_location.location_id = location_registrant.location_id
+    #             WHERE location_registrant.registrant_id = '{}' AND identifier_location.identifier_id = '{}'""".format(registrant_id, identifier_id)
+    #         # print sql
+    #         cursor.execute(sql)
+    #         conn.commit()
+    #         self.close(conn, cursor)
+    #     except mysql.connector.Error as err:
+    #         print "Error while execute'ing SQL-query: {}".format(err)
+
+
+    def _deleteNbnLocationsByRegId_pl(self, registrant_id, identifier):
+        """
+        Removes all id/loc & loc/reg pairs for this registrant_id and nbn-identifier.
+        This prevents deleting locations for this NBN that where registered by OTHER registrants (NBN-own repo perhaps).
+        It takes LTP into account.
+        """
+        try:
+            conn = self._cnxpool.get_connection()
+            cursor = conn.cursor()
+            cursor.callproc('deleteNbnLocationsByRegistrant', (identifier, registrant_id))
             conn.commit()
             self.close(conn, cursor)
         except mysql.connector.Error as err:
-            print "Error while execute'ing SQL-query: {}".format(err)
+            print "Error while execute'ing storedprocedure: {}".format(err)
 
 
     def _selectOrInsertLocationsId_pl(self, registrant_id, locations):
