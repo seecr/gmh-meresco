@@ -27,4 +27,4 @@ class Resolver(Observable):
         urnnbn = f_normdoc.xpath('//didl:DIDL/didl:Item/didl:Descriptor/didl:Statement/dii:Identifier/text()', namespaces=self._nsMap)[0]
         repositorygroupid = f_meta.xpath('//meta:meta/meta:repository/meta:repositoryGroupId/text()', namespaces=self._nsMap)[0]
         
-        yield self.do.addNbnToDB(identifier, locations=nbnlocation, urnnbn=urnnbn, rgid=repositorygroupid, isfailover=False)
+        yield self.do.addNbnToDB(identifier, locations=nbnlocation, urnnbn=urnnbn, rgid=repositorygroupid)

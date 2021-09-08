@@ -149,6 +149,8 @@ class GmhTestIntegrationState(IntegrationState):
 
             query = ("SET FOREIGN_KEY_CHECKS=0")
             cursor.execute(query)
+            query = ("TRUNCATE TABLE tst_nbnresolver.credentials")
+            cursor.execute(query)            
             query = ("TRUNCATE TABLE tst_nbnresolver.identifier_location")
             cursor.execute(query)
             query = ("TRUNCATE TABLE tst_nbnresolver.location_registrant")
