@@ -50,9 +50,9 @@ class ApiTest(IntegrationTestCase):
     def testRSS(self): # GMH21 OK
         header, body = getRequest(self.apiPort, '/rss', dict(repositoryId='kb_tst', maximumRecords=10)) #, startRecord='1'
         # print "RSS body:", etree.tostring(body)   
-        self.assertEqual(6, len(xpath(body, "/rss/channel/item/description")))
+        self.assertEqual(7, len(xpath(body, "/rss/channel/item/description")))
         self.assertEqual('GMH DANS-KB Normalisationlog Syndication', xpathFirst(body, '//channel/title/text()'))
-        self.assertEqual('DIDL: HumanStartPage descriptor found in depricated dip namespace.\n', xpathFirst(body, '//item/description/text()'))
+        self.assertEqual('MODS: Complete <m:name> element was removed: Could not find valid <m:roleTerm> and/or <m:namePart> element(s)\n', xpathFirst(body, '//item/description/text()'))
 
 
     def testOaiListMetadataFormats(self): # GMH21 OK
