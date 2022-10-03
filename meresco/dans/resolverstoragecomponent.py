@@ -67,7 +67,11 @@ class ResolverStorageComponent(object):
         #TODO: Check if NBN needs to be "unfragmented"...
         #TODO: Move all into one transaction.
         try:
-            registrant_id = self._selectOrInsertRegistrantId_pl(rgid)
+            registrant_id, isLPT, prefix = self._selectOrInsertRegistrantId_pl(rgid)
+            # Check if correct prefix:
+            if not urnnbn.startswith(prefix):
+                print "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(nbn=urnnbn, prefix=prefix)
+                return
             self._deleteNbnLocationsByRegId_pl(registrant_id, urnnbn)
             self._insertNbnLocations(registrant_id, urnnbn, locations)
 
@@ -108,6 +112,8 @@ class ResolverStorageComponent(object):
 
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
+        isLTP = False
+        prefix = "urn:nbn:nl"
         try:
             conn = self._cnxpool.get_connection()
             # print conn.get_server_info()
@@ -117,13 +123,15 @@ class ResolverStorageComponent(object):
             res = cursor.fetchall()
             if len(res) > 0 :
                 registrant_id = res[0][0]
+                isLTP = bool(res[0][3])
+                prefix = res[0][4]
             else:  # registrant_id not available from DB. Insert it and return the new id.
                 sql = "INSERT INTO registrant (registrant_groupid) VALUES ('%s')" % rgid
                 cursor.execute(sql)
                 registrant_id = cursor.lastrowid
                 conn.commit()
             self.close(conn, cursor)
-            return registrant_id
+            return registrant_id, isLTP, prefix
         except mysql.connector.Error as err:
             print "Error while execute'ing SQL-query: {}".format(err)
 
