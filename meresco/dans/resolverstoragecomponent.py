@@ -69,7 +69,7 @@ class ResolverStorageComponent(object):
         try:
             registrant_id, isLPT, prefix = self._selectOrInsertRegistrantId_pl(rgid)
             # Check if correct prefix:
-            if not urnnbn.startswith(prefix):
+            if not urnnbn.startswith(prefix) and not isLPT:
                 print "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(nbn=urnnbn, prefix=prefix)
                 return
             self._deleteNbnLocationsByRegId_pl(registrant_id, urnnbn)
