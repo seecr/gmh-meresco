@@ -16,7 +16,7 @@
           &lt;didl:Item&gt;
             &lt;didl:Descriptor&gt;
               &lt;didl:Statement mimeType="application/xml"&gt;
-                &lt;dii:Identifier&gt;URN:NBN:NL:IN:10-157&lt;/dii:Identifier&gt;
+                &lt;dii:Identifier&gt;URN:NBN:NL:IN:10-157#fragment#fragment2&lt;/dii:Identifier&gt;
               &lt;/didl:Statement&gt;
             &lt;/didl:Descriptor&gt;
             &lt;didl:Descriptor&gt;
@@ -25,7 +25,7 @@
               &lt;/didl:Statement&gt;
             &lt;/didl:Descriptor&gt;
             &lt;didl:Component&gt;
-              &lt;didl:Resource mimeType="text/html" ref="http://publications.beeldengeluid.nl/pub/157"/&gt;
+              &lt;didl:Resource mimeType="text/html" ref="http://publications.beeldengeluid.nl/pub/157#fragment"/&gt;
             &lt;/didl:Component&gt;
             &lt;didl:Item&gt;
               &lt;didl:Descriptor&gt;
