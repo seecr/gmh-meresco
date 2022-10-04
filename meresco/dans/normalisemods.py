@@ -68,6 +68,7 @@ MARC_ROLES=['abr','acp','act','adi','adp','aft','anl','anm','ann','ant','ape','a
 LOGGER1 = " is not a valid RFC3066 language code."
 LOGGER2 = "Found unknown extension (no EDUstandaard)."
 LOGGER3 = "Unknown identifier authority: %s in /mods:extension/dai:daiList; Identifier for this authority will not be processed."
+LOGGER4 = "Complete <m:name> element was removed: Could not find valid <m:roleTerm> and/or <m:namePart> element(s)"
 
 EXCEPTION1 = "Mandatory MODS metadata not found in DIDL Item."
 EXCEPTION2 = "Mandatory MODS titleInfo not found."
@@ -270,9 +271,9 @@ class NormaliseMODS(UiaConverter):
         return childNode
 
 ## Name:
-    def _validateNames(self, modsNode): 
+    def _validateNames(self, modsNode):
         for name in modsNode.iterfind(('{%s}name') % self._nsMap['mods']):
-            for roleterm in name.iterfind(('.//{%s}roleTerm') % self._nsMap['mods']):                
+            for roleterm in name.iterfind(('.//{%s}roleTerm') % self._nsMap['mods']):
                 if roleterm.text: roleterm.text = roleterm.text.strip()
             role = name.xpath("self::mods:name/mods:role/mods:roleTerm[@type='code' and @authority='marcrelator']/text()", namespaces=self._nsMap)
             for namepart in name.iterfind(('{%s}namePart') % self._nsMap['mods']):
@@ -280,8 +281,9 @@ class NormaliseMODS(UiaConverter):
                     name.remove(namepart)
             if not role or len(role) < 1 or name.find(('{%s}namePart') % self._nsMap['mods']) is None: ## Geen roleterm gevonden, of lege string voor type code en authority marcrelator, of geen nameParts: Verwijder dit name element:
                 modsNode.remove(name)
+                self.do.logMsg(self._uploadid, LOGGER4, prefix=STR_MODS)
             elif len(role) > 0 and not self.__isValidRoleTerm(role[0]):
-                raise ValidateException(formatExceptionLine( EXCEPTION4 + role[0], prefix=STR_MODS))        
+                raise ValidateException(formatExceptionLine( EXCEPTION4 + role[0], prefix=STR_MODS))
         if len(modsNode.xpath("//mods:mods/mods:name", namespaces=self._nsMap)) <= 0:
             raise ValidateException(formatExceptionLine(EXCEPTION5, prefix=STR_MODS))
 
