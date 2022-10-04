@@ -35,7 +35,6 @@ import ConfigParser
 from os.path import abspath, dirname, join, realpath
 from re import compile
 
-
 urnnbnRegex = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+')
 
 class ResolverStorageComponent(object):
@@ -43,7 +42,6 @@ class ResolverStorageComponent(object):
         self._dbconfig = self.read_db_config(conffile_path=dbconfig)
         self._name = name
         self._cnxpool = self._create_cnxpool(pool_name="resolver_pool", pool_size=4)
-        
 
     def observable_name(self):
         return self._name
@@ -62,54 +60,39 @@ class ResolverStorageComponent(object):
         rgid = rgid.lower()
         urnnbn = urnnbn.lower()
 
+        # Get rid of the fragment part:
+        if urnnbn != None and "#" in urnnbn:
+            urnnbn = urnnbn.split("#", 1)[0]
+
         if not urnnbnRegex.match(urnnbn): # DIDL normalisation rejects records with invalid urn:nbn identifiers. So this check is overhead, for this situation.
             return
-        #TODO: Check if NBN needs to be "unfragmented"...
-        #TODO: Move all into one transaction.
+
         try:
-            registrant_id, isLPT, prefix = self._selectOrInsertRegistrantId_pl(rgid)
-            # Check if correct prefix:
-            if not urnnbn.startswith(prefix) and not isLPT:
+            registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
+            # Check if correct prefix, skip registration otherwise:
+            if not urnnbn.startswith(prefix) and not isLTP:
                 print "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(nbn=urnnbn, prefix=prefix)
                 return
-            self._deleteNbnLocationsByRegId_pl(registrant_id, urnnbn)
-            self._insertNbnLocations(registrant_id, urnnbn, locations)
-
+            self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
         except mysql.connector.Error as e:
             print "Error from SQL-db: {}".format(e)
         return
 
-
-    def _insertNbnLocations(self, registrant_id, urnnbn, locations):
+    def _addNbnLocationsByRegId(self, registrant_id, urnnbn, locations, isLTP):
         """
          Upserts all locations for this identifier and registrantId
         """
         try:
             conn = self._cnxpool.get_connection()
             cursor = conn.cursor()
+            cursor.callproc('deleteNbnLocationsByRegistrantId', (str(urnnbn), int(registrant_id), bool(isLTP)))
+            conn.commit()
             for location in locations:
-                cursor.callproc('insertNbnLocation', (str(urnnbn), str(location), int(registrant_id)))
+                cursor.callproc('addNbnLocation', (str(urnnbn), str(location), int(registrant_id), bool(isLTP)))
                 conn.commit()
             self.close(conn, cursor)
         except mysql.connector.Error as err:
-            print "Error while execute'ing storedprocedure insertNbnLocation: {}".format(err)
-
-
-    def _deleteNbnLocationsByRegId_pl(self, registrant_id, identifier):
-        """
-        Removes all id/loc & loc/reg pairs for this registrant_id and nbn-identifier.
-        This prevents deleting locations for this NBN that where registered by OTHER registrants (NBN-own repo perhaps).
-        It takes LTP into account.
-        """
-        try:
-            conn = self._cnxpool.get_connection()
-            cursor = conn.cursor()
-            cursor.callproc('deleteNbnLocationsByRegistrant', (str(identifier), int(registrant_id)))
-            conn.commit()
-            self.close(conn, cursor)
-        except mysql.connector.Error as err:
-            print "Error while execute'ing storedprocedure deleteNbnLocationsByRegistrant: {}".format(err)
-
+            print "Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {}".format(err)
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
         isLTP = False
@@ -134,7 +117,6 @@ class ResolverStorageComponent(object):
             return registrant_id, isLTP, prefix
         except mysql.connector.Error as err:
             print "Error while execute'ing SQL-query: {}".format(err)
-
 
     def read_db_config(self, conffile_path, section='mysql'): #TODO: Even importeren ergens anders vandaan. Dubbele code...
         """ Read database configuration file and return a dictionary object
@@ -189,4 +171,3 @@ class ResolverStorageComponent(object):
         """
         cursor.close()
         conn.close()
-
