@@ -133,7 +133,7 @@ CREATE TABLE `registrant` (
   `registrant_groupid` varchar(255) NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
   `isLTP` tinyint(1) NOT NULL DEFAULT '0',
-  `prefix` varchar(45) DEFAULT NULL,
+  `prefix` varchar(45) DEFAULT 'urn:nbn:nl:',
   PRIMARY KEY (`registrant_id`),
   UNIQUE KEY `registrant_groupid_UNIQUE` (`registrant_groupid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
