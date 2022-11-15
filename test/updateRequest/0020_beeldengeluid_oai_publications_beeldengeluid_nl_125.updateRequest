@@ -50,6 +50,12 @@
                       &lt;mods:extent&gt;Filesize: -1 bytes&lt;/mods:extent&gt;
                       &lt;mods:digitalOrigin&gt;born digital&lt;/mods:digitalOrigin&gt;
                     &lt;/mods:physicalDescription&gt;
+                    &lt;mods:physicalDescription&gt;
+                      &lt;mods:internetMediaType&gt;application/pdf&lt;/mods:internetMediaType&gt;
+                      &lt;mods:extent&gt;Filesize: 6 bytes&lt;/mods:extent&gt;
+                      &lt;mods:digitalOrigin&gt;born digital&lt;/mods:digitalOrigin&gt;
+                    &lt;/mods:physicalDescription&gt;
+                  
                     &lt;mods:name type="personal"&gt;
                       &lt;mods:displayForm&gt;Fickers, Andreas&lt;/mods:displayForm&gt;
                       &lt;mods:namePart type="family"&gt;Fickers&lt;/mods:namePart&gt;
@@ -63,6 +69,7 @@
                       &lt;mods:displayForm&gt;O'Dwyer, Andy&lt;/mods:displayForm&gt;
                       &lt;mods:namePart type="family"&gt;O'Dwyer&lt;/mods:namePart&gt;
                       &lt;mods:namePart type="given"&gt;Andy&lt;/mods:namePart&gt;
+                      &lt;mods:affiliation&gt;BeMOEIAL&lt;/mods:affiliation&gt;
                       &lt;mods:role&gt;
                         &lt;mods:roleTerm type="code" authority="marcrelator"&gt;aut&lt;/mods:roleTerm&gt;
                         &lt;mods:roleTerm type="text" authority="marcrelator"&gt;author&lt;/mods:roleTerm&gt;
@@ -90,7 +97,9 @@
                     &lt;/mods:relatedItem&gt;
                     &lt;mods:originInfo&gt;
                       &lt;mods:publisher&gt;Netherlands Institute for Sound and Vision&lt;/mods:publisher&gt;
+                      &lt;mods:publisher&gt;Netherlands Institute for Sound and DIVISION&lt;/mods:publisher&gt;
                       &lt;mods:dateIssued encoding="iso8601"&gt;2012-11-28&lt;/mods:dateIssued&gt;
+                      &lt;mods:dateCreated encoding="iso8601"&gt;2012-11-28&lt;/mods:dateCreated&gt;
                       &lt;!--
         Note that the encoding above should actually be "w3cdtf",
         this needs to be changed in the dutch edustandaard.
@@ -98,6 +107,7 @@
                     &lt;/mods:originInfo&gt;
                     &lt;mods:language&gt;
                       &lt;mods:languageTerm type="code" authority="rfc3066"&gt;en&lt;/mods:languageTerm&gt;
+                      &lt;mods:languageTerm type="code" authority="rfc5646"&gt;nl&lt;/mods:languageTerm&gt;
                       &lt;mods:languageTerm type="text"&gt;English&lt;/mods:languageTerm&gt;
                     &lt;/mods:language&gt;
                     &lt;mods:subject&gt;
@@ -110,8 +120,16 @@
                     &lt;mods:titleInfo xml:lang="en"&gt;
                       &lt;mods:title&gt;Reading Between the Lines: a Transnational History of the Franco-British &#8216;Entente Cordiale&#8217; in Post-War Television&lt;/mods:title&gt;
                     &lt;/mods:titleInfo&gt;
+                    &lt;mods:classification authorityURI=&quot;info:eu-repo/classification/Nbc&quot; displayLabel=&quot;CLASSIFICATION&quot;&gt;54&lt;/mods:classification&gt;
+                    &lt;mods:classification authorityURI=&quot;info:eu-repo/classification/Nbc&quot; displayLabel=&quot;NEPPPER&quot;&gt;54&lt;/mods:classification&gt;
+                    &lt;mods:titleInfo xml:lang="en"&gt;
+                      &lt;mods:title&gt;Secondtitle&lt;/mods:title&gt;
+                      &lt;mods:subTitle&gt;SUBTITLE&lt;/mods:subTitle&gt;
+                      &lt;mods:subTitle&gt;SUBTITLE2&lt;/mods:subTitle&gt;
+                    &lt;/mods:titleInfo&gt;                    
                     &lt;mods:typeOfResource&gt;text&lt;/mods:typeOfResource&gt;
                     &lt;mods:genre&gt;info:eu-repo/semantics/article&lt;/mods:genre&gt;
+                    &lt;mods:genre&gt;info:eu-repo/semantics/book&lt;/mods:genre&gt;
                   &lt;/mods:mods&gt;
                 &lt;/didl:Resource&gt;
               &lt;/didl:Component&gt;
