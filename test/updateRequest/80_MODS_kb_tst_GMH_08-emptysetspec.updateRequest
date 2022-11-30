@@ -10,7 +10,7 @@
           &lt;header xmlns="http://www.openarchives.org/OAI/2.0/"&gt;
       &lt;identifier&gt;GMH:08&lt;/identifier&gt;
         &lt;datestamp&gt;2009-04-24T08:38:36Z&lt;/datestamp&gt;
-        &lt;/header&gt;
+        &lt;setSpec&gt;kas plant&lt;/setSpec&gt;&lt;/header&gt;
         &lt;metadata xmlns="http://www.openarchives.org/OAI/2.0/"&gt;
   &lt;didl:DIDL xmlns:didl=&quot;urn:mpeg:mpeg21:2002:02-DIDL-NS&quot; xmlns:dii=&quot;urn:mpeg:mpeg21:2002:01-DII-NS&quot;
     xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:dcterms=&quot;http://purl.org/dc/terms/&quot;
