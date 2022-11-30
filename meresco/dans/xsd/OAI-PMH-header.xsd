@@ -6,7 +6,8 @@
     <documentation>
       XML Schema derived from: http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd.
       This XML Schema can be used to validate the oai:header only and not the complete OAI-PMH v2.0 response.
-      W. Steinhoff, 2022-11-30. Validated with XML Editor 19.1, build 2018051511 on 2022-11-30.
+      W. Steinhoff, 2022-11-30: Validated with XML Editor 19.1, build 2018051511 on 2022-11-30.
+      W. Steinhoff, 2022-11-30: Changed identifierType restriction from 'anyURI' to 'string'. This loosens the restriction that was never here before (anyURI).
       $Date: 2022/11/30 09:31:21 $
     </documentation>
   </annotation>
@@ -28,7 +29,7 @@
   </complexType>
 
   <simpleType name="identifierType">
-    <restriction base="anyURI"/>
+    <restriction base="string"/>
   </simpleType>
 
   <simpleType name="statusType">
