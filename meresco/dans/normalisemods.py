@@ -415,14 +415,14 @@ class NormaliseMODS(UiaConverter):
 
 ## RelatedItem:
     def _tlRelateditem(self, childNode):
-        #1: Remove all non-Edustandaard 'types' (only type=host):
+        #1: Remove all non-Edustandaard 'types' (only @type=host):
         type_attr = childNode.get('type')
         if type_attr is None or (type_attr is not None and not type_attr.strip() in ['host']): #['preceding', 'host', 'succeeding', 'series', 'otherVersion']
             return None
         
         #2: Remove all NON-eduStandaard top-level elements:
         allowedlist = list(mods_edu_tlelements)
-        allowedlist.append("part")
+        allowedlist.append("part") # preserve <part> elements.
         for relitem_child in childNode.iterchildren():
             if not self._removeNamespace(relitem_child.tag) in allowedlist:
                 childNode.remove(relitem_child)
@@ -454,6 +454,7 @@ class NormaliseMODS(UiaConverter):
                 else:
                     child.getparent().remove(child)
 
+        #6: Clean some empty elements
         for child in childNode.xpath("self::mods:relatedItem/mods:originInfo/mods:publisher", namespaces=self._nsMap):
             if not child.text or not child.text.strip():
                 child.getparent().remove(child)
@@ -461,6 +462,13 @@ class NormaliseMODS(UiaConverter):
         for subtitle in childNode.xpath("self::mods:relatedItem/mods:titleInfo/mods:subTitle", namespaces=self._nsMap):
             if not subtitle.text or not subtitle.text.strip():
                 subtitle.getparent().remove(subtitle)
+
+        for detailchild in childNode.xpath("self::mods:relatedItem/mods:part/mods:detail/child::*", namespaces=self._nsMap):
+            if not detailchild.text or not detailchild.text.strip():
+                ouder = detailchild.getparent()
+                ouder.remove(detailchild)
+                if len(ouder) == 0:
+                    ouder.getparent().remove(ouder)
 
         return childNode if len(childNode) > 0 else None
 
