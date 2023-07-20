@@ -479,9 +479,18 @@ class NormaliseMODS(UiaConverter):
 
 ## TypeOfResource:
     def _tlTypeofresource(self, childNode):
-        terug = childNode if not self._bln_hasTypOfResource else None
-        self._bln_hasTypOfResource = True
-        return terug
+        # KB/Gijs 16-juni'23: de (KB) validatie loopt vast op een leeg element: <mods:TypeOfResource/>:
+
+        # Returns (xml-validated) term (other than 'text' allowed), skips empty elements:
+        # if not self._bln_hasTypOfResource:
+        #     if not childNode.text or not childNode.text.strip():
+        #         return None
+        #     else:
+        #         self._bln_hasTypOfResource = True
+        #         return childNode
+
+        # However, for now, we will never return a node, so it will be added later (Top level TypeOfResource only) with fixed value 'text' (LN#220)
+        return None
 
     def _addTypeOfResource(self, modsNode):
         ## Adds exactly one typeOfResource element to the mods node.

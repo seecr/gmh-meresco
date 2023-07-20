@@ -348,7 +348,7 @@ class NormaliseDIDL(UiaConverter):
         #6: Check bestandsnaam op objectniveau (WISH 13 april 2023, actiepunt 5, nummer 3: "Informatie op objectniveau"):
             toc = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:tableOfContents/text()', namespaces=self._nsMap)
             if len(toc) > 0 and toc[0].strip():
-                of_container += descr_templ % ('<dcterms:tableOfContents>'+toc[0].strip()+'</dcterms:tableOfContents>')
+                of_container += descr_templ % ('<dcterms:tableOfContents>'+escapeXml(toc[0].strip())+'</dcterms:tableOfContents>')
 
         ## SKIPPING: Not in EduStandaard.            
         #6.0: Check for embargo:
