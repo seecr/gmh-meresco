@@ -1,28 +1,39 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ## begin license ##
 #
-# Copyright (C) 2012-2016 Seecr (Seek You Too B.V.) http://seecr.nl
-# Copyright (C) Data Archiving and Networked Services (DANS) http://dans.knaw.nl
+# Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
 #
-# This file is part of "NARCIS Index"
+# Copyright (C) 2012-2016, 2025 Seecr (Seek You Too B.V.) https://seecr.nl
+# Copyright (C) 2020 Data Archiving and Networked Services (DANS) http://dans.knaw.nl
+# Copyright (C) 2025 Koninklijke Bibliotheek (KB) https://www.kb.nl
 #
-# "NARCIS Index" is free software; you can redistribute it and/or modify
+# This file is part of "GMH-Meresco"
+#
+# "GMH-Meresco" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# "NARCIS Index" is distributed in the hope that it will be useful,
+# "GMH-Meresco" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with "NARCIS Index"; if not, write to the Free Software
+# along with "GMH-Meresco"; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 ## end license ##
 
-from lxml.etree import parse, _ElementTree, iselement, tostring, fromstring, XMLSchema, parse as lxmlParse
+from lxml.etree import (
+    parse,
+    _ElementTree,
+    iselement,
+    tostring,
+    fromstring,
+    XMLSchema,
+    parse as lxmlParse,
+)
 from lxml import etree
 
 from xml.sax.saxutils import escape as escapeXml
@@ -44,7 +55,8 @@ class OaiAddDeleteRecordWithPrefixesAndSetSpecs(Transparent):
         self.call.addOaiRecord(
             identifier=identifier,
             setSpecs=self._setSpecs(identifier=identifier, **kwargs),
-            metadataPrefixes=self._metadataPrefixes(identifier=identifier, **kwargs))
+            metadataPrefixes=self._metadataPrefixes(identifier=identifier, **kwargs),
+        )
         return
         yield
 
@@ -52,14 +64,20 @@ class OaiAddDeleteRecordWithPrefixesAndSetSpecs(Transparent):
         self.call.deleteOaiRecord(
             identifier=identifier,
             setSpecs=self._setSpecs(identifier=identifier, **kwargs),
-            metadataPrefixes=self._metadataPrefixes(identifier=identifier, **kwargs))
+            metadataPrefixes=self._metadataPrefixes(identifier=identifier, **kwargs),
+        )
         return
         yield
+
 
 def _prepare(iterableOrCallable):
     if iterableOrCallable is None:
         return lambda **kwargs: []
-    return iterableOrCallable if callable(iterableOrCallable) else lambda **kwargs: iterableOrCallable
+    return (
+        iterableOrCallable
+        if callable(iterableOrCallable)
+        else lambda **kwargs: iterableOrCallable
+    )
 
 
 class OaiAddRecord(Transparent):
@@ -74,17 +92,37 @@ class OaiAddRecord(Transparent):
         # - origineel oai header (setSpecs)
         # - meta part (repositoryGroupId)
 
-        lxml_record_part = fromstring(lxmlNode.xpath('//document:document/document:part[@name="record"]/text()', namespaces=namespaces)[0])
-        lxml_meta_part = fromstring(lxmlNode.xpath('//document:document/document:part[@name="meta"]/text()', namespaces=namespaces)[0])
+        lxml_record_part = fromstring(
+            lxmlNode.xpath(
+                '//document:document/document:part[@name="record"]/text()',
+                namespaces=namespaces,
+            )[0]
+        )
+        lxml_meta_part = fromstring(
+            lxmlNode.xpath(
+                '//document:document/document:part[@name="meta"]/text()',
+                namespaces=namespaces,
+            )[0]
+        )
 
-        oaiHeader = xpathFirst(lxml_record_part, '//oai:header')
-        repogroupid = xpathFirst(lxml_meta_part, '//meta:repository/meta:repositoryGroupId/text()')
+        oaiHeader = xpathFirst(lxml_record_part, "//oai:header")
+        repogroupid = xpathFirst(
+            lxml_meta_part, "//meta:repository/meta:repositoryGroupId/text()"
+        )
 
-        setSpecs = oaiHeader.xpath('//oai:setSpec/text()', namespaces=namespaces)
-        sets = set(((repogroupid.strip()+':'+str(s)), "set " + (repogroupid.strip()+':'+str(s))) for s in setSpecs)
+        setSpecs = oaiHeader.xpath("//oai:setSpec/text()", namespaces=namespaces)
+        sets = set(
+            (
+                (repogroupid.strip() + ":" + str(s)),
+                "set " + (repogroupid.strip() + ":" + str(s)),
+            )
+            for s in setSpecs
+        )
         sets.add((repogroupid.strip(), "set " + repogroupid.strip()))
-        
-        self.call.addOaiRecord(identifier=identifier, sets=sets, metadataFormats=self._metadataPrefixes)
+
+        self.call.addOaiRecord(
+            identifier=identifier, sets=sets, metadataFormats=self._metadataPrefixes
+        )
         return
         yield
 
