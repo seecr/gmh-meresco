@@ -26,29 +26,31 @@
 
 from os import getuid
 import sys
+
 assert getuid() != 0, "Do not run tests as 'root'"
 
 
 from seecrdeps import includeParentAndDeps
+
 includeParentAndDeps(__file__, scanForDeps=True)
 
 from seecr.test.testrunner import TestRunner
 from _integration import GmhTestIntegrationState
 
-if __name__ == '__main__': #TODO: arg[0] fastMode uitlezen. 
+if __name__ == "__main__":  # TODO: arg[0] fastMode uitlezen.
     runner = TestRunner()
     # Setting fastmode to True, will SKIP the upload part, and reuse existing database/store for the integration tests.
     runner.fastMode = False
-    print "FASTMODE:", runner.fastMode
+    print("FASTMODE:", runner.fastMode)
 
     GmhTestIntegrationState(
         "brigmh",
+        "/home/seecr/.seecr/.gmhtestdb.conf",
         tests=[
-            '_integration.gatewaytest.GatewayTest',
-            '_integration.apitest.ApiTest',
-            '_integration.resolvertest.ResolverTest',
+            "_integration.gatewaytest.GatewayTest",
+            "_integration.apitest.ApiTest",
+            "_integration.resolvertest.ResolverTest",
         ],
-        fastMode=runner.fastMode
-        ).addToTestRunner(runner)
+        fastMode=runner.fastMode,
+    ).addToTestRunner(runner)
     runner.run()
-

@@ -31,7 +31,7 @@
 # from lxml import etree
 
 from lxml.etree import parse, XMLSchema, XMLSchemaParseError, _ElementTree, tostring, fromstring
-from StringIO import StringIO
+from io import StringIO
 
 from weightless.core import NoneOfTheObserversRespond, DeclineMessage
 from meresco.core import Observable
@@ -54,11 +54,11 @@ class Validate(Observable):
         
         ## Fill the schemas list for later use:
         for strName, strXPath, schemaPath in xSDPathList:
-            print 'schema init:', strName, strXPath, schemaPath
+            print('schema init:', strName, strXPath, schemaPath)
             try:
                 self._xmlSchemas.append((strName, strXPath, XMLSchema(parse(join(join(dirname(abspath(__file__)), 'xsd'), schemaPath) ) ) ))
-            except XMLSchemaParseError, e:
-                print 'XMLSchemaParseError.............',e.error_log.last_error
+            except XMLSchemaParseError as e:
+                print('XMLSchemaParseError.............',e.error_log.last_error)
                 raise
 
 
@@ -86,7 +86,7 @@ class Validate(Observable):
             raise DeclineMessage
 
     def _detectAndValidate(self, *args, **kwargs):
-        allArguments = list(args) + kwargs.values()
+        allArguments = list(args) + list(kwargs.values())
         for arg in allArguments:
             if type(arg) == _ElementTree: #Should be only one...
                 

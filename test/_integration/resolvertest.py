@@ -26,13 +26,26 @@
 
 from seecr.test import IntegrationTestCase
 from seecr.test.utils import getRequest
-from meresco.xml import xpath
 from lxml import etree
-from meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
+
 
 class ResolverTest(IntegrationTestCase):
 
     def testOaiIdentify(self):
-        header, body = getRequest(self.resolverPort, '/', arguments=dict(identifier='urn:nbn:nl:ui:39-ae86436a9031f6f287b2fdc6f54e3fe6'))
-        self.assertEqual('HTTP/1.0 200 OK\r\nContent-Type: text/plain; charset=utf-8', header)
-        self.assertEqual('<html><body><p>Resolver Server</p></body></html>', etree.tostring(body))
+        header, body = getRequest(
+            self.resolverPort,
+            "/",
+            arguments=dict(
+                identifier="urn:nbn:nl:ui:39-ae86436a9031f6f287b2fdc6f54e3fe6"
+            ),
+        )
+        self.assertEqual(
+            {
+                "StatusCode": "200",
+                "Headers": {"Content-Type": "text/plain; charset=utf-8"},
+            },
+            header,
+        )
+        self.assertEqual(
+            "<html><body><p>Resolver Server</p></body></html>", etree.tostring(body)
+        )

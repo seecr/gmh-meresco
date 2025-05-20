@@ -30,27 +30,52 @@ from meresco.xml import xpath
 from lxml import etree
 from meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
 
+
 class GatewayTest(IntegrationTestCase):
 
     def testOai(self):
-        header, body = getRequest(self.gatewayPort, '/oaix', arguments=dict(verb='ListRecords', metadataPrefix=NORMALISED_DOC_NAME))
-        self.assertEqual('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        # print "OAIX body:", etree.tostring(body)
-        records = xpath(body, '//oai:record')
+        header, body = getRequest(
+            self.gatewayPort,
+            "/oaix",
+            arguments=dict(verb="ListRecords", metadataPrefix=NORMALISED_DOC_NAME),
+        )
+        self.assertEqual(
+            {
+                "StatusCode": "200",
+                "Headers": {"Content-Type": "text/xml; charset=utf-8"},
+            },
+            header,
+        )
+        print("OAIX body:", etree.tostring(body))
+        records = xpath(body, b"//oai:record")
         self.assertEqual(18, len(records))
 
         deletes = xpath(body, '//oai:record[oai:header/@status = "deleted"]')
         self.assertEqual(2, len(deletes))
 
     def testOaiIdentify(self):
-        header, body = getRequest(self.gatewayPort, '/oaix', arguments=dict(verb='Identify'))
-        # print "Identify body:", etree.tostring(body)
-        self.assertEqual('HTTP/1.0 200 OK\r\nContent-Type: text/xml; charset=utf-8', header)
-        adminEmail = xpath(body, '//oai:Identify/oai:adminEmail/text()')
+        header, body = getRequest(
+            self.gatewayPort, "/oaix", arguments=dict(verb="Identify")
+        )
+        # print("Identify body:", etree.tostring(body))
+        self.assertEqual(
+            {
+                "StatusCode": "200",
+                "Headers": {"Content-Type": "text/xml; charset=utf-8"},
+            },
+            header,
+        )
+        adminEmail = xpath(body, "//oai:Identify/oai:adminEmail/text()")
         self.assertEqual("harvester@dans.knaw.nl", adminEmail[0])
 
     def testOaixInfo(self):
-        header, body = getRequest(self.gatewayPort, '/oaix/info/index')
-        self.assertEqual('HTTP/1.0 200 OK\r\nContent-Type: text/html; charset=utf-8', header)
+        header, body = getRequest(self.gatewayPort, "/oaix/info/index")
+        self.assertEqual(
+            {
+                "StatusCode": "200",
+                "Headers": {"Content-Type": "text/html; charset=utf-8"},
+            },
+            header,
+        )
         # print "testOaixInfo:", etree.tostring(body)
-        self.assertTrue('normdoc' in etree.tostring(body))
+        self.assertTrue(b"normdoc" in etree.tostring(body))

@@ -40,7 +40,7 @@ class OaiAddDeleteRecordWithPrefixesAndSetSpecs(Transparent):
         self._metadataPrefixes = _prepare(metadataPrefixes)
 
     def add(self, identifier, **kwargs):
-        print "OaiAddDeleteRecordWithPrefixesAndSetSpecs:", identifier
+        print("OaiAddDeleteRecordWithPrefixesAndSetSpecs:", identifier)
         self.call.addOaiRecord(
             identifier=identifier,
             setSpecs=self._setSpecs(identifier=identifier, **kwargs),

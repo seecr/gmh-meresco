@@ -265,7 +265,7 @@ def main(reactor, port, statePath, gatewayPort, quickCommit=False, **ignored):
 
 def startServer(port, stateDir, gatewayPort, quickCommit=False, **kwargs):
     setSignalHandlers()
-    print 'Firing up API Server.'
+    print('Firing up API Server.')
     statePath = abspath(stateDir)
 
     reactor = Reactor()
@@ -283,6 +283,6 @@ def startServer(port, stateDir, gatewayPort, quickCommit=False, **kwargs):
 
     registerShutdownHandler(statePath=statePath, server=server, reactor=reactor, shutdownMustSucceed=False)
 
-    print "Ready to rumble at %s" % port
+    print("Ready to rumble at %s" % port)
     sys.stdout.flush()
     reactor.loop()

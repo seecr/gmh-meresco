@@ -33,13 +33,9 @@ includeParentAndDeps(__file__)                    #DO_NOT_DISTRIBUTE
 from seecr.utils import isRootUser
 from meresco.components import ParseArguments
 
-import mysql.connector
-from mysql.connector import errorcode
-from mysql.connector.pooling import PooledMySQLConnection
-
 if __name__ == '__main__':
     if isRootUser():
-        print "Do not run as root user!"
+        print("Do not run as root user!")
         exit(2)
 
     parser = ParseArguments()

@@ -4,7 +4,7 @@ from lxml import etree
 from xml.sax.saxutils import escape as escapeXml
 
 from copy import deepcopy
-from StringIO import StringIO
+from io import StringIO
 
 from meresco.core import Observable
 from meresco.components.xml_generic.validate import ValidateException
@@ -15,8 +15,8 @@ from meresco.dans.uiaconverter import UiaConverter
 
 from dateutil.parser import parse as parseDate
 
-from xmlvalidator import formatExceptionLine
-import commons as comm
+from .xmlvalidator import formatExceptionLine
+from . import commons as comm
 
 from os.path import abspath, dirname, join
 
@@ -163,7 +163,7 @@ class NormaliseDIDL(UiaConverter):
 
             return e_didl
         except:
-            print 'Error while parsing: ', str_didl
+            print('Error while parsing: ', str_didl)
             raise
 
     def _getRootElement(self, lxmlNode):
@@ -215,7 +215,7 @@ class NormaliseDIDL(UiaConverter):
                     datedict["%s %s" % (str(pd.date()), str(pd.time()))] = date.strip()
 
             ## Get first sorted key:
-            for key in reversed(sorted(datedict.iterkeys())):
+            for key in reversed(sorted(datedict.keys())):
                 modified = datedict[key]
                 break
         if not tl_modified[0].strip() == modified:
@@ -326,7 +326,7 @@ class NormaliseDIDL(UiaConverter):
         #3: Check op geldige AccessRights:
             arights = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/dcterms:accessRights/text()', namespaces=self._nsMap)
             if len(arights) > 0:
-                for key, value in accessRights.iteritems():
+                for key, value in accessRights.items():
                     if arights[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<dcterms:accessRights>'+value+'</dcterms:accessRights>')
                         break
@@ -370,7 +370,7 @@ class NormaliseDIDL(UiaConverter):
         #7: Check for published version(author/publisher):
             pubVersion = objectfile.xpath('self::didl:Item/didl:Descriptor/didl:Statement/rdf:type/@rdf:resource', namespaces=self._nsMap)
             if len(pubVersion) > 0: ## Both (author/publisher) may be available: we'll take the first one...
-                for key, value in pubVersions.iteritems():
+                for key, value in pubVersions.items():
                     if pubVersion[0].strip().lower().find(key) >= 0:
                         of_container += descr_templ % ('<rdf:type rdf:resource="'+value+'"/>')
                         break
