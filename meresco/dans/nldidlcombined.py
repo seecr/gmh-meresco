@@ -3,7 +3,7 @@ from lxml.etree import parse, _ElementTree, tostring
 from lxml import etree
 from meresco.core import Observable
 from copy import deepcopy
-from StringIO import StringIO
+from io import StringIO
 from weightless.core import Transparent, be, compose
 from meresco.dans.uiaconverter import UiaConverter
 

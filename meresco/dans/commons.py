@@ -3,8 +3,8 @@
 
 from re import compile, IGNORECASE
 from dateutil.parser import parse as parseDate
-import urllib
-from urlparse import urlparse, urlunparse
+import urllib.request, urllib.parse, urllib.error
+from urllib.parse import urlparse, urlunparse
 
 #RegEx:
 REG_URNNBN = r'^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\d{2}-.+'
@@ -62,8 +62,8 @@ def urlQuote(str_url):
     '''
     o = urlparse(str_url)
     _pad = o.path
-    _pad = urllib.unquote(_pad)
-    _pad = urllib.quote(_pad.encode('utf-8', "xmlcharrefreplace")) #We'll not ignore or throw errors here, but use xml encodng instead.
+    _pad = urllib.parse.unquote(_pad)
+    _pad = urllib.parse.quote(_pad.encode('utf-8', "xmlcharrefreplace")) #We'll not ignore or throw errors here, but use xml encodng instead.
     # _pad.encode('utf-8', "xmlcharrefreplace") Wait, what happens here?
     # _pad might already be a utf-8 byte string. If, so, Python implicit decodes _pad to unicode (using sys.getdefaultencoding(), which should be utf-8), and then we encode it back to utf-8 byte string...
     # _pad might be unicode string. If, so, we explicitly encode/convert it to utf-8 byte string, and encode all characters not available in utf-8, to xml-chars, which will be available in utf-8...

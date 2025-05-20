@@ -26,8 +26,7 @@
 #
 ## end license ##
 
-from os import listdir
-from os.path import join, abspath, dirname, isdir, realpath
+from os.path import join, abspath, dirname, realpath
 from time import sleep, time
 from traceback import print_exc
 
@@ -38,31 +37,30 @@ from seecr.test.utils import postRequest, sleepWheel
 from glob import glob
 
 import mysql.connector
-import ConfigParser
+import configparser
+
+from meresco.dans.utils import read_db_config
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))
 
-JAVA_BIN="/usr/lib/jvm/jre-1.8.0/bin"
-if not isdir(JAVA_BIN):
-    JAVA_BIN="/etc/alternatives/jre_1.8.0/bin"
-
 
 class GmhTestIntegrationState(IntegrationState):
-    def __init__(self, stateName, tests=None, fastMode=False):
+    def __init__(self, stateName, db_conf_file, tests=None, fastMode=False):
         IntegrationState.__init__(self, stateName, tests=tests, fastMode=fastMode)
-        self.testdataDir = join(dirname(mydir), 'updateRequest')
-        self.gatewayPort = PortNumberGenerator.next()
-        self.apiPort = PortNumberGenerator.next()
-        self.resolverPort = PortNumberGenerator.next()
-
+        self._db_conf_file = db_conf_file
+        self.testdataDir = join(dirname(mydir), "updateRequest")
+        self.gatewayPort = PortNumberGenerator.nextPort()
+        self.apiPort = PortNumberGenerator.nextPort()
+        self.resolverPort = PortNumberGenerator.nextPort()
 
     def binDir(self):
-        return join(projectDir, 'bin')
-
+        return join(projectDir, "bin")
 
     def setUp(self):
-        self._truncateTestDb(realpath(join(mydir, '..', 'conf','config.ini')))
+        self._truncateTestDb(
+            self._db_conf_file
+        )  # realpath(join(mydir, "..", "conf", "config.ini")))
         self.startGatewayServer()
         self.startApiServer()
         self.startResolverServer()
@@ -70,100 +68,103 @@ class GmhTestIntegrationState(IntegrationState):
         self._createDatabase()
         sleep(0.2)
 
-
     def startGatewayServer(self):
-        executable = self.binPath('start-gateway')
+        executable = self.binPath("start-gateway")
         self._startServer(
-            serviceName='gateway',
+            serviceName="gateway",
             debugInfo=True,
             executable=executable,
-            serviceReadyUrl='http://localhost:%s/info/version' % self.gatewayPort,
+            serviceReadyUrl="http://localhost:%s/info/version" % self.gatewayPort,
             cwd=dirname(abspath(executable)),
             port=self.gatewayPort,
-            stateDir=join(self.integrationTempdir, 'gateway'),
-            waitForStart=False)
-
+            stateDir=join(self.integrationTempdir, "gateway"),
+            waitForStart=False,
+        )
 
     def startApiServer(self):
-        executable = self.binPath('start-api')
+        executable = self.binPath("start-api")
         self._startServer(
-            serviceName='api',
+            serviceName="api",
             debugInfo=True,
             executable=executable,
-            serviceReadyUrl='http://localhost:%s/info/version' % self.apiPort,
+            serviceReadyUrl="http://localhost:%s/info/version" % self.apiPort,
             cwd=dirname(abspath(executable)),
             port=self.apiPort,
             gatewayPort=self.gatewayPort,
-            stateDir=join(self.integrationTempdir, 'api'),
+            stateDir=join(self.integrationTempdir, "api"),
             quickCommit=True,
-            waitForStart=False)
-
+            waitForStart=False,
+        )
 
     def startResolverServer(self):
-        executable = self.binPath('start-resolver')
+        executable = self.binPath("start-resolver")
         self._startServer(
-            serviceName='resolver',
+            serviceName="resolver",
             debugInfo=True,
             executable=executable,
-            serviceReadyUrl='http://localhost:%s/' % self.resolverPort,
+            serviceReadyUrl="http://localhost:%s/" % self.resolverPort,
             cwd=dirname(abspath(executable)),
             port=self.resolverPort,
             gatewayPort=self.gatewayPort,
-            stateDir=join(self.integrationTempdir, 'resolver'),
-            dbConfig = realpath(join(mydir, '..', 'conf','config.ini')),
+            stateDir=join(self.integrationTempdir, "resolver"),
+            dbConfig=self._db_conf_file,  # realpath(join(mydir, "..", "conf", "config.ini")),
             quickCommit=True,
-            waitForStart=False)
-
-
+            waitForStart=False,
+        )
 
     def _createDatabase(self):
         if self.fastMode:
-            print "Reusing database in", self.integrationTempdir
+            print("Reusing database in", self.integrationTempdir)
             return
         start = time()
-        print "Creating database in", self.integrationTempdir
+        print("Creating database in", self.integrationTempdir)
         try:
-            for f in sorted(glob(self.testdataDir + '/*.updateRequest')):
-                print "Uploading file:", f
-                postRequest(self.gatewayPort, '/update', data=open(join(self.testdataDir, f)).read(), parse=False)
-                sleepWheel(.3)
+            for f in sorted(glob(self.testdataDir + "/*.updateRequest")):
+                print("Uploading file:", f)
+                postRequest(
+                    self.gatewayPort,
+                    "/update",
+                    data=open(join(self.testdataDir, f)).read(),
+                    parse=False,
+                )
+                sleepWheel(0.3)
             # sleepWheel(1)
-            print "Finished creating database in %s seconds" % (time() - start)
+            print("Finished creating database in %s seconds" % (time() - start))
             # print "Pauzing for a while..."
             # sleepWheel(600)
         except Exception:
-            print 'Error received while creating database for', self.stateName
+            print("Error received while creating database for", self.stateName)
             print_exc()
             sleep(1)
             exit(1)
 
-
     def tearDown(self):
-        super(GmhTestIntegrationState, self).tearDown() #Call super, otherwise the services will NOT be killed and continue to run!
-
+        super(
+            GmhTestIntegrationState, self
+        ).tearDown()  # Call super, otherwise the services will NOT be killed and continue to run!
 
     def _truncateTestDb(self, dbconfig):
         try:
-            cnx = mysql.connector.connect(**self._db_config(dbconfig))
+            cnx = mysql.connector.connect(**read_db_config(dbconfig))
             cursor = cnx.cursor()
 
-            query = ("SET FOREIGN_KEY_CHECKS=0")
+            query = "SET FOREIGN_KEY_CHECKS=0"
             cursor.execute(query)
             # query = ("TRUNCATE TABLE tst_nbnresolver.credentials")
-            # cursor.execute(query)            
-            query = ("TRUNCATE TABLE tst_nbnresolver.identifier_location")
+            # cursor.execute(query)
+            query = "TRUNCATE TABLE tst_nbnresolver.identifier_location"
             cursor.execute(query)
-            query = ("TRUNCATE TABLE tst_nbnresolver.location_registrant")
+            query = "TRUNCATE TABLE tst_nbnresolver.location_registrant"
             cursor.execute(query)
-            query = ("TRUNCATE TABLE tst_nbnresolver.identifier_registrant")
+            query = "TRUNCATE TABLE tst_nbnresolver.identifier_registrant"
             cursor.execute(query)
             # query = ("TRUNCATE TABLE tst_nbnresolver.registrant")
             # cursor.execute(query)
-            query = ("TRUNCATE TABLE tst_nbnresolver.identifier")
+            query = "TRUNCATE TABLE tst_nbnresolver.identifier"
             cursor.execute(query)
-            query = ("TRUNCATE TABLE tst_nbnresolver.location")
+            query = "TRUNCATE TABLE tst_nbnresolver.location"
             cursor.execute(query)
-            query = ("SET FOREIGN_KEY_CHECKS = 1")
+            query = "SET FOREIGN_KEY_CHECKS = 1"
             cursor.execute(query)
 
             cursor.close()
@@ -171,26 +172,4 @@ class GmhTestIntegrationState(IntegrationState):
             cnx.close()
 
         except mysql.connector.Error as err:
-            print "Error with SQLstore: {}".format(err)
-
-
-    def _db_config(self, conffile_path, section='mysql'):
-        """ Read database configuration file and return a dictionary object
-        :param filename: name of the configuration file
-        :param section: section of database configuration
-        :return: a dictionary of database parameters
-        """
-        # create parser and read ini configuration file
-        parser = ConfigParser.ConfigParser()
-        parser.read(conffile_path)
-
-        # get section, default to mysql
-        db = {}
-        if parser.has_section(section):
-            items = parser.items(section)
-            for item in items:
-                db[item[0]] = item[1]
-        else:
-            raise Exception('{0} not found in the {1} file'.format(section, conffile_path))
-        print "DB-configfile read from: {0}".format(conffile_path, )
-        return db
+            print("Error with SQLstore: {}".format(err))

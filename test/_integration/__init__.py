@@ -24,4 +24,4 @@
 #
 ## end license ##
 
-from integrationstate import GmhTestIntegrationState
+from .integrationstate import GmhTestIntegrationState

@@ -85,7 +85,7 @@ class Dump(object):
             if self._number <= self._maxCountNumber:
                 filename = '%05d_%s.updateRequest' %(self._number, normalizedRecordId)
                 with open(join(self._dumpdir, filename), 'w') as f:
-                    print recordId
+                    print(recordId)
                     stdout.flush()
                     f.write(tostring(updateRequest))
                 answer = RESPONSE_XML % {
@@ -93,11 +93,11 @@ class Dump(object):
                     "diagnostics": ""}
             else:
                 self._maxCountNumber = self._number + self._maxCount
-                print 'Reached maxCount of records:', self._maxCount
+                print('Reached maxCount of records:', self._maxCount)
                 answer = RESPONSE_XML % {
                     "operationStatus": "fail",
                     "diagnostics": DIAGNOSTIC_XML % {'uri': escapeXml("http://www.enough.is.enough.com"), 'message': escapeXml("Enough is enough! Reached max. count: " + str(self._maxCount)), 'details': escapeXml("Enough is more than enough! Reached max. count: " + str(self._maxCount))}}
-        except Exception, e:
+        except Exception as e:
             answer = RESPONSE_XML % {
                 "operationStatus": "fail",
                 "diagnostics": DIAGNOSTIC_XML % {'uri': '', 'message': '', 'details': escapeXml(format_exc())}}
@@ -122,15 +122,15 @@ def main(reactor, portNumber, dumpdir, maxCount):
 if __name__== '__main__':
     args = argv[1:]
     if len(args) != 3:
-        print "Usage %s <portnumber> <dumpdir> <maxRecordCount>" % argv[0]
+        print("Usage %s <portnumber> <dumpdir> <maxRecordCount>" % argv[0])
         exit(1)
     portNumber = int(args[0])
     dumpdir = args[1]
     maxCount = int(args[2])
     reactor = Reactor()
     main(reactor, portNumber, dumpdir, maxCount)
-    print 'Ready to rumble the dumpserver at', portNumber
-    print '  - dumps are written to', dumpdir
-    print '  - Max. record count:', maxCount
+    print('Ready to rumble the dumpserver at', portNumber)
+    print('  - dumps are written to', dumpdir)
+    print('  - Max. record count:', maxCount)
     stdout.flush()
     reactor.loop()

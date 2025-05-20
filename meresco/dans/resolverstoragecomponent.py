@@ -31,15 +31,20 @@
 
 import mysql.connector
 import mysql.connector.pooling
-import ConfigParser
+import configparser
 from os.path import abspath, dirname, join, realpath
 from re import compile
 
-urnnbnRegex = compile('^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+')
+from meresco.dans.utils import read_db_config
+
+urnnbnRegex = compile("^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+")
+
 
 class ResolverStorageComponent(object):
-    def __init__(self, dbconfig, name=None): # https://pynative.com/python-mysql-tutorial/
-        self._dbconfig = self.read_db_config(conffile_path=dbconfig)
+    def __init__(
+        self, dbconfig, name=None
+    ):  # https://pynative.com/python-mysql-tutorial/
+        self._dbconfig = read_db_config(conffile_path=dbconfig)
         self._name = name
         self._cnxpool = self._create_cnxpool(pool_name="resolver_pool", pool_size=4)
 
@@ -47,7 +52,7 @@ class ResolverStorageComponent(object):
         return self._name
 
     def addNbnToDB(self, identifier, locations, urnnbn, rgid):
-        """ Add a prioritized list of locations for a pid and repository to storage.
+        """Add a prioritized list of locations for a pid and repository to storage.
         The locations-list is added in reversed order.
         Therefore the highest priority-location will be inserted last and will resolve first.
 
@@ -64,35 +69,51 @@ class ResolverStorageComponent(object):
         if urnnbn != None and "#" in urnnbn:
             urnnbn = urnnbn.split("#", 1)[0]
 
-        if not urnnbnRegex.match(urnnbn): # DIDL normalisation rejects records with invalid urn:nbn identifiers. So this check is overhead, for this situation.
+        if not urnnbnRegex.match(
+            urnnbn
+        ):  # DIDL normalisation rejects records with invalid urn:nbn identifiers. So this check is overhead, for this situation.
             return
 
         try:
             registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
             # Check if correct prefix, skip registration otherwise:
             if not urnnbn.startswith(prefix) and not isLTP:
-                print "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(nbn=urnnbn, prefix=prefix)
+                print(
+                    "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(
+                        nbn=urnnbn, prefix=prefix
+                    )
+                )
                 return
             self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
         except mysql.connector.Error as e:
-            print "Error from SQL-db: {}".format(e)
+            print("Error from SQL-db: {}".format(e))
         return
 
     def _addNbnLocationsByRegId(self, registrant_id, urnnbn, locations, isLTP):
         """
-         Upserts all locations for this identifier and registrantId
+        Upserts all locations for this identifier and registrantId
         """
         try:
             conn = self._cnxpool.get_connection()
             cursor = conn.cursor()
-            cursor.callproc('deleteNbnLocationsByRegistrantId', (str(urnnbn), int(registrant_id), bool(isLTP)))
+            cursor.callproc(
+                "deleteNbnLocationsByRegistrantId",
+                (str(urnnbn), int(registrant_id), bool(isLTP)),
+            )
             conn.commit()
             for location in locations:
-                cursor.callproc('addNbnLocation', (str(urnnbn), str(location), int(registrant_id), bool(isLTP)))
+                cursor.callproc(
+                    "addNbnLocation",
+                    (str(urnnbn), str(location), int(registrant_id), bool(isLTP)),
+                )
                 conn.commit()
             self.close(conn, cursor)
         except mysql.connector.Error as err:
-            print "Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {}".format(err)
+            print(
+                "Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {}".format(
+                    err
+                )
+            )
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
         isLTP = False
@@ -104,7 +125,7 @@ class ResolverStorageComponent(object):
             sql = "SELECT * FROM registrant WHERE registrant_groupid = '%s'" % rgid
             cursor.execute(sql)
             res = cursor.fetchall()
-            if len(res) > 0 :
+            if len(res) > 0:
                 registrant_id = res[0][0]
                 isLTP = bool(res[0][3])
                 prefix = res[0][4]
@@ -116,28 +137,7 @@ class ResolverStorageComponent(object):
             self.close(conn, cursor)
             return registrant_id, isLTP, prefix
         except mysql.connector.Error as err:
-            print "Error while execute'ing SQL-query: {}".format(err)
-
-    def read_db_config(self, conffile_path, section='mysql'): #TODO: Even importeren ergens anders vandaan. Dubbele code...
-        """ Read database configuration file and return a dictionary object
-        :param filename: name of the configuration file
-        :param section: section of database configuration
-        :return: a dictionary of database parameters
-        """
-        # create parser and read ini configuration file
-        parser = ConfigParser.ConfigParser()
-        parser.read(conffile_path)
-
-        # get section, default to mysql
-        db = {}
-        if parser.has_section(section):
-            items = parser.items(section)
-            for item in items:
-                db[item[0]] = item[1]
-        else:
-            raise Exception('{0} not found in the {1} file'.format(section, conffile_path))
-        print "DB-configfile read from: {0}".format(conffile_path, )
-        return db
+            print("Error while execute'ing SQL-query: {}".format(err))
 
     def _create_cnxpool(self, pool_name="mypool", pool_size=5):
         """
@@ -153,11 +153,17 @@ class ResolverStorageComponent(object):
                 pool_name=pool_name,
                 pool_size=pool_size,
                 pool_reset_session=True,
-                **self._dbconfig)
-            print "Created ConnectionPool: Name=", pool.pool_name, ", Poolsize=", pool.pool_size
+                **self._dbconfig
+            )
+            print(
+                "Created ConnectionPool: Name=",
+                pool.pool_name,
+                ", Poolsize=",
+                pool.pool_size,
+            )
             return pool
         except mysql.connector.Error as err:
-            print "Error while creating MySQL Connection pool : {}".format(err)
+            print("Error while creating MySQL Connection pool : {}".format(err))
 
         # To close ALL connections in the pool: https://github.com/mysql/mysql-connector-python/blob/master/lib/mysql/connector/pooling.py#L335
         # pool._remove_connections()

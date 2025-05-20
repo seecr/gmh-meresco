@@ -23,19 +23,41 @@
 #
 ## end license ##
 
-from meresco.components import XmlPrintLxml, RewritePartname, XmlXPath, FilterMessages, PeriodicCall, Schedule, XmlParseLxml
-from meresco.components.http import BasicHttpHandler, ObservableHttpServer, PathFilter, Deproxy, IpFilter
-from meresco.components.log import ApacheLogWriter, HandleRequestLog, LogCollector, LogComponent
+from meresco.components import (
+    XmlPrintLxml,
+    RewritePartname,
+    XmlXPath,
+    FilterMessages,
+    PeriodicCall,
+    Schedule,
+    XmlParseLxml,
+)
+from meresco.components.http import (
+    BasicHttpHandler,
+    ObservableHttpServer,
+    PathFilter,
+    Deproxy,
+    IpFilter,
+)
+from meresco.components.log import (
+    ApacheLogWriter,
+    HandleRequestLog,
+    LogCollector,
+    LogComponent,
+)
 from meresco.components.sru import SruRecordUpdate
 
 from meresco.core import Observable
 from meresco.core.alltodo import AllToDo
 from meresco.core.processtools import setSignalHandlers, registerShutdownHandler
 
-from meresco.oai import OaiJazz, OaiPmh, SuspendRegister, OaiAddDeleteRecordWithPrefixesAndSetSpecs
+from meresco.oai import (
+    OaiJazz,
+    OaiPmh,
+    SuspendRegister,
+    OaiAddDeleteRecordWithPrefixesAndSetSpecs,
+)
 from meresco.oai.info import OaiInfo
-
-from meresco.xml import namespaces
 
 from os import makedirs
 from os.path import dirname, abspath, join, isdir
@@ -51,11 +73,9 @@ from storage import StorageComponent
 from storage.storageadapter import StorageAdapter
 from storage.storagecomponent import HashDistributeStrategy, DefaultStrategy
 
-from meresco.xml.namespaces import namespaces
-
 from meresco.dans.storagesplit import Md5HashDistributeStrategy
 from meresco.dans.xmlvalidator import Validate
-from meresco.dans.logger import Logger # Normalisation Logger.
+from meresco.dans.logger import Logger  # Normalisation Logger.
 from meresco.dans.normalisedidl import NormaliseDIDL
 from meresco.dans.normalisemods import NormaliseMODS
 from meresco.dans.addparttodocument import AddMetadataDocumentPart
@@ -63,110 +83,161 @@ from meresco.dans.addparttodocument import AddMetadataDocumentPart
 # from meresco.dans.metapartconverter import AddMetadataNamespace
 # from meresco.dans.longconverter import NormaliseOaiRecord
 
+from meresco.dans.utils import NAMESPACEMAP
 
-NORMALISED_DOC_NAME = 'normdoc'
+NORMALISED_DOC_NAME = "normdoc"
 
-
-namespacesMap = {
-    'dip' : 'urn:mpeg:mpeg21:2005:01-DIP-NS',
-    'gal': "info:eu-repo/grantAgreement",
-    'hbo': "info:eu-repo/xmlns/hboMODSextension",
-    'wmp': "http://www.surfgroepen.nl/werkgroepmetadataplus",
-}
 
 def main(reactor, port, statePath, **ignored):
 
     oaiSuspendRegister = SuspendRegister()
-    oaiJazz = be((OaiJazz(join(statePath, 'oai'), alwaysDeleteInPrefixes=[NORMALISED_DOC_NAME]),
-        (oaiSuspendRegister,)
-    ))
+    oaiJazz = OaiJazz(
+        join(statePath, "oai"), alwaysDeleteInPrefixes=[NORMALISED_DOC_NAME]
+    )
+    oaiJazz.updateMetadataFormat(NORMALISED_DOC_NAME, "", NAMESPACEMAP.norm)
+    oaiJazz.addObserver(oaiSuspendRegister)
 
-    normLogger = Logger(join(statePath, 'normlogger'))
+    normLogger = Logger(join(statePath, "normlogger"))
 
     # strategie = HashDistributeStrategy() # filename (=partname) is also hashed: difficult to read by human eye...
     strategie = Md5HashDistributeStrategy()
 
-    storeComponent = StorageComponent(join(statePath, 'store'), strategy=strategie, partsRemovedOnDelete=[NORMALISED_DOC_NAME])
+    storeComponent = StorageComponent(
+        join(statePath, "store"),
+        strategy=strategie,
+        partsRemovedOnDelete=[NORMALISED_DOC_NAME],
+    )
 
-    return \
-    (Observable(),
+    return (
+        Observable(),
         # (scheduledCommitPeriodicCall,),
         # (DebugPrompt(reactor=reactor, port=port+1, globals=locals()),),
-        (ObservableHttpServer(reactor=reactor, port=port),
-            (BasicHttpHandler(),
-                (IpFilter(allowedIps=['127.0.0.1']),
-                    (PathFilter('/oaix', excluding=['/oaix/info']),
-                        (OaiPmh(repositoryName='Gateway',
-                                adminEmail='harvester@dans.knaw.nl',
+        (
+            ObservableHttpServer(reactor=reactor, port=port),
+            (
+                BasicHttpHandler(),
+                (
+                    IpFilter(allowedIps=["127.0.0.1"]),
+                    (
+                        PathFilter("/oaix", excluding=["/oaix/info"]),
+                        (
+                            OaiPmh(
+                                repositoryName="Gateway",
+                                adminEmail="harvester@dans.knaw.nl",
                                 supportXWait=True,
-                                batchSize=2000 # Override default batch size of 200.
+                                batchSize=2000,  # Override default batch size of 200.
                             ),
                             (oaiJazz,),
                             (oaiSuspendRegister,),
-                            (StorageAdapter(),
+                            (
+                                StorageAdapter(),
                                 (storeComponent,),
                             ),
-                        )
+                        ),
                     ),
-                    (PathFilter('/oaix/info'),
-                        (OaiInfo(reactor=reactor, oaiPath='/oai'),
+                    (
+                        PathFilter("/oaix/info"),
+                        (
+                            OaiInfo(reactor=reactor, oaiPath="/oai"),
                             (oaiJazz,),
-                        )
+                        ),
                     ),
                 ),
-                (PathFilter('/update'),
-                    (SruRecordUpdate(sendRecordData=False, logErrors=True,),
-                        (FilterMessages(allowed=['delete']),
+                (
+                    PathFilter("/update"),
+                    (
+                        SruRecordUpdate(
+                            sendRecordData=False,
+                            logErrors=True,
+                        ),
+                        (
+                            FilterMessages(allowed=["delete"]),
                             (storeComponent,),
                             (oaiJazz,),
                         ),
-                        (FilterMessages(allowed=['add']),
+                        (
+                            FilterMessages(allowed=["add"]),
                             # (LogComponent("LXML:"),),
-                            (Validate([('OAI-PMH header','//oai:header', 'OAI-PMH-header.xsd'), ('DIDL container','//didl:DIDL', 'didl.xsd'), ('MODS metadata', '//mods:mods', 'mods-3-6.xsd')]),
+                            (
+                                Validate(
+                                    [
+                                        (
+                                            "OAI-PMH header",
+                                            "//oai:header",
+                                            "OAI-PMH-header.xsd",
+                                        ),
+                                        ("DIDL container", "//didl:DIDL", "didl.xsd"),
+                                        (
+                                            "MODS metadata",
+                                            "//mods:mods",
+                                            "mods-3-6.xsd",
+                                        ),
+                                    ]
+                                ),
                                 # (LogComponent("VALIDATED:"),),
-                                (AddMetadataDocumentPart(partName='normdoc', fromKwarg='lxmlNode'),
-                                    (NormaliseDIDL(nsMap=namespacesMap, fromKwarg='lxmlNode'), # Normalise DIDL in partname=normdoc metadata
+                                (
+                                    AddMetadataDocumentPart(
+                                        partName="normdoc", fromKwarg="lxmlNode"
+                                    ),
+                                    (
+                                        NormaliseDIDL(
+                                            nsMap=NAMESPACEMAP, fromKwarg="lxmlNode"
+                                        ),  # Normalise DIDL in partname=normdoc metadata
                                         (normLogger,),
-                                        (NormaliseMODS(nsMap=namespacesMap, fromKwarg='lxmlNode'), # Normalise MODS in partname=normdoc metadata
+                                        (
+                                            NormaliseMODS(
+                                                nsMap=NAMESPACEMAP,
+                                                fromKwarg="lxmlNode",
+                                            ),  # Normalise MODS in partname=normdoc metadata
                                             (normLogger,),
-                                            (XmlPrintLxml(fromKwarg='lxmlNode', toKwarg='data'),
-                                                (RewritePartname(NORMALISED_DOC_NAME), # Rename converted part.
-                                                    (storeComponent,), # Store converted/renamed part.
-                                                )
+                                            (
+                                                XmlPrintLxml(
+                                                    fromKwarg="lxmlNode", toKwarg="data"
+                                                ),
+                                                (
+                                                    RewritePartname(
+                                                        NORMALISED_DOC_NAME
+                                                    ),  # Rename converted part.
+                                                    (
+                                                        storeComponent,
+                                                    ),  # Store converted/renamed part.
+                                                ),
                                             ),
-                                            (OaiAddDeleteRecordWithPrefixesAndSetSpecs(metadataPrefixes=[NORMALISED_DOC_NAME]),
+                                            (
+                                                OaiAddDeleteRecordWithPrefixesAndSetSpecs(
+                                                    metadataPrefixes=[
+                                                        NORMALISED_DOC_NAME
+                                                    ]
+                                                ),
                                                 (oaiJazz,),
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
     )
+
 
 def startServer(port, stateDir, **kwargs):
     setSignalHandlers()
-    print 'Firing up Gateway Server.'
-    statePath=abspath(stateDir)
+    print("Firing up Gateway Server.")
+    statePath = abspath(stateDir)
     isdir(statePath) or makedirs(statePath)
 
     reactor = Reactor()
-    dna = main(
-            reactor=reactor,
-            port=port,
-            statePath=statePath,
-            **kwargs
-        )
+    dna = main(reactor=reactor, port=port, statePath=statePath, **kwargs)
     server = be(dna)
     consume(server.once.observer_init())
 
-    registerShutdownHandler(statePath=statePath, server=server, reactor=reactor, shutdownMustSucceed=False)
+    registerShutdownHandler(
+        statePath=statePath, server=server, reactor=reactor, shutdownMustSucceed=False
+    )
 
-    print 'Ready to rumble at %s' % port
+    print("Ready to rumble at %s" % port)
     stdout.flush()
     reactor.loop()
-

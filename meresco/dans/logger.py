@@ -43,7 +43,7 @@ class Logger(Observable):
         if not isdir(self._logfileDir):
             makedirs(self._logfileDir)
             
-        print "RSS Logger directory:", self._logfileDir
+        print("RSS Logger directory:", self._logfileDir)
 
 
     def logMsg(self, identifier, logmsg, prefix=None):
@@ -114,7 +114,7 @@ class Logger(Observable):
                 # for Windows the mmap parameters are different
                 fm = mmap.mmap(f.fileno(), 0, mmap.MAP_SHARED, mmap.PROT_READ)
                 try:
-                    for i in xrange(size - 1, -1, -1):
+                    for i in range(size - 1, -1, -1):
                         if fm[i] == '\n':
                             n -= 1
                             if n == -1:
