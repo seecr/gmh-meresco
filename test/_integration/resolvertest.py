@@ -45,6 +45,4 @@ class ResolverTest(IntegrationTestCase):
             },
             header,
         )
-        self.assertEqual(
-            "<html><body><p>Resolver Server</p></body></html>", etree.tostring(body)
-        )
+        self.assertEqual(b"Resolver Server", body)

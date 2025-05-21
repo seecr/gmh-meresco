@@ -200,7 +200,7 @@ class ApiTest(IntegrationTestCase):
             "/oai",
             dict(verb="ListRecords", metadataPrefix=NL_DIDL_COMBINED_PREFIX, set="kb"),
         )
-        # print 'testOaiSet:', etree.tostring(body)
+        # print("testOaiSet:", etree.tostring(body))
         self.assertEqual(
             {
                 "StatusCode": "200",
@@ -248,7 +248,7 @@ class ApiTest(IntegrationTestCase):
         )
         self.assertEqual(
             "deleted",
-            xpath(body, "//oai:GetRecord/oai:record[1]/oai:header/@status")[0],
+            xpath(body, b"//oai:GetRecord/oai:record[1]/oai:header/@status")[0],
         )
 
     def testOai(self):  # GMH31 OK

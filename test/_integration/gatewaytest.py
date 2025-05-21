@@ -45,7 +45,7 @@ class GatewayTest(IntegrationTestCase):
             },
             header,
         )
-        print("OAIX body:", etree.tostring(body))
+        # print("OAIX body:", etree.tostring(body))
         records = xpath(body, b"//oai:record")
         self.assertEqual(18, len(records))
 
