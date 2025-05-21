@@ -34,7 +34,7 @@ from lxml.etree import (
     fromstring,
 )
 from copy import deepcopy
-from io import BytesIO
+from io import StringIO
 from meresco.components.xml_generic.validate import ValidateException
 from meresco.xml.namespaces import namespaces
 
@@ -519,14 +519,14 @@ class NormaliseMODS(UiaConverter):
 
         if len(lxmlMODS) > 0:
             # 2: Normalize it
-            norm_mods = b""
+            norm_mods = ""
             for function in modsFunctions:
-                norm_mods += function(lxmlMODS[0])
+                new_part = function(lxmlMODS[0]).decode(encoding="utf-8").strip()
+                norm_mods += new_part
 
-            print("NORM_MODS", norm_mods)
             # 3: Put it back in DIDL/place:
             lxmlMODS[0].getparent().replace(
-                lxmlMODS[0], etree.parse(BytesIO(norm_mods)).getroot()
+                lxmlMODS[0], etree.parse(StringIO(norm_mods)).getroot()
             )
 
         else:  # This should never happen @runtime: record should have been validated up front...
@@ -628,8 +628,8 @@ class NormaliseMODS(UiaConverter):
 
         returnxml = tostring(
             root.find(("{%s}mods") % self._nsMap["mods"]),
-            pretty_print=True,
             encoding=XML_ENCODING,
+            method="xml",
         )
         # returnxml = etree.tostring(e_modsroot_copy, pretty_print=True, encoding=XML_ENCODING)
         # print returnxml

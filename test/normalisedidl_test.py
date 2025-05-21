@@ -33,21 +33,22 @@ normdoc_path = pathlib.Path(__file__).parent / "testdata"
 
 from meresco.xml import xpathFirst
 
-from meresco.dans.normalisemods import NormaliseMODS
+from meresco.dans.normalisedidl import NormaliseDIDL
 from meresco.dans.utils import NAMESPACEMAP
 
+import difflib
 import pytest
 from meresco.components.xml_generic.validate import ValidateException
 
 
-def test_normalise_mods():
+def test_normalise_didl():
 
     observer = CallTrace(emptyGeneratorMethods=["add"])
     dna = be(
         (
             Observable(),
             (
-                NormaliseMODS(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode"),
+                NormaliseDIDL(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode"),
                 (observer,),
             ),
         )
@@ -69,8 +70,17 @@ def test_normalise_mods():
                 )
             )
             after = xpathFirst(lxmlNode, "//document:part[@name='normdoc']/text()")
-            print(after)
 
 
-def test_convertFullMods2GHMods():
-    n = NormaliseMODS(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode")
+def test_normalize_didl2():
+    normalise_didl = NormaliseDIDL(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode")
+
+    lxmlNode = parse(StringIO("<something/>"))
+
+    with pytest.raises(ValidateException) as exc_info:
+        normalise_didl._normaliseRecord(lxmlNode)
+
+    assert (
+        exc_info.value.args[0]
+        == "DIDL: Mandatory persistent identifier (urn:nbn) in top level DIDL Item not found."
+    )
