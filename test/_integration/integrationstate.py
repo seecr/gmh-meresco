@@ -150,19 +150,19 @@ class GmhTestIntegrationState(IntegrationState):
 
             query = "SET FOREIGN_KEY_CHECKS=0"
             cursor.execute(query)
-            # query = ("TRUNCATE TABLE tst_nbnresolver.credentials")
+            # query = ("TRUNCATE TABLE gmhtest.credentials")
             # cursor.execute(query)
-            query = "TRUNCATE TABLE tst_nbnresolver.identifier_location"
+            query = "TRUNCATE TABLE gmhtest.identifier_location"
             cursor.execute(query)
-            query = "TRUNCATE TABLE tst_nbnresolver.location_registrant"
+            query = "TRUNCATE TABLE gmhtest.location_registrant"
             cursor.execute(query)
-            query = "TRUNCATE TABLE tst_nbnresolver.identifier_registrant"
+            query = "TRUNCATE TABLE gmhtest.identifier_registrant"
             cursor.execute(query)
-            # query = ("TRUNCATE TABLE tst_nbnresolver.registrant")
+            # query = ("TRUNCATE TABLE gmhtest.registrant")
             # cursor.execute(query)
-            query = "TRUNCATE TABLE tst_nbnresolver.identifier"
+            query = "TRUNCATE TABLE gmhtest.identifier"
             cursor.execute(query)
-            query = "TRUNCATE TABLE tst_nbnresolver.location"
+            query = "TRUNCATE TABLE gmhtest.location"
             cursor.execute(query)
             query = "SET FOREIGN_KEY_CHECKS = 1"
             cursor.execute(query)
