@@ -26,21 +26,27 @@
 #
 ## end license ##
 
-from seecrdeps import includeParentAndDeps        #DO_NOT_DISTRIBUTE
-includeParentAndDeps(__file__)                    #DO_NOT_DISTRIBUTE
+from seecrdeps import includeParentAndDeps  # DO_NOT_DISTRIBUTE
+
+includeParentAndDeps(__file__)  # DO_NOT_DISTRIBUTE
 
 from seecr.utils import isRootUser
-from meresco.components import ParseArguments
+import pathlib
+import argparse
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if isRootUser():
         print("Do not run as root user!")
         exit(2)
 
-    parser = ParseArguments()
-    parser.addOption('-p', '--port', type='int', help="Default port number", mandatory=True)
-    parser.addOption('', '--stateDir', help="Directory to write state.", mandatory=True)
-    options, arguments =  parser.parse()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p", "--port", type=int, help="Default port number", required=True
+    )
+    parser.add_argument("--stateDir", help="Directory to write state.", type=pathlib.Path, required=True)
+    parser.add_argument("--globalConfig", help="Global config file", type=pathlib.Path, required=True)
+    args = parser.parse_args()
 
     from meresco.servers.gateway.gatewayserver import startServer
-    startServer(**vars(options))
+
+    startServer(**vars(args))

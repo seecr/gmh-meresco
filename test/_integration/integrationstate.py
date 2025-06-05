@@ -38,6 +38,8 @@ from glob import glob
 
 import mysql.connector
 import configparser
+import pathlib
+import json
 
 from meresco.dans.utils import read_db_config
 
@@ -61,6 +63,8 @@ class GmhTestIntegrationState(IntegrationState):
         self._truncateTestDb(
             self._db_conf_file
         )  # realpath(join(mydir, "..", "conf", "config.ini")))
+        global_config = pathlib.Path(self.integrationTempdir) / "global-config.json"
+        global_config.write_text(json.dumps({}))
         self.startGatewayServer()
         self.startApiServer()
         self.startResolverServer()
@@ -78,6 +82,7 @@ class GmhTestIntegrationState(IntegrationState):
             cwd=dirname(abspath(executable)),
             port=self.gatewayPort,
             stateDir=join(self.integrationTempdir, "gateway"),
+            globalConfig=join(self.integrationTempdir, "global-config.json"),
             waitForStart=False,
         )
 

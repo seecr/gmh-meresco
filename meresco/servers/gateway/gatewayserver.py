@@ -24,32 +24,22 @@
 #
 ## end license ##
 
+import pathlib
+import json
 from meresco.components import (
     XmlPrintLxml,
     RewritePartname,
-    XmlXPath,
     FilterMessages,
-    PeriodicCall,
-    Schedule,
-    XmlParseLxml,
 )
 from meresco.components.http import (
     BasicHttpHandler,
     ObservableHttpServer,
     PathFilter,
-    Deproxy,
     IpFilter,
-)
-from meresco.components.log import (
-    ApacheLogWriter,
-    HandleRequestLog,
-    LogCollector,
-    LogComponent,
 )
 from meresco.components.sru import SruRecordUpdate
 
 from meresco.core import Observable
-from meresco.core.alltodo import AllToDo
 from meresco.core.processtools import setSignalHandlers, registerShutdownHandler
 
 from meresco.oai import (
@@ -60,11 +50,6 @@ from meresco.oai import (
 )
 from meresco.oai.info import OaiInfo
 
-from os import makedirs
-from os.path import dirname, abspath, join, isdir
-
-from seecr.utils import DebugPrompt
-
 from sys import stdout
 
 from weightless.core import be, consume
@@ -72,7 +57,6 @@ from weightless.io import Reactor
 
 from storage import StorageComponent
 from storage.storageadapter import StorageAdapter
-from storage.storagecomponent import HashDistributeStrategy, DefaultStrategy
 
 from meresco.dans.storagesplit import Md5HashDistributeStrategy
 from meresco.dans.xmlvalidator import Validate
@@ -89,24 +73,30 @@ from meresco.dans.utils import NAMESPACEMAP
 NORMALISED_DOC_NAME = "normdoc"
 
 
-def main(reactor, port, statePath, **ignored):
+def main(reactor, port, statePath, config, **ignored):
 
     oaiSuspendRegister = SuspendRegister()
     oaiJazz = OaiJazz(
-        join(statePath, "oai"), alwaysDeleteInPrefixes=[NORMALISED_DOC_NAME]
+        statePath.joinpath("oai").as_posix(),
+        alwaysDeleteInPrefixes=[NORMALISED_DOC_NAME],
     )
     oaiJazz.updateMetadataFormat(NORMALISED_DOC_NAME, "", NAMESPACEMAP.norm)
     oaiJazz.addObserver(oaiSuspendRegister)
 
-    normLogger = Logger(join(statePath, "normlogger"))
+    normLogger = Logger(statePath.joinpath("normlogger").as_posix())
 
     # strategie = HashDistributeStrategy() # filename (=partname) is also hashed: difficult to read by human eye...
     strategie = Md5HashDistributeStrategy()
 
     storeComponent = StorageComponent(
-        join(statePath, "store"),
+        statePath.joinpath("store").as_posix(),
         strategy=strategie,
         partsRemovedOnDelete=[NORMALISED_DOC_NAME],
+    )
+
+    oaixIpFilter = IpFilter(
+        allowedIps=config.get("allowedIps", ["127.0.0.1"]),
+        allowedIpRanges=config.get("allowedIpRanges", []),
     )
 
     return (
@@ -118,7 +108,7 @@ def main(reactor, port, statePath, **ignored):
             (
                 BasicHttpHandler(),
                 (
-                    IpFilter(allowedIps=["127.0.0.1"]),
+                    oaixIpFilter,
                     (
                         PathFilter("/oaix", excluding=["/oaix/info"]),
                         (
@@ -139,7 +129,7 @@ def main(reactor, port, statePath, **ignored):
                     (
                         PathFilter("/oaix/info"),
                         (
-                            OaiInfo(reactor=reactor, oaiPath="/oai"),
+                            OaiInfo(reactor=reactor, oaiPath="/oaix"),
                             (oaiJazz,),
                         ),
                     ),
@@ -224,14 +214,15 @@ def main(reactor, port, statePath, **ignored):
     )
 
 
-def startServer(port, stateDir, **kwargs):
+def startServer(port, stateDir, globalConfig, **kwargs):
     setSignalHandlers()
     print("Firing up Gateway Server.")
-    statePath = abspath(stateDir)
-    isdir(statePath) or makedirs(statePath)
+    statePath = pathlib.Path(stateDir).resolve()
+    statePath.mkdir(parents=True, exist_ok=True)
+    config = json.loads(globalConfig.read_text())
 
     reactor = Reactor()
-    dna = main(reactor=reactor, port=port, statePath=statePath, **kwargs)
+    dna = main(reactor=reactor, port=port, statePath=statePath, config=config, **kwargs)
     server = be(dna)
     consume(server.once.observer_init())
 
@@ -240,5 +231,7 @@ def startServer(port, stateDir, **kwargs):
     )
 
     print("Ready to rumble at %s" % port)
+    print("Global Config:")
+    print(json.dumps(config, indent=2))
     stdout.flush()
     reactor.loop()
