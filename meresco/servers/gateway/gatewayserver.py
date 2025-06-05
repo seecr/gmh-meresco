@@ -31,11 +31,13 @@ from meresco.components import (
     RewritePartname,
     FilterMessages,
 )
+from meresco.components.log import ApacheLogWriter, LogCollector, HandleRequestLog
 from meresco.components.http import (
     BasicHttpHandler,
     ObservableHttpServer,
     PathFilter,
     IpFilter,
+    Deproxy,
 )
 from meresco.components.sru import SruRecordUpdate
 
@@ -74,6 +76,7 @@ NORMALISED_DOC_NAME = "normdoc"
 
 
 def main(reactor, port, statePath, config, **ignored):
+    apacheLogStream = stdout
 
     oaiSuspendRegister = SuspendRegister()
     oaiJazz = OaiJazz(
@@ -98,6 +101,10 @@ def main(reactor, port, statePath, config, **ignored):
         allowedIps=config.get("allowedIps", ["127.0.0.1"]),
         allowedIpRanges=config.get("allowedIpRanges", []),
     )
+    deproxy_gateway = Deproxy(
+        deproxyForIps=config.get("deproxyForIps", ["127.0.0.1"]),
+        deproxyForIpRanges=config.get("deproxyForIpRanges", []),
+    )
 
     return (
         Observable(),
@@ -106,101 +113,118 @@ def main(reactor, port, statePath, config, **ignored):
         (
             ObservableHttpServer(reactor=reactor, port=port),
             (
-                BasicHttpHandler(),
+                LogCollector(),
+                (ApacheLogWriter(apacheLogStream),),
                 (
-                    oaixIpFilter,
+                    deproxy_gateway,
                     (
-                        PathFilter("/oaix", excluding=["/oaix/info"]),
+                        HandleRequestLog(),
                         (
-                            OaiPmh(
-                                repositoryName="Gateway",
-                                adminEmail="harvester@dans.knaw.nl",
-                                supportXWait=True,
-                                batchSize=2000,  # Override default batch size of 200.
-                            ),
-                            (oaiJazz,),
-                            (oaiSuspendRegister,),
+                            BasicHttpHandler(),
                             (
-                                StorageAdapter(),
-                                (storeComponent,),
-                            ),
-                        ),
-                    ),
-                    (
-                        PathFilter("/oaix/info"),
-                        (
-                            OaiInfo(reactor=reactor, oaiPath="/oaix"),
-                            (oaiJazz,),
-                        ),
-                    ),
-                ),
-                (
-                    PathFilter("/update"),
-                    (
-                        SruRecordUpdate(
-                            sendRecordData=False,
-                            logErrors=True,
-                        ),
-                        (
-                            FilterMessages(allowed=["delete"]),
-                            (storeComponent,),
-                            (oaiJazz,),
-                        ),
-                        (
-                            FilterMessages(allowed=["add"]),
-                            # (LogComponent("LXML:"),),
-                            (
-                                Validate(
-                                    [
-                                        (
-                                            "OAI-PMH header",
-                                            "//oai:header",
-                                            "OAI-PMH-header.xsd",
-                                        ),
-                                        ("DIDL container", "//didl:DIDL", "didl.xsd"),
-                                        (
-                                            "MODS metadata",
-                                            "//mods:mods",
-                                            "mods-3-6.xsd",
-                                        ),
-                                    ]
-                                ),
-                                # (LogComponent("VALIDATED:"),),
+                                oaixIpFilter,
                                 (
-                                    AddMetadataDocumentPart(
-                                        partName="normdoc", fromKwarg="lxmlNode"
+                                    PathFilter("/oaix", excluding=["/oaix/info"]),
+                                    (
+                                        OaiPmh(
+                                            repositoryName="Gateway",
+                                            adminEmail="harvester@dans.knaw.nl",
+                                            supportXWait=True,
+                                            batchSize=2000,  # Override default batch size of 200.
+                                        ),
+                                        (oaiJazz,),
+                                        (oaiSuspendRegister,),
+                                        (
+                                            StorageAdapter(),
+                                            (storeComponent,),
+                                        ),
+                                    ),
+                                ),
+                                (
+                                    PathFilter("/oaix/info"),
+                                    (
+                                        OaiInfo(reactor=reactor, oaiPath="/oaix"),
+                                        (oaiJazz,),
+                                    ),
+                                ),
+                            ),
+                            (
+                                PathFilter("/update"),
+                                (
+                                    SruRecordUpdate(
+                                        sendRecordData=False,
+                                        logErrors=True,
                                     ),
                                     (
-                                        NormaliseDIDL(
-                                            nsMap=NAMESPACEMAP, fromKwarg="lxmlNode"
-                                        ),  # Normalise DIDL in partname=normdoc metadata
-                                        (normLogger,),
+                                        FilterMessages(allowed=["delete"]),
+                                        (storeComponent,),
+                                        (oaiJazz,),
+                                    ),
+                                    (
+                                        FilterMessages(allowed=["add"]),
+                                        # (LogComponent("LXML:"),),
                                         (
-                                            NormaliseMODS(
-                                                nsMap=NAMESPACEMAP,
-                                                fromKwarg="lxmlNode",
-                                            ),  # Normalise MODS in partname=normdoc metadata
-                                            (normLogger,),
+                                            Validate(
+                                                [
+                                                    (
+                                                        "OAI-PMH header",
+                                                        "//oai:header",
+                                                        "OAI-PMH-header.xsd",
+                                                    ),
+                                                    (
+                                                        "DIDL container",
+                                                        "//didl:DIDL",
+                                                        "didl.xsd",
+                                                    ),
+                                                    (
+                                                        "MODS metadata",
+                                                        "//mods:mods",
+                                                        "mods-3-6.xsd",
+                                                    ),
+                                                ]
+                                            ),
+                                            # (LogComponent("VALIDATED:"),),
                                             (
-                                                XmlPrintLxml(
-                                                    fromKwarg="lxmlNode", toKwarg="data"
+                                                AddMetadataDocumentPart(
+                                                    partName="normdoc",
+                                                    fromKwarg="lxmlNode",
                                                 ),
                                                 (
-                                                    RewritePartname(
-                                                        NORMALISED_DOC_NAME
-                                                    ),  # Rename converted part.
+                                                    NormaliseDIDL(
+                                                        nsMap=NAMESPACEMAP,
+                                                        fromKwarg="lxmlNode",
+                                                    ),  # Normalise DIDL in partname=normdoc metadata
+                                                    (normLogger,),
                                                     (
-                                                        storeComponent,
-                                                    ),  # Store converted/renamed part.
+                                                        NormaliseMODS(
+                                                            nsMap=NAMESPACEMAP,
+                                                            fromKwarg="lxmlNode",
+                                                        ),  # Normalise MODS in partname=normdoc metadata
+                                                        (normLogger,),
+                                                        (
+                                                            XmlPrintLxml(
+                                                                fromKwarg="lxmlNode",
+                                                                toKwarg="data",
+                                                            ),
+                                                            (
+                                                                RewritePartname(
+                                                                    NORMALISED_DOC_NAME
+                                                                ),  # Rename converted part.
+                                                                (
+                                                                    storeComponent,
+                                                                ),  # Store converted/renamed part.
+                                                            ),
+                                                        ),
+                                                        (
+                                                            OaiAddDeleteRecordWithPrefixesAndSetSpecs(
+                                                                metadataPrefixes=[
+                                                                    NORMALISED_DOC_NAME
+                                                                ]
+                                                            ),
+                                                            (oaiJazz,),
+                                                        ),
+                                                    ),
                                                 ),
-                                            ),
-                                            (
-                                                OaiAddDeleteRecordWithPrefixesAndSetSpecs(
-                                                    metadataPrefixes=[
-                                                        NORMALISED_DOC_NAME
-                                                    ]
-                                                ),
-                                                (oaiJazz,),
                                             ),
                                         ),
                                     ),
