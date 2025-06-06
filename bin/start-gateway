@@ -43,8 +43,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "-p", "--port", type=int, help="Default port number", required=True
     )
-    parser.add_argument("--stateDir", help="Directory to write state.", type=pathlib.Path, required=True)
-    parser.add_argument("--globalConfig", help="Global config file", type=pathlib.Path, required=True)
+    parser.add_argument(
+        "--stateDir", help="Directory to write state.", type=pathlib.Path, required=True
+    )
+    parser.add_argument(
+        "--globalConfig", help="Global config file", type=pathlib.Path, required=True
+    )
     args = parser.parse_args()
 
     from meresco.servers.gateway.gatewayserver import startServer

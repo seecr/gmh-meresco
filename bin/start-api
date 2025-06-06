@@ -26,23 +26,40 @@
 #
 ## end license ##
 
-from seecrdeps import includeParentAndDeps        #DO_NOT_DISTRIBUTE
-includeParentAndDeps(__file__)                    #DO_NOT_DISTRIBUTE
+from seecrdeps import includeParentAndDeps  # DO_NOT_DISTRIBUTE
+
+includeParentAndDeps(__file__)  # DO_NOT_DISTRIBUTE
 
 from seecr.utils import isRootUser
-from meresco.components import ParseArguments
+import argparse
+import pathlib
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if isRootUser():
         print("Do not run as root user!")
         exit(2)
 
-    parser = ParseArguments()
-    parser.addOption('-p', '--port', type='int', help="Default port number", mandatory=True)
-    parser.addOption('', '--stateDir', help="Directory to write state.", mandatory=True)
-    parser.addOption('', '--gatewayPort', type='int', help="Portnumber of gateway server.", mandatory=True)
-    parser.addOption('', '--quickCommit', help="True or False. Use True for integration tests. Defaults to False.", mandatory=False)
-    options, arguments =  parser.parse()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p", "--port", type=int, help="Default port number", required=True
+    )
+    parser.add_argument(
+        "--stateDir", type=pathlib.Path, help="Directory to write state.", required=True
+    )
+    parser.add_argument(
+        "--gatewayPort",
+        type=int,
+        help="Portnumber of gateway server.",
+        required=True,
+    )
+    parser.add_argument(
+        "--quickCommit", default=False, action="store_true", help="For integrationtests"
+    )
+    parser.add_argument(
+        "--globalConfig", help="Global config file", type=pathlib.Path, required=True
+    )
+    args = parser.parse_args()
 
     from meresco.servers.api.apiserver import startServer
-    startServer(**vars(options))
+
+    startServer(**vars(args))

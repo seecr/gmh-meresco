@@ -97,8 +97,9 @@ class GmhTestIntegrationState(IntegrationState):
             port=self.apiPort,
             gatewayPort=self.gatewayPort,
             stateDir=join(self.integrationTempdir, "api"),
-            quickCommit=True,
+            globalConfig=join(self.integrationTempdir, "global-config.json"),
             waitForStart=False,
+            flagOptions=["quickCommit"],
         )
 
     def startResolverServer(self):

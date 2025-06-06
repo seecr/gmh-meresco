@@ -27,28 +27,23 @@
 
 import sys
 from sys import stdout
-from os.path import join, dirname, abspath
+from os.path import dirname, abspath
 
 from weightless.core import be, consume
 from weightless.io import Reactor
 
 
 from meresco.core import Observable
-from meresco.core.alltodo import AllToDo
 from meresco.core.processtools import setSignalHandlers, registerShutdownHandler
 
 from meresco.components import (
-    RenameFieldForExact,
     PeriodicDownload,
     XmlPrintLxml,
     XmlXPath,
     FilterMessages,
     RewritePartname,
     XmlParseLxml,
-    CqlMultiSearchClauseConversion,
-    PeriodicCall,
     Schedule,
-    XsltCrosswalk,
     RetrieveToGetDataAdapter,
 )  # , Rss, RssItem
 from meresco.components.http import (
@@ -56,16 +51,12 @@ from meresco.components.http import (
     BasicHttpHandler,
     PathFilter,
     Deproxy,
+    IpFilter,
 )
 from meresco.components.log import (
     LogCollector,
     ApacheLogWriter,
     HandleRequestLog,
-    LogCollectorScope,
-    QueryLogWriter,
-    DirectoryLog,
-    LogFileServer,
-    LogComponent,
 )
 
 from meresco.oai import (
@@ -76,14 +67,13 @@ from meresco.oai import (
     OaiBranding,
     OaiProvenance,
 )  # , OaiAddDeleteRecordWithPrefixesAndSetSpecs
+from meresco.oai.info import OaiInfo
 
 
-from seecr.utils import DebugPrompt
 from storage import StorageComponent
 
 from meresco.xml import namespaces
 
-from storage.storageadapter import StorageAdapter
 
 from meresco.dans.nldidlcombined import NlDidlCombined
 from meresco.dans.storagesplit import Md5HashDistributeStrategy
@@ -91,8 +81,11 @@ from meresco.dans.writedeleted import ResurrectTombstone, WriteTombstone
 from meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
 from meresco.dans.loggerrss import LoggerRSS
 from meresco.dans.logger import Logger  # Normalisation Logger.
-from meresco.seecr.oai import OaiAddDeleteRecordWithPrefixesAndSetSpecs, OaiAddRecord
+from meresco.seecr.oai import OaiAddRecord
 from meresco.dans.xlsserver import XlsServer
+
+import pathlib
+import json
 
 NL_DIDL_NORMALISED_PREFIX = "nl_didl_norm"
 NL_DIDL_COMBINED_PREFIX = "nl_didl_combined"
@@ -323,11 +316,11 @@ def createDownloadHelix(
     )
 
 
-def main(reactor, port, statePath, gatewayPort, quickCommit=False, **ignored):
-
+def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ignored):
+    apacheLogStream = stdout
     strategie = Md5HashDistributeStrategy()
     storage = StorageComponent(
-        join(statePath, "store"),
+        statePath.joinpath("store").as_posix(),
         strategy=strategie,
         partsRemovedOnDelete=[
             NL_DIDL_NORMALISED_PREFIX,
@@ -336,14 +329,14 @@ def main(reactor, port, statePath, gatewayPort, quickCommit=False, **ignored):
         ],
     )
 
-    oaiJazz = OaiJazz(join(statePath, "oai"))
+    oaiJazz = OaiJazz(statePath.joinpath("oai").as_posix())
     oaiJazz.updateMetadataFormat(
         "metadata", "http://didl.loc.nl/didl.xsd", NAMESPACEMAP.didl
     )
     oaiJazz.updateMetadataFormat(NL_DIDL_COMBINED_PREFIX, "", NAMESPACEMAP.gmhcombined)
     oaiJazz.updateMetadataFormat(NL_DIDL_NORMALISED_PREFIX, "", NAMESPACEMAP.gmhnorm)
 
-    normLogger = Logger(join(statePath, "..", "gateway", "normlogger"))
+    normLogger = Logger(statePath.joinpath("..", "gateway", "normlogger").as_posix())
 
     periodicGateWayDownload = PeriodicDownload(
         reactor,
@@ -359,11 +352,19 @@ def main(reactor, port, statePath, gatewayPort, quickCommit=False, **ignored):
     oaiDownload = OaiDownloadProcessor(
         path="/oaix",
         metadataPrefix=NORMALISED_DOC_NAME,
-        workingDirectory=join(statePath, "harvesterstate", "gateway"),
+        workingDirectory=statePath.joinpath("harvesterstate", "gateway").as_posix(),
         userAgentAddition="ApiServer",
         xWait=True,
         name="api",
         autoCommit=False,
+    )
+    deproxy = Deproxy(
+        deproxyForIps=config.get("deproxyForIps", ["127.0.0.1"]),
+        deproxyForIpRanges=config.get("deproxyForIpRanges", []),
+    )
+    oaiInfoIpFilter = IpFilter(
+        allowedIps=config.get("allowedIps", ["127.0.0.1"]),
+        allowedIpRanges=config.get("allowedIpRanges", []),
     )
 
     return (
@@ -374,79 +375,110 @@ def main(reactor, port, statePath, gatewayPort, quickCommit=False, **ignored):
         (
             ObservableHttpServer(reactor, port, compressResponse=True),
             (
-                BasicHttpHandler(),
+                LogCollector(),
+                (ApacheLogWriter(apacheLogStream),),
                 (
-                    PathFilter("/oai"),
+                    deproxy,
                     (
-                        OaiPmh(
-                            repositoryName="Gemeenschappelijke Metadata Harvester DANS-KB",
-                            adminEmail="harvester@dans.knaw.nl",
-                            externalUrl="http://oai.gharvester.dans.knaw.nl",
-                            batchSize=200,
-                            supportXWait=False,
-                            # preciseDatestamp=False,
-                            # deleteInSets=False
-                        ),
-                        (oaiJazz,),
+                        HandleRequestLog(),
                         (
-                            RetrieveToGetDataAdapter(),
-                            (storage,),
-                        ),
-                        (
-                            OaiBranding(
-                                url="https://www.narcis.nl/images/logos/logo-knaw-house.gif",  # TODO: Link to a joint-GMH icon...
-                                link="https://harvester.dans.knaw.nl",
-                                title="Gemeenschappelijke Metadata Harvester (GMH) van DANS en de KB",
-                            ),
-                        ),
-                        (
-                            OaiProvenance(
-                                nsMap=NAMESPACEMAP,
-                                baseURL=(
-                                    "meta",
-                                    "//meta:repository/meta:baseurl/text()",
+                            BasicHttpHandler(),
+                            (
+                                PathFilter("/oai", excluding=["/oai/info"]),
+                                (
+                                    OaiPmh(
+                                        repositoryName="Gemeenschappelijke Metadata Harvester DANS-KB",
+                                        adminEmail="harvester@dans.knaw.nl",
+                                        externalUrl="http://oai.gharvester.dans.knaw.nl",
+                                        batchSize=200,
+                                        supportXWait=False,
+                                        # preciseDatestamp=False,
+                                        # deleteInSets=False
+                                    ),
+                                    (oaiJazz,),
+                                    (
+                                        RetrieveToGetDataAdapter(),
+                                        (storage,),
+                                    ),
+                                    (
+                                        OaiBranding(
+                                            url="https://www.narcis.nl/images/logos/logo-knaw-house.gif",  # TODO: Link to a joint-GMH icon...
+                                            link="https://harvester.dans.knaw.nl",
+                                            title="Gemeenschappelijke Metadata Harvester (GMH) van DANS en de KB",
+                                        ),
+                                    ),
+                                    (
+                                        OaiProvenance(
+                                            nsMap=NAMESPACEMAP,
+                                            baseURL=(
+                                                "meta",
+                                                "//meta:repository/meta:baseurl/text()",
+                                            ),
+                                            harvestDate=(
+                                                "meta",
+                                                "//meta:harvestdate/text()",
+                                            ),
+                                            metadataNamespace=(
+                                                "meta",
+                                                "//meta:metadataPrefix/text()",
+                                            ),  # TODO: Kan hardcoded in harvester mapper gezet eventueel: <metadataNamespace>urn:mpeg:mpeg21:2002:01-DII-NS</metadataNamespace>?? (storage,) #metadataNamespace=('meta', '//meta:record/meta:metadataNamespace/text()'),
+                                            identifier=(
+                                                "header",
+                                                "//oai:identifier/text()",
+                                            ),
+                                            datestamp=(
+                                                "header",
+                                                "//oai:datestamp/text()",
+                                            ),
+                                        ),
+                                        (
+                                            RetrieveToGetDataAdapter(),
+                                            (storage,),
+                                        ),
+                                    ),
                                 ),
-                                harvestDate=("meta", "//meta:harvestdate/text()"),
-                                metadataNamespace=(
-                                    "meta",
-                                    "//meta:metadataPrefix/text()",
-                                ),  # TODO: Kan hardcoded in harvester mapper gezet eventueel: <metadataNamespace>urn:mpeg:mpeg21:2002:01-DII-NS</metadataNamespace>?? (storage,) #metadataNamespace=('meta', '//meta:record/meta:metadataNamespace/text()'),
-                                identifier=("header", "//oai:identifier/text()"),
-                                datestamp=("header", "//oai:datestamp/text()"),
                             ),
                             (
-                                RetrieveToGetDataAdapter(),
-                                (storage,),
+                                PathFilter("/oai/info"),
+                                (
+                                    oaiInfoIpFilter,
+                                    (
+                                        OaiInfo(reactor=reactor, oaiPath="/oai"),
+                                        (oaiJazz,),
+                                    ),
+                                ),
+                            ),
+                            (
+                                PathFilter("/rss"),
+                                (
+                                    LoggerRSS(
+                                        title="GMH DANS-KB Normalisationlog Syndication",
+                                        description="Harvester normalisation log for: ",
+                                        link="http://rss.gharvester.dans.knaw.nl/rss",
+                                        maximumRecords=30,
+                                    ),
+                                    (normLogger, (storage,)),
+                                ),
+                            ),
+                            (
+                                PathFilter("/xls"),
+                                # (LogComponent("XLS-Request:"),),
+                                (XlsServer(),),
                             ),
                         ),
                     ),
-                ),
-                (
-                    PathFilter("/rss"),
-                    (
-                        LoggerRSS(
-                            title="GMH DANS-KB Normalisationlog Syndication",
-                            description="Harvester normalisation log for: ",
-                            link="http://rss.gharvester.dans.knaw.nl/rss",
-                            maximumRecords=30,
-                        ),
-                        (normLogger, (storage,)),
-                    ),
-                ),
-                (
-                    PathFilter("/xls"),
-                    # (LogComponent("XLS-Request:"),),
-                    (XlsServer(),),
                 ),
             ),
         ),
     )
 
 
-def startServer(port, stateDir, gatewayPort, quickCommit=False, **kwargs):
+def startServer(port, stateDir, gatewayPort, globalConfig, quickCommit=False, **kwargs):
     setSignalHandlers()
     print("Firing up API Server.")
-    statePath = abspath(stateDir)
+    statePath = pathlib.Path(stateDir).resolve()
+    statePath.mkdir(parents=True, exist_ok=True)
+    config = json.loads(globalConfig.read_text())
 
     reactor = Reactor()
     dna = main(
@@ -455,6 +487,7 @@ def startServer(port, stateDir, gatewayPort, quickCommit=False, **kwargs):
         statePath=statePath,
         gatewayPort=gatewayPort,
         quickCommit=quickCommit,
+        config=config,
         **kwargs
     )
 
@@ -466,5 +499,7 @@ def startServer(port, stateDir, gatewayPort, quickCommit=False, **kwargs):
     )
 
     print("Ready to rumble at %s" % port)
+    print("Global Config:")
+    print(json.dumps(config, indent=2))
     sys.stdout.flush()
     reactor.loop()
