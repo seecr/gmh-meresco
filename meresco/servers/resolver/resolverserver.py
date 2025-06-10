@@ -32,6 +32,7 @@ from os.path import join, dirname, abspath
 from weightless.core import be, consume
 from weightless.io import Reactor
 
+import json
 
 from meresco.core import Observable
 from meresco.core.alltodo import AllToDo
@@ -146,10 +147,12 @@ def createDownloadHelix(reactor, periodicDownload, oaiDownload, dbStorageCompone
     )
 
 
-def main(reactor, port, statePath, gatewayPort, dbConfig, quickCommit=False, **ignored):
+def main(
+    reactor, port, state_path, gatewayPort, dbConfig, quickCommit=False, **ignored
+):
 
     # TODO: Implement logging.
-    # normLogger = Logger(join(statePath, '..', 'gateway', 'normlogger'))
+    # normLogger = Logger(state_path.joinpath('..', 'gateway', 'normlogger').as_posix())
 
     dbStorageComponent = ResolverStorageComponent(dbConfig)
     verbose = True
@@ -168,7 +171,7 @@ def main(reactor, port, statePath, gatewayPort, dbConfig, quickCommit=False, **i
     oaiDownload = OaiDownloadProcessor(
         path="/oaix",
         metadataPrefix=NORMALISED_DOC_NAME,
-        workingDirectory=join(statePath, "harvesterstate", "gateway"),
+        workingDirectory=state_path.joinpath("harvesterstate", "gateway").as_posix(),
         userAgentAddition="ResolverServer",
         xWait=True,
         name="resolver",
@@ -193,18 +196,23 @@ def main(reactor, port, statePath, gatewayPort, dbConfig, quickCommit=False, **i
     )
 
 
-def startServer(port, stateDir, gatewayPort, dbConfig, quickCommit=False, **kwargs):
+def startServer(
+    port, stateDir, gatewayPort, dbConfig, globalConfig, quickCommit=False, **kwargs
+):
     setSignalHandlers()
     print("Firing up resolver Server.")
-    statePath = abspath(stateDir)
+    state_path = stateDir.resolve()
+    state_path.mkdir(parents=True, exist_ok=True)
+    config = json.loads(globalConfig.read_text())
 
     reactor = Reactor()
     dna = main(
         reactor=reactor,
         port=port,
-        statePath=statePath,
+        state_path=state_path,
         gatewayPort=gatewayPort,
         dbConfig=dbConfig,
+        config=config,
         quickCommit=quickCommit,
         **kwargs
     )
@@ -213,9 +221,14 @@ def startServer(port, stateDir, gatewayPort, dbConfig, quickCommit=False, **kwar
     consume(server.once.observer_init())
 
     registerShutdownHandler(
-        statePath=statePath, server=server, reactor=reactor, shutdownMustSucceed=False
+        statePath=state_path.as_posix(),
+        server=server,
+        reactor=reactor,
+        shutdownMustSucceed=False,
     )
 
     print("Ready to rumble at %s" % port)
+    print("Global Config:")
+    print(json.dumps(config, indent=2))
     sys.stdout.flush()
     reactor.loop()

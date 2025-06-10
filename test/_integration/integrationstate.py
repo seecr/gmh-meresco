@@ -114,8 +114,9 @@ class GmhTestIntegrationState(IntegrationState):
             gatewayPort=self.gatewayPort,
             stateDir=join(self.integrationTempdir, "resolver"),
             dbConfig=self._db_conf_file,  # realpath(join(mydir, "..", "conf", "config.ini")),
-            quickCommit=True,
+            globalConfig=join(self.integrationTempdir, "global-config.json"),
             waitForStart=False,
+            flagOptions=["quickCommit"],
         )
 
     def _createDatabase(self):
