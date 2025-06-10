@@ -457,7 +457,10 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                         link="http://rss.gharvester.dans.knaw.nl/rss",
                                         maximumRecords=30,
                                     ),
-                                    (normLogger, (storage,)),
+                                    (
+                                        normLogger,
+                                        (storage,),
+                                    ),
                                 ),
                             ),
                             (

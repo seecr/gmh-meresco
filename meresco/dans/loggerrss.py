@@ -73,7 +73,7 @@ class LoggerRSS(Observable):
                 str(e)
             )
             yield """</channel></rss>"""
-            raise StopIteration()
+            return
 
         yield "<title>%s</title>" % xmlEscape(self._title)
         yield "<description>%s</description>" % xmlEscape(self._description + rId)
