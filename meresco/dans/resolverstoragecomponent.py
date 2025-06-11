@@ -107,6 +107,7 @@ class ResolverStorageComponent(object):
                     (str(urnnbn), str(location), int(registrant_id), bool(isLTP)),
                 )
                 conn.commit()
+                print("addNbnLocation", urnnbn, location, registrant_id, isLTP)
             self.close(conn, cursor)
         except mysql.connector.Error as err:
             print(
