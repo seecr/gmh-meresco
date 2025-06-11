@@ -23,7 +23,7 @@
 #
 ## end license ##
 
-from meresco.dans.storagesplit import Md5HashDistributeStrategy, md5Split, md5Join
+from gmh_meresco.dans.storagesplit import Md5HashDistributeStrategy, md5Split, md5Join
 
 
 def test_split():

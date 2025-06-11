@@ -30,7 +30,7 @@ from meresco.core import Observable
 from copy import deepcopy
 from io import StringIO
 from weightless.core import Transparent, be, compose
-from meresco.dans.uiaconverter import UiaConverter
+from gmh_meresco.dans.uiaconverter import UiaConverter
 
 # lxml staat het gebruik van colonisednames niet meer toe: gebruik kwarg: prefix="[ns_alias]"
 # This component handles ADD messages only.

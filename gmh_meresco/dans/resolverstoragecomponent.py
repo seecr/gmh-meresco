@@ -35,7 +35,7 @@ import configparser
 from os.path import abspath, dirname, join, realpath
 from re import compile
 
-from meresco.dans.utils import read_db_config
+from gmh_meresco.dans.utils import read_db_config
 
 urnnbnRegex = compile("^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+")
 

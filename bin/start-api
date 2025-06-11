@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 ## begin license ##
 #
 # Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
@@ -60,6 +59,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    from meresco.servers.api.apiserver import startServer
+    from gmh_meresco.servers.api.apiserver import startServer
 
     startServer(**vars(args))

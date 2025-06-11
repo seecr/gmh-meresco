@@ -42,7 +42,7 @@ from .xmlvalidator import formatExceptionLine
 from dateutil.parser import parse as parseDate
 from datetime import *
 from .normalisedidl import XML_ENCODING
-from meresco.dans.uiaconverter import UiaConverter
+from gmh_meresco.dans.uiaconverter import UiaConverter
 
 from . import commons as comm
 

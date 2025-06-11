@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ## begin license ##
 #
 # Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
@@ -75,14 +74,14 @@ from storage import StorageComponent
 from meresco.xml import namespaces
 
 
-from meresco.dans.nldidlcombined import NlDidlCombined
-from meresco.dans.storagesplit import Md5HashDistributeStrategy
-from meresco.dans.writedeleted import ResurrectTombstone, WriteTombstone
-from meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
-from meresco.dans.loggerrss import LoggerRSS
-from meresco.dans.logger import Logger  # Normalisation Logger.
-from meresco.seecr.oai import OaiAddRecord
-from meresco.dans.xlsserver import XlsServer
+from gmh_meresco.dans.nldidlcombined import NlDidlCombined
+from gmh_meresco.dans.storagesplit import Md5HashDistributeStrategy
+from gmh_meresco.dans.writedeleted import ResurrectTombstone, WriteTombstone
+from gmh_meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
+from gmh_meresco.dans.loggerrss import LoggerRSS
+from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
+from gmh_meresco.seecr.oai import OaiAddRecord
+from gmh_meresco.dans.xlsserver import XlsServer
 
 import pathlib
 import json

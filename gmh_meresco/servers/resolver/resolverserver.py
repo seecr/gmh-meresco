@@ -84,9 +84,9 @@ from meresco.oai import (
 
 from seecr.utils import DebugPrompt
 
-from meresco.dans.resolver import Resolver
-from meresco.dans.resolverstoragecomponent import ResolverStorageComponent
-from meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
+from gmh_meresco.dans.resolver import Resolver
+from gmh_meresco.dans.resolverstoragecomponent import ResolverStorageComponent
+from gmh_meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
 
 from meresco.components.http.utils import (
     ContentTypePlainText,
@@ -94,13 +94,13 @@ from meresco.components.http.utils import (
     ContentTypeJson,
 )
 
-# from meresco.dans.loggerrss import LoggerRSS
-# from meresco.dans.logger import Logger # Normalisation Logger.
+# from gmh_meresco.dans.loggerrss import LoggerRSS
+# from gmh_meresco.dans.logger import Logger # Normalisation Logger.
 
 # NL_DIDL_NORMALISED_PREFIX = 'nl_didl_norm'
 # NL_DIDL_COMBINED_PREFIX = 'nl_didl_combined'
 
-from meresco.dans.utils import NAMESPACEMAP
+from gmh_meresco.dans.utils import NAMESPACEMAP
 
 
 def createDownloadHelix(reactor, periodicDownload, oaiDownload, dbStorageComponent):

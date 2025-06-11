@@ -31,7 +31,7 @@ update_request_path = pathlib.Path(__file__).parent / "updateRequest"
 testdata_path = pathlib.Path(__file__).parent / "testdata"
 
 from meresco.xml import xpathFirst, xpath
-from meresco.dans.addparttodocument import AddMetadataDocumentPart
+from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
 
 from seecr.test import CallTrace
 from meresco.core import Observable, be

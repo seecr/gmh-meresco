@@ -60,17 +60,17 @@ from weightless.io import Reactor
 from storage import StorageComponent
 from storage.storageadapter import StorageAdapter
 
-from meresco.dans.storagesplit import Md5HashDistributeStrategy
-from meresco.dans.xmlvalidator import Validate
-from meresco.dans.logger import Logger  # Normalisation Logger.
-from meresco.dans.normalisedidl import NormaliseDIDL
-from meresco.dans.normalisemods import NormaliseMODS
-from meresco.dans.addparttodocument import AddMetadataDocumentPart
+from gmh_meresco.dans.storagesplit import Md5HashDistributeStrategy
+from gmh_meresco.dans.xmlvalidator import Validate
+from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
+from gmh_meresco.dans.normalisedidl import NormaliseDIDL
+from gmh_meresco.dans.normalisemods import NormaliseMODS
+from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
 
-# from meresco.dans.metapartconverter import AddMetadataNamespace
-# from meresco.dans.longconverter import NormaliseOaiRecord
+# from gmh_meresco.dans.metapartconverter import AddMetadataNamespace
+# from gmh_meresco.dans.longconverter import NormaliseOaiRecord
 
-from meresco.dans.utils import NAMESPACEMAP
+from gmh_meresco.dans.utils import NAMESPACEMAP
 
 NORMALISED_DOC_NAME = "normdoc"
 

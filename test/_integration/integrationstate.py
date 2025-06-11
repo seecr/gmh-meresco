@@ -41,7 +41,7 @@ import configparser
 import pathlib
 import json
 
-from meresco.dans.utils import read_db_config
+from gmh_meresco.dans.utils import read_db_config
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))

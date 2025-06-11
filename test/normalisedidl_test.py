@@ -33,8 +33,8 @@ normdoc_path = pathlib.Path(__file__).parent / "testdata"
 
 from meresco.xml import xpathFirst
 
-from meresco.dans.normalisedidl import NormaliseDIDL
-from meresco.dans.utils import NAMESPACEMAP
+from gmh_meresco.dans.normalisedidl import NormaliseDIDL
+from gmh_meresco.dans.utils import NAMESPACEMAP
 
 import difflib
 import pytest

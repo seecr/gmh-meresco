@@ -43,7 +43,7 @@ from meresco.components.xml_generic.validate import ValidateException
 from meresco.components import Converter
 from meresco.xml.namespaces import namespaces
 
-from meresco.dans.uiaconverter import UiaConverter
+from gmh_meresco.dans.uiaconverter import UiaConverter
 
 from dateutil.parser import parse as parseDate
 
