@@ -81,7 +81,6 @@ from gmh_meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
 from gmh_meresco.dans.loggerrss import LoggerRSS
 from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
 from gmh_meresco.seecr.oai import OaiAddRecord
-from gmh_meresco.dans.xlsserver import XlsServer
 
 import pathlib
 import json
@@ -461,11 +460,6 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                         (storage,),
                                     ),
                                 ),
-                            ),
-                            (
-                                PathFilter("/xls"),
-                                # (LogComponent("XLS-Request:"),),
-                                (XlsServer(),),
                             ),
                         ),
                     ),
