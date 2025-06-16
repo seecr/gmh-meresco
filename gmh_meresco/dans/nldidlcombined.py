@@ -53,14 +53,14 @@ class NlDidlCombined(UiaConverter):
     def _convert(self, lxmlNode):
         # Get partName from disk to combine:
         storage_part = self._getPart(self._uploadid, "nl_didl_norm")
-        original_part = lxmlNode.getroot().xpath('//didl:DIDL', namespaces=self._nsMap)
+        original_part = lxmlNode.getroot().xpath("//didl:DIDL", namespaces=self._nsMap)
 
         # Create wrapper:
         root = etree.Element(GH_COMBINED + "nl_didl_combined", nsmap=NSMAP)
         e_original = etree.SubElement(root, GH_COMBINED + "nl_didl")
         e_normalized = etree.SubElement(root, GH_COMBINED + "nl_didl_norm")
 
-        nl_didl_norm = storage_part.xpath('//didl:DIDL', namespaces=self._nsMap)
+        nl_didl_norm = storage_part.xpath("//didl:DIDL", namespaces=self._nsMap)
         # print(etree.tostring(didl_xml[0], pretty_print=True))
         if nl_didl_norm:
             e_normalized.append(nl_didl_norm[0])
@@ -76,4 +76,4 @@ class NlDidlCombined(UiaConverter):
         return None
 
     def __str__(self):
-        return 'NL_DIDL_combined'
+        return "NL_DIDL_combined"

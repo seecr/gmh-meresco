@@ -43,6 +43,7 @@ from meresco.components.sru import SruRecordUpdate
 
 from meresco.core import Observable
 from meresco.core.processtools import setSignalHandlers, registerShutdownHandler
+from meresco.sequentialstore import MultiSequentialStorage, StorageComponentAdapter
 
 from meresco.oai import (
     OaiJazz,
@@ -91,10 +92,12 @@ def main(reactor, port, statePath, config, **ignored):
     # strategie = HashDistributeStrategy() # filename (=partname) is also hashed: difficult to read by human eye...
     strategie = Md5HashDistributeStrategy()
 
-    storeComponent = StorageComponent(
-        statePath.joinpath("store").as_posix(),
-        strategy=strategie,
-        partsRemovedOnDelete=[NORMALISED_DOC_NAME],
+    storeComponent = be(
+        (
+            StorageComponentAdapter(),
+            # (LogComponent("STORAGE"),),
+            (MultiSequentialStorage(statePath.joinpath("store").as_posix()),),
+        )
     )
 
     oaixIpFilter = IpFilter(

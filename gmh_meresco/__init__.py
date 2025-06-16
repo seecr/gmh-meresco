@@ -34,4 +34,4 @@ __path__ = extend_path(__path__, __name__)
 
 import seecr_initvm
 
-seecr_initvm.initvm("meresco_lucene", "meresco_oai")
+seecr_initvm.initvm("meresco_lucene", "meresco_oai", "meresco_sequentialstore")

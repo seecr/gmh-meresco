@@ -34,6 +34,7 @@ from weightless.io import Reactor
 
 from meresco.core import Observable
 from meresco.core.processtools import setSignalHandlers, registerShutdownHandler
+from meresco.sequentialstore import MultiSequentialStorage, StorageComponentAdapter
 
 from meresco.components import (
     PeriodicDownload,
@@ -56,6 +57,7 @@ from meresco.components.log import (
     LogCollector,
     ApacheLogWriter,
     HandleRequestLog,
+    LogComponent,
 )
 
 from meresco.oai import (
@@ -316,15 +318,23 @@ def createDownloadHelix(
 
 def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ignored):
     apacheLogStream = stdout
-    strategie = Md5HashDistributeStrategy()
-    storage = StorageComponent(
-        statePath.joinpath("store").as_posix(),
-        strategy=strategie,
-        partsRemovedOnDelete=[
-            NL_DIDL_NORMALISED_PREFIX,
-            NL_DIDL_COMBINED_PREFIX,
-            "metadata",
-        ],
+    # strategie = Md5HashDistributeStrategy()
+    # storage = StorageComponent(
+    #     statePath.joinpath("store").as_posix(),
+    #     strategy=strategie,
+    #     partsRemovedOnDelete=[
+    #         NL_DIDL_NORMALISED_PREFIX,
+    #         NL_DIDL_COMBINED_PREFIX,
+    #         "metadata",
+    #     ],
+    # )
+
+    storage = be(
+        (
+            StorageComponentAdapter(),
+            # (LogComponent("STORAGE"),),
+            (MultiSequentialStorage(statePath.joinpath("store").as_posix()),),
+        )
     )
 
     oaiJazz = OaiJazz(statePath.joinpath("oai").as_posix())
@@ -457,7 +467,10 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                     ),
                                     (
                                         normLogger,
-                                        (storage,),
+                                        (
+                                            StorageComponentAdapter(),
+                                            (storage,),
+                                        ),
                                     ),
                                 ),
                             ),

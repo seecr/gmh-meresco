@@ -46,9 +46,12 @@ class ResurrectTombstone(Observable):
         Observable.__init__(self, name=name)
 
     def add(self, identifier, partname, **kwargs):
-        yield self.do.deletePart(identifier=identifier, partname="tombstone")
-        # return
-        # yield
+        try:
+            self.do.deletePart(identifier=identifier, partname="tombstone")
+        except KeyError:
+            pass
+        return
+        yield
 
 
 # For now we can only add current datetime to tombstone, because 'datestamp' of deletion is only available from OAI-pmh delete,
