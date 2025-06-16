@@ -61,7 +61,6 @@ from weightless.io import Reactor
 from storage import StorageComponent
 from storage.storageadapter import StorageAdapter
 
-from gmh_meresco.dans.storagesplit import Md5HashDistributeStrategy
 from gmh_meresco.dans.xmlvalidator import Validate
 from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
 from gmh_meresco.dans.normalisedidl import NormaliseDIDL
@@ -88,9 +87,6 @@ def main(reactor, port, statePath, config, **ignored):
     oaiJazz.addObserver(oaiSuspendRegister)
 
     normLogger = Logger(statePath.joinpath("normlogger").as_posix())
-
-    # strategie = HashDistributeStrategy() # filename (=partname) is also hashed: difficult to read by human eye...
-    strategie = Md5HashDistributeStrategy()
 
     storeComponent = be(
         (

@@ -77,7 +77,6 @@ from meresco.xml import namespaces
 
 
 from gmh_meresco.dans.nldidlcombined import NlDidlCombined
-from gmh_meresco.dans.storagesplit import Md5HashDistributeStrategy
 from gmh_meresco.dans.writedeleted import ResurrectTombstone, WriteTombstone
 from gmh_meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
 from gmh_meresco.dans.loggerrss import LoggerRSS
@@ -318,16 +317,6 @@ def createDownloadHelix(
 
 def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ignored):
     apacheLogStream = stdout
-    # strategie = Md5HashDistributeStrategy()
-    # storage = StorageComponent(
-    #     statePath.joinpath("store").as_posix(),
-    #     strategy=strategie,
-    #     partsRemovedOnDelete=[
-    #         NL_DIDL_NORMALISED_PREFIX,
-    #         NL_DIDL_COMBINED_PREFIX,
-    #         "metadata",
-    #     ],
-    # )
 
     storage = be(
         (
