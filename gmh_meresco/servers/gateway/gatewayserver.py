@@ -66,6 +66,7 @@ from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
 from gmh_meresco.dans.normalisedidl import NormaliseDIDL
 from gmh_meresco.dans.normalisemods import NormaliseMODS
 from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
+from gmh_meresco.servers.information import server_information
 
 # from gmh_meresco.dans.metapartconverter import AddMetadataNamespace
 # from gmh_meresco.dans.longconverter import NormaliseOaiRecord
@@ -78,6 +79,7 @@ NORMALISED_DOC_NAME = "normdoc"
 def main(reactor, port, statePath, config, **ignored):
     apacheLogStream = stdout
 
+    server_info = server_information(config)
     oaiSuspendRegister = SuspendRegister()
     oaiJazz = OaiJazz(
         statePath.joinpath("oai").as_posix(),
@@ -127,7 +129,7 @@ def main(reactor, port, statePath, config, **ignored):
                                     (
                                         OaiPmh(
                                             repositoryName="Gateway",
-                                            adminEmail="harvester@dans.knaw.nl",
+                                            adminEmail=server_info.oai_admin_email,
                                             supportXWait=True,
                                             batchSize=2000,  # Override default batch size of 200.
                                         ),

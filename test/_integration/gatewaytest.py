@@ -65,7 +65,7 @@ class GatewayTest(IntegrationTestCase):
             header,
         )
         adminEmail = xpath(body, "//oai:Identify/oai:adminEmail/text()")
-        self.assertEqual("harvester@dans.knaw.nl", adminEmail[0])
+        self.assertEqual("admin@example.org", adminEmail[0])
 
     def testOaixInfo(self):
         header, body = getRequest(self.gatewayPort, "/oaix/info/index")

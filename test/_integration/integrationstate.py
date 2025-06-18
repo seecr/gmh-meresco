@@ -64,7 +64,17 @@ class GmhTestIntegrationState(IntegrationState):
             self._db_conf_file
         )  # realpath(join(mydir, "..", "conf", "config.ini")))
         global_config = pathlib.Path(self.integrationTempdir) / "global-config.json"
-        global_config.write_text(json.dumps({}))
+        global_config.write_text(
+            json.dumps(
+                {
+                    "info": dict(
+                        oai_admin_email="admin@example.org",
+                        oai_base_url="https://oai.example.org",
+                        harvester_base_url="https://harvester.example.org",
+                    )
+                }
+            )
+        )
         self.startGatewayServer()
         self.startApiServer()
         self.startResolverServer()

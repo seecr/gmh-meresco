@@ -79,6 +79,7 @@ from meresco.xml import namespaces
 from gmh_meresco.dans.nldidlcombined import NlDidlCombined
 from gmh_meresco.dans.writedeleted import ResurrectTombstone, WriteTombstone
 from gmh_meresco.servers.gateway.gatewayserver import NORMALISED_DOC_NAME
+from gmh_meresco.servers.information import server_information
 from gmh_meresco.dans.loggerrss import LoggerRSS
 from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
 from gmh_meresco.seecr.oai import OaiAddRecord
@@ -326,6 +327,8 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
         )
     )
 
+    server_info = server_information(config)
+
     oaiJazz = OaiJazz(statePath.joinpath("oai").as_posix())
     oaiJazz.updateMetadataFormat(
         "metadata", "http://didl.loc.nl/didl.xsd", NAMESPACEMAP.didl
@@ -384,9 +387,9 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                 PathFilter("/oai", excluding=["/oai/info"]),
                                 (
                                     OaiPmh(
-                                        repositoryName="Gemeenschappelijke Metadata Harvester DANS-KB",
-                                        adminEmail="harvester@dans.knaw.nl",
-                                        externalUrl="http://oai.gharvester.dans.knaw.nl",
+                                        repositoryName="Gemeenschappelijke Metadata Harvester KB",
+                                        adminEmail=server_info.oai_admin_email,
+                                        externalUrl=server_info.oai_base_url,
                                         batchSize=200,
                                         supportXWait=False,
                                         # preciseDatestamp=False,
@@ -399,9 +402,9 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                     ),
                                     (
                                         OaiBranding(
-                                            url="https://www.narcis.nl/images/logos/logo-knaw-house.gif",  # TODO: Link to a joint-GMH icon...
-                                            link="https://harvester.dans.knaw.nl",
-                                            title="Gemeenschappelijke Metadata Harvester (GMH) van DANS en de KB",
+                                            url="https://www.kb.nl",
+                                            link=server_info.harvester_base_url,
+                                            title="Gemeenschappelijke Metadata Harvester (GMH) van de KB",
                                         ),
                                     ),
                                     (
@@ -449,9 +452,9 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                 PathFilter("/rss"),
                                 (
                                     LoggerRSS(
-                                        title="GMH DANS-KB Normalisationlog Syndication",
+                                        title="GMH KB Normalisationlog Syndication",
                                         description="Harvester normalisation log for: ",
-                                        link="http://rss.gharvester.dans.knaw.nl/rss",
+                                        link=f"{server_info.harvester_base_url}/rss",
                                         maximumRecords=30,
                                     ),
                                     (
@@ -486,7 +489,7 @@ def startServer(port, stateDir, gatewayPort, globalConfig, quickCommit=False, **
         gatewayPort=gatewayPort,
         quickCommit=quickCommit,
         config=config,
-        **kwargs
+        **kwargs,
     )
 
     server = be(dna)

@@ -56,7 +56,7 @@ class ApiTest(IntegrationTestCase):
         # print "RSS body:", etree.tostring(body)
         self.assertEqual(7, len(xpath(body, "/rss/channel/item/description")))
         self.assertEqual(
-            "GMH DANS-KB Normalisationlog Syndication",
+            "GMH KB Normalisationlog Syndication",
             xpathFirst(body, "//channel/title/text()"),
         )
         self.assertEqual(
@@ -112,15 +112,15 @@ class ApiTest(IntegrationTestCase):
             header,
         )
         self.assertEqual(
-            "Gemeenschappelijke Metadata Harvester DANS-KB",
+            "Gemeenschappelijke Metadata Harvester KB",
             xpathFirst(body, "//oai:Identify/oai:repositoryName/text()"),
         )
         self.assertEqual(
-            "harvester@dans.knaw.nl",
+            "admin@example.org",
             xpathFirst(body, "//oai:Identify/oai:adminEmail/text()"),
         )
         self.assertEqual(
-            "Gemeenschappelijke Metadata Harvester (GMH) van DANS en de KB",
+            "Gemeenschappelijke Metadata Harvester (GMH) van de KB",
             testNamespaces.xpathFirst(
                 body,
                 "//oai:Identify/oai:description/oaibrand:branding/oaibrand:collectionIcon/oaibrand:title/text()",
