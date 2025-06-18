@@ -26,11 +26,13 @@
 ## end license ##
 
 import sys
+import pathlib
 from sys import stdout
 from os.path import join, dirname, abspath
 
 from weightless.core import be, consume
 from weightless.io import Reactor
+import weightless.http
 
 import json
 
@@ -56,8 +58,10 @@ from meresco.components.http import (
     ObservableHttpServer,
     BasicHttpHandler,
     PathFilter,
+    PathRename,
     Deproxy,
     StringServer,
+    IpFilter,
     FileServer,
 )
 from meresco.components.log import (
@@ -81,6 +85,7 @@ from meresco.oai import (
     OaiAddDeleteRecordWithPrefixesAndSetSpecs,
 )
 
+from meresco.html import DynamicHtml
 
 from seecr.utils import DebugPrompt
 
@@ -101,6 +106,9 @@ from meresco.components.http.utils import (
 # NL_DIDL_COMBINED_PREFIX = 'nl_didl_combined'
 
 from gmh_meresco.dans.utils import NAMESPACEMAP
+
+my_path = pathlib.Path(__file__).resolve().parent
+dynamicPaths = [my_path.joinpath("dynamic-info").as_posix()]
 
 
 def createDownloadHelix(reactor, periodicDownload, oaiDownload, dbStorageComponent):
@@ -148,7 +156,14 @@ def createDownloadHelix(reactor, periodicDownload, oaiDownload, dbStorageCompone
 
 
 def main(
-    reactor, port, state_path, gatewayPort, dbConfig, quickCommit=False, **ignored
+    reactor,
+    port,
+    state_path,
+    gatewayPort,
+    dbConfig,
+    config,
+    quickCommit=False,
+    **ignored
 ):
 
     # TODO: Implement logging.
@@ -177,6 +192,16 @@ def main(
         name="resolver",
         autoCommit=False,
     )
+    infoIpFilter = IpFilter(
+        allowedIps=config.get("allowedIps", ["127.0.0.1"]),
+        allowedIpRanges=config.get("allowedIpRanges", []),
+    )
+    additionalGlobals = {
+        "config": config,
+        "oaiDownloadState": oaiDownload.getState(),
+        "gatewayPort": gatewayPort,
+        "httpget": weightless.http.httpget,
+    }
 
     return (
         Observable(),
@@ -188,8 +213,28 @@ def main(
             (
                 BasicHttpHandler(),
                 (
-                    PathFilter("/"),
+                    PathFilter(
+                        "/",
+                        excluding=["/info"],
+                    ),
                     (StringServer("Resolver Server", ContentTypePlainText),),
+                ),
+                (
+                    infoIpFilter,
+                    (
+                        PathFilter("/info"),
+                        (
+                            PathRename(lambda path: path[len("/info") :] or "/"),
+                            (
+                                DynamicHtml(
+                                    dynamicPaths,
+                                    reactor=reactor,
+                                    indexPage="/info/index",
+                                    additionalGlobals=additionalGlobals,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             ),
         ),
