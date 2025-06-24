@@ -31,6 +31,13 @@ from os import walk
 from os.path import join
 
 data_files = []
+for path, dirs, files in walk("doc"):
+    data_files.append(
+        (
+            path.replace("doc", "/usr/share/doc/gmh-meresco", 1)
+            [join(path, f) for f in files],
+        )
+    )
 scripts = []
 for path, dirs, files in walk("bin"):
     scripts.extend(join(path, f) for f in files)
