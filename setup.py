@@ -34,7 +34,7 @@ data_files = []
 for path, dirs, files in walk("doc"):
     data_files.append(
         (
-            path.replace("doc", "/usr/share/doc/gmh-meresco", 1)
+            path.replace("doc", "/usr/share/doc/gmh-meresco", 1),
             [join(path, f) for f in files],
         )
     )
