@@ -50,7 +50,7 @@ def inhoud(**kwargs):
                             yield "Harvester"
                         yield ": Control panel van de harvester voor het vullen van de database"
                     with tag("li"):
-                        with tag("a", target="_blank", href=f"{server_info.oai_base_url}?verb=Identify"):
+                        with tag("a", target="_blank", href=f"{server_info.oai_base_url}/oai?verb=Identify"):
                             yield "OAI GMH"
                         yield ": OAI output van de verzamelde records"
                     with tag("li"):
