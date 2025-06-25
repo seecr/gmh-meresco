@@ -27,6 +27,8 @@
 import sys
 from sys import stdout
 from os.path import dirname, abspath
+import pathlib
+import markdown2
 
 from weightless.core import be, consume
 from weightless.io import Reactor
@@ -50,8 +52,10 @@ from meresco.components.http import (
     ObservableHttpServer,
     BasicHttpHandler,
     PathFilter,
+    PathRename,
     Deproxy,
     IpFilter,
+    FileServer,
 )
 from meresco.components.log import (
     LogCollector,
@@ -59,6 +63,7 @@ from meresco.components.log import (
     HandleRequestLog,
     LogComponent,
 )
+from meresco.html import DynamicHtml
 
 from meresco.oai import (
     OaiPmh,
@@ -84,6 +89,8 @@ from gmh_meresco.dans.loggerrss import LoggerRSS
 from gmh_meresco.dans.logger import Logger  # Normalisation Logger.
 from gmh_meresco.seecr.oai import OaiAddRecord
 
+from .docdata import DocData
+
 import pathlib
 import json
 
@@ -103,8 +110,11 @@ NAMESPACEMAP = namespaces.copyUpdate(
     }
 )
 
-myPath = dirname(abspath(__file__))
-# dynamicHtmlPath = join(myPath, 'controlpanel', 'html', 'dynamic')
+my_path = pathlib.Path(__file__).resolve().parent
+dynamicPath = my_path / "dynamic"
+staticPath = my_path / "static"
+docPath = pathlib.Path("/usr/share/doc/gmh-meresco")
+docPath = my_path.parent.parent.parent / "doc"  # DO_NOT_DISTRIBUTE
 # staticHtmlPath = join(myPath, 'controlpanel', 'html', 'static')
 
 
@@ -328,6 +338,10 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
     )
 
     server_info = server_information(config)
+    additionalGlobals = {
+        "markdown2": markdown2,
+        "server_info": server_info,
+    }
 
     oaiJazz = OaiJazz(statePath.joinpath("oai").as_posix())
     oaiJazz.updateMetadataFormat(
@@ -463,6 +477,30 @@ def main(reactor, port, statePath, gatewayPort, config, quickCommit=False, **ign
                                             StorageComponentAdapter(),
                                             (storage,),
                                         ),
+                                    ),
+                                ),
+                            ),
+                            (
+                                PathFilter("/static/"),
+                                (
+                                    PathRename(
+                                        lambda path: path.replace("/static/", "/", 1)
+                                    ),
+                                    (FileServer(staticPath.as_posix()),),
+                                ),
+                            ),
+                            (
+                                PathFilter("/doc"),
+                                (
+                                    PathRename(lambda path: path[len("/doc") :] or "/"),
+                                    (
+                                        DynamicHtml(
+                                            [dynamicPath.as_posix()],
+                                            reactor=reactor,
+                                            indexPage="/doc/index",
+                                            additionalGlobals=additionalGlobals,
+                                        ),
+                                        (DocData([docPath]),),
                                     ),
                                 ),
                             ),

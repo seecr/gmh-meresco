@@ -1,0 +1,67 @@
+## begin license ##
+#
+# Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
+#
+# Copyright (C) 2025 Koninklijke Bibliotheek (KB) https://www.kb.nl
+# Copyright (C) 2025 Seecr (Seek You Too B.V.) https://seecr.nl
+#
+# This file is part of "GMH-Meresco"
+#
+# "GMH-Meresco" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "GMH-Meresco" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "GMH-Meresco"; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+## end license ##
+
+import page
+
+def inhoud(**kwargs):
+    tag = kwargs['tag']
+    with tag('div', class_=['container-fluid']):
+        with tag('div', class_=['row']):
+            with tag('div', class_='col-12'):
+                with tag("h1"):
+                    yield "Overzicht documentatie"
+                with tag("p"):
+                    yield "GMH (Gemeenschappelijke Metadata Harvester) is een project van de Koninklijke Bibliotheek en wordt onderhouden en gehost door "
+                    with tag("a", href="https://seecr.nl", target="_blank"):
+                        yield "Seecr"
+                    yield "."
+                with tag("p"):
+                    yield "Via deze "
+                    with tag("a", href="/doc/md/README.md"):
+                        yield "beschrijving"
+                    yield " wordt uitgelegd hoe deze GMH werkt"
+                with tag("h2"):
+                    yield "Overzicht belangrijke urls"
+                with tag("ul"):
+                    with tag("li"):
+                        with tag("a", target="_blank", href=server_info.harvester_base_url):
+                            yield "Harvester"
+                        yield ": Control panel van de harvester voor het vullen van de database"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"{server_info.oai_base_url}?verb=Identify"):
+                            yield "OAI GMH"
+                        yield ": OAI output van de verzamelde records"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"{server_info.resolver_base_url}"):
+                            yield "Resolver UI"
+                        yield ": Voor het resolven van nbn:identifiers naar locaties"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"{server_info.resolver_base_url}/gmh-registration-service/api/v1/openapi.yaml"):
+                            yield "GMH Registration Service (openapi.yaml)"
+                        yield ": Voor het registreren van nbn:identifiers naar locaties"
+
+
+def main(**kwargs):
+    yield page.page(contents=inhoud, title="GMH Documentatie overzicht", **kwargs)

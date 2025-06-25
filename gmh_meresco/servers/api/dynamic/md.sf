@@ -1,0 +1,57 @@
+## begin license ##
+#
+# Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
+#
+# Copyright (C) 2022, 2025 Seecr (Seek You Too B.V.) https://seecr.nl
+# Copyright (C) 2022 Stichting Kennisnet https://www.kennisnet.nl
+# Copyright (C) 2025 Koninklijke Bibliotheek (KB) https://www.kb.nl
+#
+# This file is part of "GMH-Meresco"
+#
+# "GMH-Meresco" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "GMH-Meresco" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "GMH-Meresco"; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+## end license ##
+
+
+import page
+
+def inhoud(markdown_data, **kwargs):
+    tag = kwargs['tag']
+    with tag('div', class_=['container-fluid']):
+        with tag('div', class_=['row']):
+            with tag('div', class_='col-12'):
+                yield tag.as_is(markdown2.markdown(markdown_data, extras=['header-ids']))
+
+def main(**kwargs):
+    path = kwargs['path']
+    arguments = kwargs['arguments']
+    begin, _, name = path.partition("/md/")
+    debug = 'debug' in arguments
+
+    try:
+        data = observable.call.get_document(name=name)
+    except:
+        data = None
+
+    if data is None:
+        yield 'Not found'
+        return
+    if debug:
+        yield 'HTTP/1.0 200 Ok\r\nContent-Type: text/plain\r\n\r\n'
+        yield data
+        return
+    yield page.page(contents=inhoud, title='Document', markdown_data=data,
+            **kwargs)
+
