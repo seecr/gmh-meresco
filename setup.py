@@ -47,7 +47,7 @@ for path, dirs, files in walk("gmh_meresco"):
         packages.append(path.replace("/", "."))
 package_data = {}
 for path, dirs, files in walk("gmh_meresco"):
-    for suffix in [".txt", ".sf", ".xsd"]:
+    for suffix in [".txt", ".sf", ".xsd", ".png"]:
         if any(f.endswith(suffix) for f in files):
             segments = path.split("/")
             package = ".".join(segments[:2])
