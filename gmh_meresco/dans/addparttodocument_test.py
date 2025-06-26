@@ -27,8 +27,11 @@ import pathlib
 from lxml.etree import parse, tostring
 from io import BytesIO
 
-update_request_path = pathlib.Path(__file__).parent / "updateRequest"
-testdata_path = pathlib.Path(__file__).parent / "testdata"
+my_path = pathlib.Path(__file__).resolve().parent
+test_path = my_path.parent.parent / "test"
+
+update_request_path = test_path / "updateRequest"
+testdata_path = test_path / "testdata"
 
 from meresco.xml import xpathFirst, xpath
 from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
@@ -57,7 +60,9 @@ def test_add_metadata_document_part():
         )
     )
 
+    count = 0
     for filename in sorted(update_request_path.glob("*.updateRequest")):
+        count += 1
         with filename.open() as fp:
             lxmlNode = parse(fp)
             update_request = xpathFirst(lxmlNode, '/*[local-name()="updateRequest"]')
@@ -109,3 +114,4 @@ def test_add_metadata_document_part():
                     ):
                         target_filename.write_text(formatted)
                         print(f"Wrote {target_filename}")
+    assert count > 0
