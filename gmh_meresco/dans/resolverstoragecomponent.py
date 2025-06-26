@@ -76,14 +76,6 @@ class ResolverStorageComponent(object):
 
         try:
             registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
-            # Check if correct prefix, skip registration otherwise:
-            if not urnnbn.startswith(prefix) and not isLTP:
-                print(
-                    "{nbn} does not match prefix '{prefix}'. Registration skipped.".format(
-                        nbn=urnnbn, prefix=prefix
-                    )
-                )
-                return
             self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
         except mysql.connector.Error as e:
             print("Error from SQL-db: {}".format(e))
