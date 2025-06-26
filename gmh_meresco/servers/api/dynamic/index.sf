@@ -50,6 +50,10 @@ def inhoud(**kwargs):
                             yield "Harvester"
                         yield ": Control panel van de harvester voor het vullen van de database"
                     with tag("li"):
+                        with tag("a", target="_blank", href=f"{server_info.harvester_base_url}/showHarvesterStatus?domainId={server_info.harvester_domainId}"):
+                            yield "Harvester Status"
+                        yield ": Statuspagina van de harvester"
+                    with tag("li"):
                         with tag("a", target="_blank", href=f"{server_info.oai_base_url}/oai?verb=Identify"):
                             yield "OAI GMH"
                         yield ": OAI output van de verzamelde records"
@@ -61,6 +65,27 @@ def inhoud(**kwargs):
                         with tag("a", target="_blank", href=f"{server_info.resolver_base_url}/gmh-registration-service/api/v1/openapi.yaml"):
                             yield "GMH Registration Service (openapi.yaml)"
                         yield ": Voor het registreren van nbn:identifiers naar locaties"
+                with tag("h2"):
+                    yield "Overzicht GITHUB repository's"
+                with tag("p"):
+                    yield "Seecr heeft alle code voor de verschillende services voor GMH gepubliceerd op GitHub."
+                with tag("ul"):
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"https://github.com/seecr/gmh-meresco"):
+                            yield "GMH Meresco"
+                        yield ": services zoals OAI en detecteren van nbn identifier en locatie"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"https://github.com/seecr/gmh-harvester"):
+                            yield "GMH Harvester addons"
+                        yield ": aanvullingen voor de Seecr Metastreams Harvester, zorgt o.a. voor andere status pagina"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"https://github.com/seecr/gmh-resolver-ui"):
+                            yield "GMH Resolver UI"
+                        yield f": service voor opleveren van locatie bij een identifier. {server_info.resolver_base_url}"
+                    with tag("li"):
+                        with tag("a", target="_blank", href=f"https://github.com/seecr/gmh-registration-service"):
+                            yield "GMH Resolver UI"
+                        yield f": service voor opleveren van locatie bij een identifier. {server_info.resolver_base_url}/gmh-registration-service"
 
 
 def main(**kwargs):
