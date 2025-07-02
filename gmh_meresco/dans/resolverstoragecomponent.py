@@ -95,20 +95,22 @@ class ResolverStorageComponent(object):
                 "deleteNbnLocationsByRegistrantId",
                 (str(urnnbn), int(registrant_id), bool(isLTP)),
             )
+            t1_5 = time.time()
             conn.commit()
-            t2 = time.time()
+            t2_5 = t2 = time.time()
             for location in locations:
                 cursor.callproc(
                     "addNbnLocation",
                     (str(urnnbn), str(location), int(registrant_id), bool(isLTP)),
                 )
+                t2_5 = time.time()
                 conn.commit()
             t3 = time.time()
             self.close(conn, cursor)
             t4 = time.time()
             print("addNbnLocations", urnnbn, location)
             print(
-                f"Total: {t4-t0:.2f}, Connection {t1-t0:.2f}, Delete {t2-t1:.2f}, Add {t3-t2:.2f}, Close {t4-t3:.2f}",
+                f"Total: {t4-t0:.2f}, Connection {t1-t0:.2f}, Delete {t2-t1:.2f}/{t2-t1_5:.2f}, Add {t3-t2:.2f}/{t3-t2_5:.2f}, Close {t4-t3:.2f}",
             )
         except mysql.connector.Error as err:
             print(
