@@ -124,30 +124,12 @@ def createDownloadHelix(reactor, periodicDownload, oaiDownload, dbStorageCompone
                 oaiDownload,  # Implementation/Protocol of a PeriodicDownload...
                 (
                     UpdateAdapterFromOaiDownloadProcessor(),  # Maakt van een SRU update/delete bericht (lxmlNode) een relevante message: 'delete' of 'add' message.
-                    # (FilterMessages(['delete']), # Filtert delete messages
-                    #     # (LogComponent("Delete msg:"),),
-                    #     # Write a 'deleted' part to the storage, that holds the (Record)uploadId.
-                    #     # (WriteTombstone(),
-                    #     #     (storageComponent,),
-                    #     # )
-                    # ),
                     (
                         FilterMessages(allowed=["add"]),
-                        # (LogComponent("AddToNBNRES"),),
                         (
                             Resolver(ro=False, nsMap=NAMESPACEMAP),
                             (dbStorageComponent,),
                         ),
-                        # (XmlXPath(['//document:document/document:part[@name="normdoc"]/text()'], fromKwarg='lxmlNode', toKwarg='data', namespaces=NAMESPACEMAP),
-                        #     (XmlParseLxml(fromKwarg='data', toKwarg='lxmlNode'),
-                        #         (LogComponent("NORMDOC"),),   #TODO: get urn:nbn and location from document.
-                        #         # (RewritePartname(NL_DIDL_NORMALISED_PREFIX), # Hernoemt partname van 'record' naar "metadata".
-                        #         #     (XmlPrintLxml(fromKwarg="lxmlNode", toKwarg="data", pretty_print=True),
-                        #         #         (storageComponent,) # Schrijft oai:metadata (=origineel) naar storage.
-                        #         #     )
-                        #         # )
-                        #     )
-                        # )
                     ),
                 ),
             ),
@@ -165,9 +147,6 @@ def main(
     quickCommit=False,
     **ignored
 ):
-
-    # TODO: Implement logging.
-    # normLogger = Logger(state_path.joinpath('..', 'gateway', 'normlogger').as_posix())
 
     dbStorageComponent = ResolverStorageComponent(dbConfig)
     verbose = True

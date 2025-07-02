@@ -32,6 +32,7 @@
 import mysql.connector
 import mysql.connector.pooling
 import configparser
+import time
 from os.path import abspath, dirname, join, realpath
 from re import compile
 
@@ -85,27 +86,33 @@ class ResolverStorageComponent(object):
         """
         Upserts all locations for this identifier and registrantId
         """
+        t0 = time.time()
         try:
             conn = self._cnxpool.get_connection()
             cursor = conn.cursor()
+            t1 = time.time()
             cursor.callproc(
                 "deleteNbnLocationsByRegistrantId",
                 (str(urnnbn), int(registrant_id), bool(isLTP)),
             )
             conn.commit()
+            t2 = time.time()
             for location in locations:
                 cursor.callproc(
                     "addNbnLocation",
                     (str(urnnbn), str(location), int(registrant_id), bool(isLTP)),
                 )
                 conn.commit()
-                print("addNbnLocation", urnnbn, location, registrant_id, isLTP)
+            t3 = time.time()
             self.close(conn, cursor)
+            t4 = time.time()
+            print("addNbnLocations", urnnbn, location)
+            print(
+                f"Total: {t4-t0:.2f}, Connection {t1-t0:.2f}, Delete {t2-t1:.2f}, Add {t3-t2:.2f}, Close {t4-t3:.2f}",
+            )
         except mysql.connector.Error as err:
             print(
-                "Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {}".format(
-                    err
-                )
+                f"Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {err!s}"
             )
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
@@ -146,7 +153,7 @@ class ResolverStorageComponent(object):
                 pool_name=pool_name,
                 pool_size=pool_size,
                 pool_reset_session=True,
-                **self._dbconfig
+                **self._dbconfig,
             )
             print(
                 "Created ConnectionPool: Name=",
