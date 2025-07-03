@@ -42,16 +42,15 @@ import pathlib
 import json
 
 from gmh_meresco.dans.utils import read_db_config
-from gmh_meresco.database import Database
+from gmh_meresco.test_utils import TestDbConf
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))
 
 
 class GmhTestIntegrationState(IntegrationState):
-    def __init__(self, stateName, db_conf_file, tests=None, fastMode=False):
+    def __init__(self, stateName, tests=None, fastMode=False):
         IntegrationState.__init__(self, stateName, tests=tests, fastMode=fastMode)
-        self._db_conf_file = db_conf_file
         self.testdataDir = join(dirname(mydir), "updateRequest")
         self.gatewayPort = PortNumberGenerator.nextPort()
         self.apiPort = PortNumberGenerator.nextPort()
@@ -61,10 +60,9 @@ class GmhTestIntegrationState(IntegrationState):
         return join(projectDir, "bin")
 
     def setUp(self):
-        self._truncateTestDb(
-            self._db_conf_file
-        )  # realpath(join(mydir, "..", "conf", "config.ini")))
-        self.db = Database(**read_db_config(self._db_conf_file))
+        db_conf = TestDbConf()
+        self.db = db_conf.db
+        db_conf.write_conf(pathlib.Path(self.integrationTempdir) / ".db.conf")
         global_config = pathlib.Path(self.integrationTempdir) / "global-config.json"
         global_config.write_text(
             json.dumps(
@@ -125,7 +123,7 @@ class GmhTestIntegrationState(IntegrationState):
             port=self.resolverPort,
             gatewayPort=self.gatewayPort,
             stateDir=join(self.integrationTempdir, "resolver"),
-            dbConfig=self._db_conf_file,  # realpath(join(mydir, "..", "conf", "config.ini")),
+            dbConfig=join(self.integrationTempdir, ".db.conf"),
             globalConfig=join(self.integrationTempdir, "global-config.json"),
             waitForStart=False,
             flagOptions=["quickCommit"],
@@ -161,34 +159,3 @@ class GmhTestIntegrationState(IntegrationState):
         super(
             GmhTestIntegrationState, self
         ).tearDown()  # Call super, otherwise the services will NOT be killed and continue to run!
-
-    def _truncateTestDb(self, dbconfig):
-        try:
-            cnx = mysql.connector.connect(**read_db_config(dbconfig))
-            cursor = cnx.cursor()
-
-            query = "SET FOREIGN_KEY_CHECKS=0"
-            cursor.execute(query)
-            # query = ("TRUNCATE TABLE gmhtest.credentials")
-            # cursor.execute(query)
-            query = "TRUNCATE TABLE gmhtest.identifier_location"
-            cursor.execute(query)
-            query = "TRUNCATE TABLE gmhtest.location_registrant"
-            cursor.execute(query)
-            query = "TRUNCATE TABLE gmhtest.identifier_registrant"
-            cursor.execute(query)
-            # query = ("TRUNCATE TABLE gmhtest.registrant")
-            # cursor.execute(query)
-            query = "TRUNCATE TABLE gmhtest.identifier"
-            cursor.execute(query)
-            query = "TRUNCATE TABLE gmhtest.location"
-            cursor.execute(query)
-            query = "SET FOREIGN_KEY_CHECKS = 1"
-            cursor.execute(query)
-
-            cursor.close()
-            cnx.commit()
-            cnx.close()
-
-        except mysql.connector.Error as err:
-            print("Error with SQLstore: {}".format(err))

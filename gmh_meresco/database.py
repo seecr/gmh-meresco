@@ -124,3 +124,27 @@ class Database:
                     isLTP=isLTP,
                 ),
             )
+
+    def ensure_registrant(self, repoGroupId):
+        results = self.select_query(
+            ["registrant_id", "isLTP", "prefix"],
+            from_stmt="registrant",
+            where_stmt="registrant_groupid = %(groupid)s",
+            values=dict(groupid=repoGroupId),
+        )
+        if len(results) > 0:
+            r = results[0]
+            return r["registrant_id"], bool(r["isLTP"]), r["prefix"]
+        ltp = False
+        prefix = "urn:nbn:nl:"
+        with self.cursor() as cursor:
+            cursor.execute(
+                (
+                    "INSERT INTO registrant "
+                    "(registrant_groupid, isLTP, prefix) "
+                    "VALUES (%(groupid)s, %(ltp)s, %(prefix)s)"
+                ),
+                dict(groupid=repoGroupId, ltp=ltp, prefix=prefix),
+            )
+        new_reg_id = cursor.lastrowid
+        return new_reg_id, ltp, prefix

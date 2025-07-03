@@ -44,7 +44,6 @@ if __name__ == "__main__":  # TODO: arg[0] fastMode uitlezen.
 
     GmhTestIntegrationState(
         "brigmh",
-        "/home/seecr/.seecr/.gmhtestdb.conf",
         tests=[
             "_integration.gatewaytest.GatewayTest",
             "_integration.apitest.ApiTest",

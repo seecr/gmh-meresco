@@ -31,9 +31,7 @@
 
 import mysql.connector
 import mysql.connector.pooling
-import configparser
 import time
-from os.path import abspath, dirname, join, realpath
 from re import compile
 
 from gmh_meresco.dans.utils import read_db_config
@@ -43,19 +41,16 @@ urnnbnRegex = compile("^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{
 
 
 class ResolverStorageComponent(object):
-    def __init__(
-        self, dbconfig, name=None
-    ):  # https://pynative.com/python-mysql-tutorial/
-        self._dbconfig = read_db_config(conffile_path=dbconfig)
-        self._db = Database(**self._dbconfig)
+    def __init__(self, dbconfig, name=None):
+        self._db = Database(**read_db_config(conffile_path=dbconfig))
         self._name = name
-        self._cnxpool = self._create_cnxpool(pool_name="resolver_pool", pool_size=4)
 
     def observable_name(self):
         return self._name
 
     def addNbnToDB(self, identifier, locations, urnnbn, rgid):
         """Add a prioritized list of locations for a pid and repository to storage.
+
         The locations-list is added in reversed order.
         Therefore the highest priority-location will be inserted last and will resolve first.
 
@@ -69,7 +64,7 @@ class ResolverStorageComponent(object):
         urnnbn = urnnbn.lower()
 
         # Get rid of the fragment part:
-        if urnnbn != None and "#" in urnnbn:
+        if urnnbn is not None and "#" in urnnbn:
             urnnbn = urnnbn.split("#", 1)[0]
 
         if not urnnbnRegex.match(
@@ -78,89 +73,23 @@ class ResolverStorageComponent(object):
             return
 
         try:
-            registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
-            self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
+            registrant_id, isLTP, prefix = self._db.ensure_registrant(rgid)
+            t0 = time.time()
+            self._db.delete_nbn_locations(
+                identifier=urnnbn, registrant_id=registrant_id, isLTP=isLTP
+            )
+            t1 = time.time()
+            self._db.add_nbn_locations(
+                identifier=urnnbn,
+                locations=locations,
+                registrant_id=registrant_id,
+                isLTP=isLTP,
+            )
+            t2 = time.time()
+
+            print("addNbnLocations", urnnbn, list(map(str, locations)))
+            print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
         except mysql.connector.Error as e:
             print("Error from SQL-db: {}".format(e))
             raise
         return
-
-    def _addNbnLocationsByRegId(self, registrant_id, urnnbn, locations, isLTP):
-        t0 = time.time()
-        self._db.delete_nbn_locations(
-            identifier=urnnbn, registrant_id=registrant_id, isLTP=isLTP
-        )
-        t1 = time.time()
-        self._db.add_nbn_locations(
-            identifier=urnnbn,
-            locations=locations,
-            registrant_id=registrant_id,
-            isLTP=isLTP,
-        )
-        t2 = time.time()
-
-        print("addNbnLocations", urnnbn, map(str, locations))
-        print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
-
-    def _selectOrInsertRegistrantId_pl(self, rgid):
-        isLTP = False
-        prefix = "urn:nbn:nl"
-        try:
-            conn = self._cnxpool.get_connection()
-            # print conn.get_server_info()
-            cursor = conn.cursor()
-            sql = "SELECT * FROM registrant WHERE registrant_groupid = '%s'" % rgid
-            cursor.execute(sql)
-            res = cursor.fetchall()
-            if len(res) > 0:
-                registrant_id = res[0][0]
-                isLTP = bool(res[0][3])
-                prefix = res[0][4]
-            else:  # registrant_id not available from DB. Insert it and return the new id.
-                sql = "INSERT INTO registrant (registrant_groupid) VALUES ('%s')" % rgid
-                cursor.execute(sql)
-                registrant_id = cursor.lastrowid
-                conn.commit()
-            self.close(conn, cursor)
-            return registrant_id, isLTP, prefix
-        except mysql.connector.Error as err:
-            print("Error while execute'ing SQL-query: {}".format(err))
-
-    def _create_cnxpool(self, pool_name="mypool", pool_size=5):
-        """
-        Create a connection pool, after created, the request of connecting
-        MySQL could get a connection from this pool instead of request to
-        create a connection.
-        :param pool_name: the name of pool, default is "mypool"
-        :param pool_size: the size of pool, default is 3
-        :return: connection pool
-        """
-        try:
-            pool = mysql.connector.pooling.MySQLConnectionPool(
-                pool_name=pool_name,
-                pool_size=pool_size,
-                pool_reset_session=True,
-                **self._dbconfig,
-            )
-            print(
-                "Created ConnectionPool: Name=",
-                pool.pool_name,
-                ", Poolsize=",
-                pool.pool_size,
-            )
-            return pool
-        except mysql.connector.Error as err:
-            print("Error while creating MySQL Connection pool : {}".format(err))
-
-        # To close ALL connections in the pool: https://github.com/mysql/mysql-connector-python/blob/master/lib/mysql/connector/pooling.py#L335
-        # pool._remove_connections()
-
-    def close(self, conn, cursor):
-        """
-        A method used to close connection of mysql.
-        :param conn:
-        :param cursor:
-        :return:
-        """
-        cursor.close()
-        conn.close()
