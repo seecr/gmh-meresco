@@ -37,6 +37,7 @@ from os.path import abspath, dirname, join, realpath
 from re import compile
 
 from gmh_meresco.dans.utils import read_db_config
+from gmh_meresco.database import Database
 
 urnnbnRegex = compile("^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+")
 
@@ -46,6 +47,7 @@ class ResolverStorageComponent(object):
         self, dbconfig, name=None
     ):  # https://pynative.com/python-mysql-tutorial/
         self._dbconfig = read_db_config(conffile_path=dbconfig)
+        self._db = Database(**self._dbconfig)
         self._name = name
         self._cnxpool = self._create_cnxpool(pool_name="resolver_pool", pool_size=4)
 
@@ -77,45 +79,28 @@ class ResolverStorageComponent(object):
 
         try:
             registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
-            self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
+            self._addNbnLocationsByRegId2(registrant_id, urnnbn, locations, isLTP)
         except mysql.connector.Error as e:
             print("Error from SQL-db: {}".format(e))
+            raise
         return
 
     def _addNbnLocationsByRegId(self, registrant_id, urnnbn, locations, isLTP):
-        """
-        Upserts all locations for this identifier and registrantId
-        """
         t0 = time.time()
-        try:
-            conn = self._cnxpool.get_connection()
-            cursor = conn.cursor()
-            t1 = time.time()
-            cursor.callproc(
-                "deleteNbnLocationsByRegistrantId",
-                (str(urnnbn), int(registrant_id), bool(isLTP)),
-            )
-            t1_5 = time.time()
-            conn.commit()
-            t2_5 = t2 = time.time()
-            for location in locations:
-                cursor.callproc(
-                    "addNbnLocation",
-                    (str(urnnbn), str(location), int(registrant_id), bool(isLTP)),
-                )
-                t2_5 = time.time()
-                conn.commit()
-            t3 = time.time()
-            self.close(conn, cursor)
-            t4 = time.time()
-            print("addNbnLocations", urnnbn, location)
-            print(
-                f"Total: {t4-t0:.2f}, Connection {t1-t0:.2f}, Delete {t2-t1:.2f}/{t2-t1_5:.2f}, Add {t3-t2:.2f}/{t3-t2_5:.2f}, Close {t4-t3:.2f}",
-            )
-        except mysql.connector.Error as err:
-            print(
-                f"Error while execute'ing storedprocedure addNbnLocation or deleteNbnLocationsByRegistrantId: {err!s}"
-            )
+        self._db.delete_nbn_locations(
+            identifier=urnnbn, registrant_id=registrant_id, isLTP=isLTP
+        )
+        t1 = time.time()
+        self._db.add_nbn_locations(
+            identifier=urnnbn,
+            locations=locations,
+            registrant_id=registrant_id,
+            isLTP=isLTP,
+        )
+        t2 = time.time()
+
+        print("addNbnLocations", urnnbn, location)
+        print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
         isLTP = False

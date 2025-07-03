@@ -100,26 +100,26 @@ class Database:
             target_fields=["uri", "ltp"],
         )
 
-    def add_nbn_locations(self, identifier, locations, user):
+    def add_nbn_locations(self, identifier, locations, registrant_id, isLTP):
         with self.cursor() as cursor:
             for location in locations:
                 cursor.execute(
                     "call addNbnLocation(%(identifier)s, %(location)s, %(registrant_id)s, %(isLTP)s)",
                     dict(
                         identifier=unfragment(identifier),
-                        location=location,
-                        registrant_id=user["registrant_id"],
-                        isLTP=user["isLTP"],
+                        location=str(location),
+                        registrant_id=registrant_id,
+                        isLTP=isLTP,
                     ),
                 )
 
-    def delete_nbn_locations(self, identifier, user):
+    def delete_nbn_locations(self, identifier, registrant_id, isLTP):
         with self.cursor() as cursor:
             cursor.execute(
                 "call deleteNbnLocationsByRegistrantId(%(identifier)s, %(registrant_id)s, %(isLTP)s)",
                 dict(
                     identifier=unfragment(identifier),
-                    registrant_id=user["registrant_id"],
-                    isLTP=user["isLTP"],
+                    registrant_id=registrant_id,
+                    isLTP=isLTP,
                 ),
             )
