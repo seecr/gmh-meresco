@@ -33,7 +33,7 @@ def unfragment(identifier):
 
 
 class Database:
-    def __init__(self, host, user, password, database):
+    def __init__(self, host, user, password, database, port=3306):
         self._pool = MySQLConnectionPool(
             pool_reset_session=True,
             pool_size=5,
@@ -41,6 +41,7 @@ class Database:
             user=user,
             password=password,
             database=database,
+            port=port,
         )
 
     @contextmanager
