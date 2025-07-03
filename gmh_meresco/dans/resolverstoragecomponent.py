@@ -73,22 +73,9 @@ class ResolverStorageComponent(object):
             return
 
         try:
-            registrant_id, isLTP, prefix = self._db.ensure_registrant(rgid)
-            t0 = time.time()
-            self._db.delete_nbn_locations(
-                identifier=urnnbn, registrant_id=registrant_id, isLTP=isLTP
+            self._db.update_nbn_locations(
+                repoGroupId=rgid, identifier=urnnbn, locations=locations
             )
-            t1 = time.time()
-            self._db.add_nbn_locations(
-                identifier=urnnbn,
-                locations=locations,
-                registrant_id=registrant_id,
-                isLTP=isLTP,
-            )
-            t2 = time.time()
-
-            print("addNbnLocations", urnnbn, list(map(str, locations)))
-            print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
         except mysql.connector.Error as e:
             print("Error from SQL-db: {}".format(e))
             raise

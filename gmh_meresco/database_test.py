@@ -27,10 +27,6 @@ import pytest
 import random
 from gmh_meresco.test_utils import TestDbConf
 
-# Idee: Database gaat alles overnemen van de huidige ResolveStorageComponent
-
-from gmh_meresco.dans.resolverstoragecomponent import ResolverStorageComponent
-
 
 @pytest.fixture(scope="session")
 def db_conf(tmp_path_factory):
@@ -60,12 +56,10 @@ def tmp_urnnbn():
 
 
 def test_add_urnbn(db_conf):
-    rsc = ResolverStorageComponent(db_conf.file.as_posix())
-    rsc.addNbnToDB(
-        identifier="ignored",
+    db_conf.db.update_nbn_locations(
         locations=["http://publications.beeldengeluid.nl/pub/125"],
-        urnnbn="urn:nbn:nl:in:10-125",
-        rgid="repogroup",
+        identifier="urn:nbn:nl:in:10-125",
+        repoGroupId="repogroup",
     )
     assert db_conf.db.get_locations("urn:nbn:nl:in:10-125", include_ltp=True) == [
         {"uri": "http://publications.beeldengeluid.nl/pub/125", "ltp": 0}
@@ -74,12 +68,10 @@ def test_add_urnbn(db_conf):
 
 def test_multiple_locations(db_conf):
     urnnbn = tmp_urnnbn()
-    rsc = ResolverStorageComponent(db_conf.file.as_posix())
-    rsc.addNbnToDB(
-        identifier="ignored",
+    db_conf.db.update_nbn_locations(
         locations=["https://example.org/1", "https://example.org/2"],
-        urnnbn=urnnbn,
-        rgid="repogroup",
+        identifier=urnnbn,
+        repoGroupId="repogroup",
     )
     assert db_conf.db.get_locations(urnnbn, include_ltp=True) == [
         {"uri": "https://example.org/1", "ltp": 0},
@@ -91,13 +83,11 @@ def test_urns_with_samelocation(db_conf):
     urnnbn1 = tmp_urnnbn()
     urnnbn2 = tmp_urnnbn()
     assert urnnbn1 != urnnbn2
-    rsc = ResolverStorageComponent(db_conf.file.as_posix())
     for urn in [urnnbn1, urnnbn2]:
-        rsc.addNbnToDB(
-            identifier="ignored",
+        db_conf.db.update_nbn_locations(
             locations=["https://example.org/1"],
-            urnnbn=urn,
-            rgid="repogroup",
+            identifier=urn,
+            repoGroupId="repogroup",
         )
     assert db_conf.db.get_locations(urnnbn1, include_ltp=True) == [
         {"uri": "https://example.org/1", "ltp": 0},
@@ -105,11 +95,10 @@ def test_urns_with_samelocation(db_conf):
     assert db_conf.db.get_locations(urnnbn2, include_ltp=True) == [
         {"uri": "https://example.org/1", "ltp": 0},
     ]
-    rsc.addNbnToDB(
-        identifier="ignored",
+    db_conf.db.update_nbn_locations(
         locations=["https://example.org/2"],
-        urnnbn=urnnbn2,
-        rgid="repogroup",
+        identifier=urnnbn2,
+        repoGroupId="repogroup",
     )
     assert db_conf.db.get_locations(urnnbn1, include_ltp=True) == [
         {"uri": "https://example.org/1", "ltp": 0},
@@ -120,27 +109,23 @@ def test_urns_with_samelocation(db_conf):
 
 
 def test_registrant_only_added_once(db_conf):
-    rsc = ResolverStorageComponent(db_conf.file.as_posix())
-    rsc.addNbnToDB(
-        identifier="ignored",
+    db_conf.db.update_nbn_locations(
         locations=["https://example.org/1"],
-        urnnbn=tmp_urnnbn(),
-        rgid="tmp_rg01",
+        identifier=tmp_urnnbn(),
+        repoGroupId="tmp_rg01",
     )
     reg_db_id = db_conf.get_registrant_id("tmp_rg01")
 
     for i in range(4):
-        rsc.addNbnToDB(
-            identifier="ignored",
+        db_conf.db.update_nbn_locations(
             locations=["https://example.org/1"],
-            urnnbn=tmp_urnnbn(),
-            rgid="tmp_rg01",
+            identifier=tmp_urnnbn(),
+            repoGroupId="tmp_rg01",
         )
     assert db_conf.get_registrant_id("tmp_rg01") == reg_db_id
 
 
 def test_ensure_registrant(db_conf):
-    rsc = ResolverStorageComponent(db_conf.file.as_posix())
     reg_id, ltp, prefix = db_conf.db.ensure_registrant("group0")
     assert ltp is False
     assert prefix == "urn:nbn:nl:"

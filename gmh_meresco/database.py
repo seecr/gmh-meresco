@@ -24,6 +24,7 @@
 ## end license ##
 
 from mysql.connector.pooling import MySQLConnectionPool
+import time
 
 from contextlib import contextmanager
 
@@ -100,6 +101,25 @@ class Database:
             values=dict(identifier=unfragment(identifier)),
             target_fields=["uri", "ltp"],
         )
+
+    def update_nbn_locations(self, repoGroupId, identifier, locations):
+
+        registrant_id, isLTP, prefix = self.ensure_registrant(repoGroupId)
+        t0 = time.time()
+        self.delete_nbn_locations(
+            identifier=identifier, registrant_id=registrant_id, isLTP=isLTP
+        )
+        t1 = time.time()
+        self.add_nbn_locations(
+            identifier=identifier,
+            locations=locations,
+            registrant_id=registrant_id,
+            isLTP=isLTP,
+        )
+        t2 = time.time()
+
+        print("addNbnLocations", identifier, [str(l) for l in locations])
+        print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
 
     def add_nbn_locations(self, identifier, locations, registrant_id, isLTP):
         with self.cursor() as cursor:
