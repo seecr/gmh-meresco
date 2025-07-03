@@ -79,7 +79,7 @@ class ResolverStorageComponent(object):
 
         try:
             registrant_id, isLTP, prefix = self._selectOrInsertRegistrantId_pl(rgid)
-            self._addNbnLocationsByRegId2(registrant_id, urnnbn, locations, isLTP)
+            self._addNbnLocationsByRegId(registrant_id, urnnbn, locations, isLTP)
         except mysql.connector.Error as e:
             print("Error from SQL-db: {}".format(e))
             raise
@@ -99,7 +99,7 @@ class ResolverStorageComponent(object):
         )
         t2 = time.time()
 
-        print("addNbnLocations", urnnbn, location)
+        print("addNbnLocations", urnnbn, map(str, locations))
         print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
 
     def _selectOrInsertRegistrantId_pl(self, rgid):
