@@ -42,6 +42,7 @@ import pathlib
 import json
 
 from gmh_meresco.dans.utils import read_db_config
+from gmh_meresco.database import Database
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))
@@ -63,6 +64,7 @@ class GmhTestIntegrationState(IntegrationState):
         self._truncateTestDb(
             self._db_conf_file
         )  # realpath(join(mydir, "..", "conf", "config.ini")))
+        self.db = Database(**read_db_config(self._db_conf_file))
         global_config = pathlib.Path(self.integrationTempdir) / "global-config.json"
         global_config.write_text(
             json.dumps(
