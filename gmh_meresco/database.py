@@ -89,6 +89,16 @@ class Database:
                 results.append(dict(zip(result_fields, hit)))
         return results
 
+    def select_query_one(self, *args, **kwargs):
+        results = self.select_query(*args, **kwargs)
+        if len(results) == 0:
+            return {}
+        if len(results) > 1:
+            raise ValueError(
+                f"Unexpected more results, total ({len(results)}), for select_query(*{args!r}, **{kwargs!r})"
+            )
+        return results[0]
+
     def get_locations(self, identifier, include_ltp):
         return self.select_query(
             ["L.location_url", "IL.isFailover"],
@@ -122,6 +132,102 @@ class Database:
         print(f"Total: {t2-t0:.2f}, Delete {t1-t0:.2f}, Add {t2-t1:.2f}")
 
     def add_nbn_locations(self, identifier, locations, registrant_id, isLTP):
+        loc_identifierid = self.select_query_one(
+            ["identifier_id"],
+            from_stmt="identifier",
+            where_stmt="identifier_value = %s",
+            values=(identifier,),
+        ).get("identifier_id")
+        loc_locationids = []
+        for location in locations:
+            loc_locationids.append(
+                (
+                    self.select_query_one(
+                        ["location_id"],
+                        from_stmt="location",
+                        where_stmt="location_url = %s",
+                        values=(str(location),),
+                    ).get("location_id"),
+                    str(location),
+                )
+            )
+        with self.cursor() as cursor:
+            if loc_identifierid is None:
+                cursor.execute(
+                    "INSERT INTO identifier (identifier_value) VALUES (%s)",
+                    [identifier],
+                )
+                loc_identifierid = cursor.lastrowid
+            cursor.execute(
+                (
+                    "INSERT IGNORE INTO identifier_registrant (identifier_id, registrant_id) "
+                    "VALUES (%(loc_identifierid)s, %(registrant_id)s)"
+                ),
+                dict(loc_identifierid=loc_identifierid, registrant_id=registrant_id),
+            )
+
+            for loc_locationid, location in loc_locationids:
+                if loc_locationid is None:
+                    cursor.execute(
+                        "INSERT INTO location (location_url) VALUES (%s)", [location]
+                    )
+                    loc_locationid = cursor.lastrowid
+                cursor.execute(
+                    (
+                        "INSERT IGNORE INTO location_registrant (location_id, registrant_id) "
+                        "VALUES (%(loc_locationid)s, %(registrant_id)s)"
+                    ),
+                    dict(loc_locationid=loc_locationid, registrant_id=registrant_id),
+                )
+                cursor.execute(
+                    (
+                        "INSERT INTO identifier_location (location_id, identifier_id, last_modified, isFailover) "
+                        "VALUES (%(location)s, %(identifier)s, NOW(4), %(failover)s) "
+                        # "ON DUPLICATE KEY "
+                        # "UPDATE location_id=%(location)s, identifier_id=%(identifier)s, last_modified=NOW(4), "
+                    )
+                    # + (" isFailover=%(failover)s" if isLTP else ""),
+                    ,
+                    dict(
+                        location=loc_locationid,
+                        identifier=loc_identifierid,
+                        failover=isLTP,
+                    ),
+                )
+
+        # return self._stored_procedure_add_nbn_locations(
+        #     identifier, locations, registrant_id, isLTP
+        # )
+
+    def delete_nbn_locations(self, identifier, registrant_id, isLTP):
+        identifier_id = self.select_query_one(
+            ["identifier_id"],
+            from_stmt="identifier",
+            where_stmt="identifier_value = %s",
+            values=(identifier,),
+        ).get("identifier_id")
+        if identifier_id is None:
+            return
+        with self.cursor() as cursor:
+            cursor.execute(
+                (
+                    "DELETE identifier_location "
+                    "FROM identifier_location "
+                    "INNER JOIN location_registrant ON identifier_location.location_id = location_registrant.location_id "
+                    "WHERE location_registrant.registrant_id = %(registrant_id)s "
+                    "AND identifier_location.identifier_id = %(identifier_id)s "
+                    "AND identifier_location.isFailover = %(ltp)s"
+                ),
+                dict(
+                    registrant_id=registrant_id,
+                    ltp=isLTP,
+                    identifier_id=identifier_id,
+                ),
+            )
+
+    def _stored_procedure_add_nbn_locations(
+        self, identifier, locations, registrant_id, isLTP
+    ):
         with self.cursor() as cursor:
             for location in locations:
                 cursor.execute(
@@ -134,7 +240,7 @@ class Database:
                     ),
                 )
 
-    def delete_nbn_locations(self, identifier, registrant_id, isLTP):
+    def _stored_procedure_delete_nbn_locations(self, identifier, registrant_id, isLTP):
         with self.cursor() as cursor:
             cursor.execute(
                 "call deleteNbnLocationsByRegistrantId(%(identifier)s, %(registrant_id)s, %(isLTP)s)",
