@@ -29,9 +29,6 @@
 #
 ## end license ##
 
-import configparser
-
-
 from meresco.xml import namespaces
 
 NAMESPACEMAP = namespaces.copyUpdate(
@@ -47,31 +44,3 @@ NAMESPACEMAP = namespaces.copyUpdate(
         "oai": "http://www.openarchives.org/OAI/2.0/",
     }
 )
-
-
-def read_db_config(
-    conffile_path, section="client"
-):  # TODO: Even importeren ergens anders vandaan. Dubbele code...
-    """Read database configuration file and return a dictionary object
-    :param filename: name of the configuration file
-    :param section: section of database configuration
-    :return: a dictionary of database parameters
-    """
-    # create parser and read ini configuration file
-    parser = configparser.ConfigParser()
-    parser.read(conffile_path)
-
-    # get section, default to mysql
-    db = {}
-    if parser.has_section(section):
-        items = parser.items(section)
-        for item in items:
-            db[item[0]] = item[1]
-    else:
-        raise Exception("{0} not found in the {1} file".format(section, conffile_path))
-    print(
-        "DB-configfile read from: {0}".format(
-            conffile_path,
-        )
-    )
-    return db

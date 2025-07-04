@@ -34,8 +34,8 @@ import mysql.connector.pooling
 import time
 from re import compile
 
-from gmh_meresco.dans.utils import read_db_config
-from gmh_meresco.database import Database
+from gmh_common.utils import read_db_config
+from gmh_common.database import Database
 
 urnnbnRegex = compile("^[uU][rR][nN]:[nN][bB][nN]:[nN][lL](:([a-zA-Z]{2}))?:\\d{2}-.+")
 

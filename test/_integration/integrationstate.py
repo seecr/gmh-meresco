@@ -41,8 +41,8 @@ import configparser
 import pathlib
 import json
 
-from gmh_meresco.dans.utils import read_db_config
-from gmh_meresco.test_utils import TestDbConf
+from gmh_common.utils import read_db_config
+from gmh_common.test_utils import TestDbConf
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))
