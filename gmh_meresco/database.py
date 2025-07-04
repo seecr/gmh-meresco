@@ -24,6 +24,7 @@
 ## end license ##
 
 from mysql.connector.pooling import MySQLConnectionPool
+import mysql.connector
 import time
 
 from contextlib import contextmanager
@@ -179,21 +180,32 @@ class Database:
                     ),
                     dict(loc_locationid=loc_locationid, registrant_id=registrant_id),
                 )
+                # try:
                 cursor.execute(
                     (
                         "INSERT INTO identifier_location (location_id, identifier_id, last_modified, isFailover) "
                         "VALUES (%(location)s, %(identifier)s, NOW(4), %(failover)s) "
-                        # "ON DUPLICATE KEY "
-                        # "UPDATE location_id=%(location)s, identifier_id=%(identifier)s, last_modified=NOW(4), "
+                        "ON DUPLICATE KEY "
+                        "UPDATE location_id=%(location)s, identifier_id=%(identifier)s, last_modified=NOW(4)"
                     )
-                    # + (" isFailover=%(failover)s" if isLTP else ""),
-                    ,
+                    + (", isFailover=%(failover)s" if isLTP else ""),
                     dict(
                         location=loc_locationid,
                         identifier=loc_identifierid,
                         failover=isLTP,
                     ),
                 )
+                # except mysql.connector.IntegrityError as err:
+                #     cursor.execute(
+                #         "UPDATE identifier_location SET last_modified=NOW(4) "
+                #         + ("isFailover=%(failover)s " if isLTP else "")
+                #         + "WHERE location_id=%(location)s AND identifier_id=%(identifier)s",
+                #         dict(
+                #             location=loc_locationid,
+                #             identifier=loc_identifierid,
+                #             failover=isLTP,
+                #         ),
+                #     )
 
         # return self._stored_procedure_add_nbn_locations(
         #     identifier, locations, registrant_id, isLTP
@@ -225,33 +237,7 @@ class Database:
                 ),
             )
 
-    def _stored_procedure_add_nbn_locations(
-        self, identifier, locations, registrant_id, isLTP
-    ):
-        with self.cursor() as cursor:
-            for location in locations:
-                cursor.execute(
-                    "call addNbnLocation(%(identifier)s, %(location)s, %(registrant_id)s, %(isLTP)s)",
-                    dict(
-                        identifier=unfragment(identifier),
-                        location=str(location),
-                        registrant_id=registrant_id,
-                        isLTP=isLTP,
-                    ),
-                )
-
-    def _stored_procedure_delete_nbn_locations(self, identifier, registrant_id, isLTP):
-        with self.cursor() as cursor:
-            cursor.execute(
-                "call deleteNbnLocationsByRegistrantId(%(identifier)s, %(registrant_id)s, %(isLTP)s)",
-                dict(
-                    identifier=unfragment(identifier),
-                    registrant_id=registrant_id,
-                    isLTP=isLTP,
-                ),
-            )
-
-    def ensure_registrant(self, repoGroupId):
+    def ensure_registrant(self, repoGroupId, ltp=False, prefix="urn:nbn:nl:"):
         results = self.select_query(
             ["registrant_id", "isLTP", "prefix"],
             from_stmt="registrant",
@@ -261,8 +247,6 @@ class Database:
         if len(results) > 0:
             r = results[0]
             return r["registrant_id"], bool(r["isLTP"]), r["prefix"]
-        ltp = False
-        prefix = "urn:nbn:nl:"
         with self.cursor() as cursor:
             cursor.execute(
                 (

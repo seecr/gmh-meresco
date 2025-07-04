@@ -125,6 +125,21 @@ def test_registrant_only_added_once(db_conf):
     assert db_conf.get_registrant_id("tmp_rg01") == reg_db_id
 
 
+def test_two_registrants_same_key(db_conf):
+    nbn = tmp_urnnbn()
+    db_conf.db.ensure_registrant("tmp_rg02", ltp=True)
+    db_conf.db.update_nbn_locations(
+        locations=["https://example.org/1"],
+        identifier=nbn,
+        repoGroupId="tmp_rg01",
+    )
+    db_conf.db.update_nbn_locations(
+        locations=["https://example.org/1"],
+        identifier=nbn,
+        repoGroupId="tmp_rg02",
+    )
+
+
 def test_ensure_registrant(db_conf):
     reg_id, ltp, prefix = db_conf.db.ensure_registrant("group0")
     assert ltp is False
