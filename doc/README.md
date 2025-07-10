@@ -15,6 +15,6 @@ Deze services zijn onderdeel van de GMH dienst maar niet van dit project.
 
 - [Metastreams Harvester](https://github.com/seecr/metastreams-harvester) een OAI-PMH harvester die records harvest bij repositories.
 - GMH Resolver UI, de persistent resolver voor het opzoeken van NBN identifiers. [Resolver UI](https://persistent-identifier.nl)
-- GMH Registration Service, een dienst om via een API call data toe te voegen aan de resolver service.
+- GMH Registration Service, een dienst om via een API call data toe te voegen aan de resolver service. [OPENAPI Beschrijving](https://persistent-identifier.nl/gmh-registration-service/api/v1/openapi.yaml)
 
 
