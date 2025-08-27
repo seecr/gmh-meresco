@@ -25,7 +25,9 @@
 
 import pytest
 from lxml.etree import parse
-from meresco.xml import xpathFirst
+from meresco.xml import xpathFirst, namespaces
+from meresco.xml.utils import createElement, createSubElement
+from meresco.components import lxmltostring
 from seecr.test import CallTrace
 from weightless.core import Observable, be, compose
 
@@ -68,3 +70,19 @@ def test_normalise_mods(filename):
 
 def test_convertFullMods2GHMods():
     n = NormaliseMODS(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode")
+
+
+@pytest.mark.parametrize("filename", testdata_path.glob("*.getrecord.xml"))
+def test_normalise_real_life_data(filename):
+    normalise = NormaliseMODS(nsMap=NAMESPACEMAP, fromKwarg="lxmlNode")
+    with filename.open() as fp:
+        lxmlNode = parse(fp)
+        oai_metadata = xpathFirst(lxmlNode, "//oai:metadata")
+        doc = createElement("document:document", nsmap=namespaces.select("document"))
+        createSubElement(
+            doc,
+            "document:part",
+            attrib={"name": "normdoc"},
+            text=lxmltostring(oai_metadata),
+        )
+        normalise._convertArgs(identifier=filename.name, lxmlNode=doc.getroottree())

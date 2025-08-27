@@ -1,0 +1,191 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2025-08-27T11:38:57Z</responseDate>
+  <request identifier="oai:pure.eur.nl:publications/ab6f70ae-397a-4930-aea2-4ae4464f94ad" metadataPrefix="nl_didl" verb="GetRecord">https://pure.eur.nl/ws/oai</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:pure.eur.nl:publications/ab6f70ae-397a-4930-aea2-4ae4464f94ad</identifier>
+        <datestamp>2025-07-11T00:02:49Z</datestamp>
+        <setSpec>publications:all</setSpec>
+        <setSpec>publications:withFiles</setSpec>
+        <setSpec>publications:year2025</setSpec>
+        <setSpec>publications:year2025:withFiles</setSpec>
+      </header>
+      <metadata>
+        <didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:didmodel="urn:mpeg:mpeg21:2002:02-DIDMODEL-NS" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" DIDLDocumentId="urn:nbn:nl:ui:15-ab6f70ae-397a-4930-aea2-4ae4464f94ad" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-8.xsd urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd">
+          <didl:Item>
+            <didl:Descriptor>
+              <didl:Statement mimeType="application/xml">
+                <dii:Identifier>urn:nbn:nl:ui:15-ab6f70ae-397a-4930-aea2-4ae4464f94ad</dii:Identifier>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Descriptor>
+              <didl:Statement mimeType="application/xml">
+                <dcterms:modified>2025-07-11T00:02:49Z</dcterms:modified>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Component>
+              <didl:Resource mimeType="text/html" ref="https://pure.eur.nl/en/publications/ab6f70ae-397a-4930-aea2-4ae4464f94ad"/>
+            </didl:Component>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <dii:Identifier>urn:nbn:nl:ui:15-ab6f70ae-397a-4930-aea2-4ae4464f94ad-mods</dii:Identifier>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="application/xml">
+                  <mods:mods xmlns:gal="info:eu-repo/grantAgreement" xmlns:dai="info:eu-repo/dai" version="3.8" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-8.xsd ">
+                    <mods:typeOfResource>text</mods:typeOfResource>
+                    <mods:recordInfo>
+                      <mods:recordContentSource>local</mods:recordContentSource>
+                    </mods:recordInfo>
+                    <mods:identifier type="pure/id">182409202</mods:identifier>
+                    <mods:identifier type="pure/uuid">ab6f70ae-397a-4930-aea2-4ae4464f94ad</mods:identifier>
+                    <mods:identifier type="local">ORCID: /0009-0004-4114-3312/work/179327979</mods:identifier>
+                    <mods:physicalDescription>
+                      <mods:extent unit="pages">9</mods:extent>
+                    </mods:physicalDescription>
+                    <mods:titleInfo lang="nld" xlink:type="simple">
+                      <mods:title>Richtlijn recht op reparatie: revolutionair of lege dop?</mods:title>
+                    </mods:titleInfo>
+                    <mods:titleInfo lang="eng" type="alternative" xlink:type="simple">
+                      <mods:title>Right to repair directive: revolutionary or empty shell?</mods:title>
+                    </mods:titleInfo>
+                    <mods:name authority="local" type="personal" xlink:type="simple">
+                      <mods:role>
+                        <mods:roleTerm authority="marcrelator" type="code">aut</mods:roleTerm>
+                      </mods:role>
+                      <mods:nameIdentifier type="pure/uuid">659bcf24-87f1-425e-b363-680c83c93379</mods:nameIdentifier>
+                      <mods:nameIdentifier type="orcid" typeURI="http://id.loc.gov/vocabulary/identifiers/orcid">0009-0004-4114-3312</mods:nameIdentifier>
+                      <mods:namePart type="given">Josje</mods:namePart>
+                      <mods:namePart type="family">de Vogel</mods:namePart>
+                      <mods:affiliation>Civil Law</mods:affiliation>
+                    </mods:name>
+                    <mods:name authority="local" lang="eng" type="corporate" xlink:type="simple">
+                      <mods:role>
+                        <mods:roleTerm authority="marcrelator" type="code">pbl</mods:roleTerm>
+                      </mods:role>
+                      <mods:role>
+                        <mods:roleTerm authority="pure/organisationId" type="text">EUR-41421900</mods:roleTerm>
+                      </mods:role>
+                      <mods:role>
+                        <mods:roleTerm authority="pure/organisationType" type="text">/dk/atira/pure/organisation/organisationtypes/organisation/sub_department</mods:roleTerm>
+                      </mods:role>
+                      <mods:nameIdentifier type="pure/uuid">9240a4df-26ce-4258-97d2-cdceaab730af</mods:nameIdentifier>
+                      <mods:namePart>Civil Law</mods:namePart>
+                      <mods:role>
+                        <mods:roleTerm authority="pure/linkidentifier/organisationid_depricated" type="text">EUR-41421900</mods:roleTerm>
+                      </mods:role>
+                    </mods:name>
+                    <mods:genre>info:eu-repo/semantics/article</mods:genre>
+                    <mods:physicalDescription>
+                      <mods:form authority="marcform">electronic</mods:form>
+                      <mods:note type="title" xlink:type="simple">Richtlijn_recht_op_reparatie_revolutionair_of_lege_dop</mods:note>
+                      <mods:internetMediaType>application/pdf</mods:internetMediaType>
+                      <mods:extent unit="bytes">215412</mods:extent>
+                      <mods:note type="location" xlink:href="https://pure.eur.nl/ws/files/182409206/Richtlijn_recht_op_reparatie_revolutionair_of_lege_dop.pdf" xlink:type="simple"/>
+                      <mods:note type="visibility" xlink:type="simple">FREE</mods:note>
+                      <mods:note type="license" typeURI="/dk/atira/pure/core/document/licenses" xlink:type="simple">taverne</mods:note>
+                      <mods:note type="version" typeURI="/dk/atira/pure/researchoutput/electronicversion/versiontype" xlink:type="simple">publishersversion</mods:note>
+                      <mods:note type="access" typeURI="/dk/atira/pure/core/openaccesspermission" xlink:type="simple">embargoed</mods:note>
+                      <mods:note type="embargo end" xlink:type="simple">2025-07-12</mods:note>
+                    </mods:physicalDescription>
+                    <mods:note type="peerreview status" xlink:type="simple">Peer reviewed</mods:note>
+                    <mods:note type="publication category" xlink:type="simple">Academic</mods:note>
+                    <mods:note type="publication workflow state" xlink:type="simple">validated</mods:note>
+                    <mods:originInfo>
+                      <mods:dateIssued encoding="w3cdtf">2025-01-12</mods:dateIssued>
+                      <mods:dateValid encoding="w3cdtf">2025-07-12</mods:dateValid>
+                      <mods:dateOther encoding="w3cdtf" type="published">2025-01-12</mods:dateOther>
+                    </mods:originInfo>
+                    <mods:subject xlink:type="simple">
+                      <mods:topic>Sector plan SSH-Breed</mods:topic>
+                    </mods:subject>
+                    <mods:classification authority="pure/erasmus_sectorplan" displayLabel="Sector plan SSH-Breed">erasmus_sectorplan/sectorplan_ssh_breed</mods:classification>
+                    <mods:identifier type="doi" typeURI="http://id.loc.gov/vocabulary/identifiers/doi">10.5553/Contr/156608932024026004004</mods:identifier>
+                    <mods:language>
+                      <mods:languageTerm authority="rfc3066" type="code">nl</mods:languageTerm>
+                    </mods:language>
+                    <mods:abstract lang="eng" type="content" xlink:type="simple">De Richtlijn recht op reparatie (2024/1799) is recent aangenomen als antwoord op de groeiende behoefte aan duurzamere consumptie. Deze bijdrage bespreekt de richtlijn als onderdeel van en in samenhang met de Europese green deal wetgevingsinitiatieven. Voorts wordt ingegaan op de wijzigingen in de Richtlijn consumentenkoop en de nieuwe en/of verder strekkende verplichtingen voor fabrikanten en verkopers. Hoewel de Richtlijn recht op reparatie een stap richting duurzamere consumentenkeuzes lijkt, brengt zij geen revolutionaire verandering.</mods:abstract>
+                    <mods:accessCondition type="info:eu-repo/semantics/openAccess" xlink:type="simple"/>
+                    <mods:note type="metadata visibility" xlink:type="simple">FREE</mods:note>
+                    <mods:note type="creatorCount" xlink:type="simple">1</mods:note>
+                    <mods:relatedItem type="host" xlink:role="" xlink:type="simple">
+                      <mods:titleInfo xlink:type="simple">
+                        <mods:title>Contracteren. Tijdschrift voor de Contractspraktijk</mods:title>
+                      </mods:titleInfo>
+                      <mods:identifier type="issn" typeURI="http://id.loc.gov/vocabulary/identifiers/issn">1566-0893</mods:identifier>
+                      <mods:part>
+                        <mods:detail type="volume">
+                          <mods:number>2024</mods:number>
+                          <mods:caption>vol.</mods:caption>
+                        </mods:detail>
+                        <mods:detail type="issue">
+                          <mods:number>4</mods:number>
+                          <mods:caption>no.</mods:caption>
+                        </mods:detail>
+                        <mods:extent unit="page">
+                          <mods:start>113</mods:start>
+                          <mods:end>121</mods:end>
+                          <mods:total>9</mods:total>
+                          <mods:list>113-121</mods:list>
+                        </mods:extent>
+                      </mods:part>
+                    </mods:relatedItem>
+                    <mods:note type="publicationStatus" xlink:type="simple">published</mods:note>
+                  </mods:mods>
+                </didl:Resource>
+              </didl:Component>
+            </didl:Item>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/objectFile"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <dii:Identifier>urn:nbn:nl:ui:15-ab6f70ae-397a-4930-aea2-4ae4464f94ad-182409205</dii:Identifier>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <dcterms:available>2025-07-12</dcterms:available>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <dcterms:accessRights>http://purl.org/eprint/accessRights/OpenAccess</dcterms:accessRights>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="application/pdf" ref="https://pure.eur.nl/ws/files/182409206/Richtlijn_recht_op_reparatie_revolutionair_of_lege_dop.pdf"/>
+              </didl:Component>
+            </didl:Item>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <dii:Identifier>urn:nbn:nl:ui:15-ab6f70ae-397a-4930-aea2-4ae4464f94ad/jump-off-page</dii:Identifier>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="text/html" ref="https://pure.eur.nl/en/publications/ab6f70ae-397a-4930-aea2-4ae4464f94ad"/>
+              </didl:Component>
+            </didl:Item>
+          </didl:Item>
+        </didl:DIDL>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>
