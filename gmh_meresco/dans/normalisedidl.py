@@ -230,7 +230,7 @@ class NormaliseDIDL(UiaConverter):
 
     def _getRootElement(self, lxmlNode):
 
-        return """<didl:DIDL 
+        return """<didl:DIDL
     xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS"
     xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -319,6 +319,7 @@ class NormaliseDIDL(UiaConverter):
             '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/objectFile"]/didl:Component/didl:Resource/@ref',  # fallback DIDL 2.3.1
         ).strip()
 
+        print(pidlocation)
         if pidlocation == "":
             raise ValidateException(formatExceptionLine(EXCEPTION4, prefix=STR_DIDL))
         if not comm.isURL(pidlocation):
@@ -383,7 +384,7 @@ class NormaliseDIDL(UiaConverter):
                                     </didl:Descriptor>
                                     %s%s<didl:Component>
                                         <didl:Resource mimeType="application/xml">
-                                           %s 
+                                           %s
                                         </didl:Resource>
                                     </didl:Component>
                                 </didl:Item>""" % (
