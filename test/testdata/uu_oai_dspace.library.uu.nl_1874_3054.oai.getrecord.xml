@@ -1,85 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="static/style.xsl"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2025-08-27T08:03:47Z</responseDate><request verb="GetRecord" identifier="oai:dspace.library.uu.nl:1874/3054" metadataPrefix="nl_didl">https://dspace.library.uu.nl/oai/dare</request><GetRecord><record><header><identifier>oai:dspace.library.uu.nl:1874/3054</identifier><datestamp>2016-12-12T09:44:52Z</datestamp><setSpec>com_1874_296827</setSpec><setSpec>com_1874_298213</setSpec><setSpec>col_1874_296828</setSpec><setSpec>col_1874_298214</setSpec><setSpec>dare</setSpec></header><metadata>
-<didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:doc="http://www.lyncode.com/xoai" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:diext="http://library.lanl.gov/2004-04/STB-RL/DIEXT" xsi:schemaLocation=" urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd http://library.lanl.gov/2004-04/STB-RL/DIEXT http://purl.lanl.gov/STB-RL/schemas/2004-04/DIEXT.xsd" DIDLDocumentId="DIDL:URN:NBN:NL:UI:10-1874-3054">
-<didl:Item>
-<didl:Descriptor>
-<didl:Statement mimeType="application/xml; charset=utf-8">
-<dii:Identifier>URN:NBN:NL:UI:10-1874-3054</dii:Identifier>
-</didl:Statement>
-</didl:Descriptor>
-<didl:Descriptor>
-<didl:Statement mimeType="application/xml">
-<dcterms:modified>2016-12-12T10:44:52.182Z</dcterms:modified>
-</didl:Statement>
-</didl:Descriptor>
-<didl:Component>
-<didl:Resource mimeType="application/xml">https://dspace.library.uu.nl/handle/1874/3054</didl:Resource>
-</didl:Component>
-<didl:Item>
-<didl:Descriptor>
-<didl:Statement mimeType="application/xml">
-<rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata" />
-</didl:Statement>
-</didl:Descriptor>
-<didl:Component>
-<didl:Resource mimeType="application/xml">
-<mods xmlns="http://www.loc.gov/mods/v3" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd" version="3.2">
-<titleInfo>
-<title>3D Rotational X-Ray guidance for surgical interventions</title>
-</titleInfo>
-<name xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd" type="personal" ID="n3054_aut_1">
-<namePart type="family">Kraats</namePart>
-<namePart type="given"> Everine Brenda van de</namePart>
-<role>
-<roleTerm authority="marcrelator" type="code">aut</roleTerm>
-</role>
-</name>
-<name type="corporate">
-<namePart>University Utrecht</namePart>
-<role>
-<roleTerm type="code" authority="marcrelator">dgg</roleTerm>
-</role>
-</name>
-<typeOfResource>text</typeOfResource>
-<genre>info:eu-repo/semantics/doctoralThesis</genre>
-<originInfo>
-<dateIssued encoding="iso8601">2005-05-18</dateIssued>
-<publisher>Utrecht University</publisher>
-</originInfo>
-<language>
-<languageTerm type="code" authority="rfc3066">en</languageTerm>
-</language>
-<abstract>The research described in this thesis is aimed at increasing the accuracy and decreasing the invasiveness of surgical procedures, with a focus on spine procedures, by using a combination of multi-modality images, computer-assisted navigation, intraoperative 3D rotational X-ray (3DRX) imaging, and minimally invasive image-to-patient registration.&#xd;
-&#xd;
-&#xd;
+<?xml-stylesheet type="text/xsl" href="static/style.xsl"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2025-08-27T08:03:47Z</responseDate>
+  <request verb="GetRecord" identifier="oai:dspace.library.uu.nl:1874/3054" metadataPrefix="nl_didl">https://dspace.library.uu.nl/oai/dare</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:dspace.library.uu.nl:1874/3054</identifier>
+        <datestamp>2016-12-12T09:44:52Z</datestamp>
+        <setSpec>com_1874_296827</setSpec>
+        <setSpec>com_1874_298213</setSpec>
+        <setSpec>col_1874_296828</setSpec>
+        <setSpec>col_1874_298214</setSpec>
+        <setSpec>dare</setSpec>
+      </header>
+      <metadata>
+        <didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:doc="http://www.lyncode.com/xoai" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dip="urn:mpeg:mpeg21:2005:01-DIP-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:diext="http://library.lanl.gov/2004-04/STB-RL/DIEXT" xsi:schemaLocation=" urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd urn:mpeg:mpeg21:2005:01-DIP-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dip/dip.xsd http://library.lanl.gov/2004-04/STB-RL/DIEXT http://purl.lanl.gov/STB-RL/schemas/2004-04/DIEXT.xsd" DIDLDocumentId="DIDL:URN:NBN:NL:UI:10-1874-3054">
+          <didl:Item>
+            <didl:Descriptor>
+              <didl:Statement mimeType="application/xml; charset=utf-8">
+                <dii:Identifier>URN:NBN:NL:UI:10-1874-3054</dii:Identifier>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Descriptor>
+              <didl:Statement mimeType="application/xml">
+                <dcterms:modified>2016-12-12T10:44:52.182Z</dcterms:modified>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Component>
+              <didl:Resource mimeType="application/xml">https://dspace.library.uu.nl/handle/1874/3054</didl:Resource>
+            </didl:Component>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="application/xml">
+                  <mods xmlns="http://www.loc.gov/mods/v3" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd" version="3.2">
+                    <titleInfo>
+                      <title>3D Rotational X-Ray guidance for surgical interventions</title>
+                    </titleInfo>
+                    <name xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd" type="personal" ID="n3054_aut_1">
+                      <namePart type="family">Kraats</namePart>
+                      <namePart type="given"> Everine Brenda van de</namePart>
+                      <role>
+                        <roleTerm authority="marcrelator" type="code">aut</roleTerm>
+                      </role>
+                    </name>
+                    <name type="corporate">
+                      <namePart>University Utrecht</namePart>
+                      <role>
+                        <roleTerm type="code" authority="marcrelator">dgg</roleTerm>
+                      </role>
+                    </name>
+                    <typeOfResource>text</typeOfResource>
+                    <genre>info:eu-repo/semantics/doctoralThesis</genre>
+                    <originInfo>
+                      <dateIssued encoding="iso8601">2005-05-18</dateIssued>
+                      <publisher>Utrecht University</publisher>
+                    </originInfo>
+                    <language>
+                      <languageTerm type="code" authority="rfc3066">en</languageTerm>
+                    </language>
+                    <abstract>The research described in this thesis is aimed at increasing the accuracy and decreasing the invasiveness of surgical procedures, with a focus on spine procedures, by using a combination of multi-modality images, computer-assisted navigation, intraoperative 3D rotational X-ray (3DRX) imaging, and minimally invasive image-to-patient registration.&#13;
+&#13;
+&#13;
 In Chapters 2 and 3 a coupling between a floor-mounted 3DRX system and a mobile 3DRX system and a navigation system that facilitates direct navigation on 3DRX data without an invasive image-to-patient registration step is presented. The resulting navigation accuracy evaluated on a phantom was approximately 1 mm for both the fixed and the mobile 3DRRX system. Chapter 4 shows that registration of 3DRX images and MR images using an image-content based registration method called maximization of mutual information is more accurate than when using standard marker-based registration.  In Chapter 5 direct 3DRX navigation is used to transfer high-resolution 3D rotational angiograms (3DRA) to a neurosurgical operating suite for aneurysm clipping. 3DRA data could previously not be used for neuronavigation as a 3DRA volume is too small to contain external fiducials necessary for image-to-patient registration. In Chapter 6 we demonstrate the potential of 3DRX guidance in percutaneous spinal applications by comparing 3DRX-navigated biopsy needle introduction to conventional fluoroscopy-guided biopsy needle introduction. The results show that, at the expense of increased preparation time, 3DRX navigation technology can reduce radiation exposure to both staff and patient, while not compromising accurate needle placement and it provides improved visualization of the 3D anatomy to surgeons or trainees with little experience in fluoroscopic guidance, which leads to better results in needle placement. In Chapter 7 the accuracy of navigation under close-to-clinical conditions is quantitatively evaluated. The reported distance between the navigated biopsy needle tip position and the actual needle tip position was 2.5±1.5 mm when they were introduced in embalmed human cadavers. The last two chapters address 2D-3D registration, which is important in image-guided interventions as it can be used to relate intraoperative X-ray images (and by that also the patient) to preoperative 3D data. In Chapter 8 we introduced a standardized evaluation methodology for objective inter-method and inter-modality comparison of 2D-3D registration techniques. A gradient-based registration method and an intensity-based registration method were evaluated demonstrating that effective comparison was feasible. Submillimeter registration accuracy could be achieved for registering both 3DRX and CT data to two X-ray images.  The capture range for both methods was rather limited and MR to X-ray registration was challenging. In Chapter 9, therefore, a method was introduced to increase the accuracy and capture range for MR to X-ray registration by using multispectral MR data. In the method, a synthetic CT image (that depicts bone edges well) is constructed from multispectral MR data. Training data is used to learn which synthetic CT value can best be used for a specific combination of MR values. This CT-like dataset can subsequently be used in 2D-3D registration.  First experiments show that this increases the accuracy and applicability of MR to X-ray registration.</abstract>
-<subject>
-<topic>image-guided surgery</topic>
-<topic>3D rotational X-ray imaging</topic>
-<topic>2D-3D registration</topic>
-<topic>multi-modality registration</topic>
-<topic>direct navigation</topic>
-</subject>
-<classification>Geneeskunde</classification>
-<identifier type="hdl" typeURI="http://id.loc.gov/vocabulary/identifiers/hdl">1874/3054</identifier>
-<identifier type="isbn" typeURI="http://id.loc.gov/vocabulary/identifiers/isbn/">90–393–3859–0</identifier>
-<extension>
-<dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai http://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd" />
-</extension>
-</mods>
-</didl:Resource>
-</didl:Component>
-</didl:Item>
-
-<didl:Item>
-<didl:Descriptor>
-<didl:Statement mimeType="application/xml">
-<rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage" />
-</didl:Statement>
-</didl:Descriptor>
-<didl:Component>
-<didl:Resource ref="https://dspace.library.uu.nl/handle/1874/3054" mimeType="text/html" />
-</didl:Component>
-</didl:Item>
-</didl:Item>
-</didl:DIDL>
-</metadata></record></GetRecord></OAI-PMH>
+                    <subject>
+                      <topic>image-guided surgery</topic>
+                      <topic>3D rotational X-ray imaging</topic>
+                      <topic>2D-3D registration</topic>
+                      <topic>multi-modality registration</topic>
+                      <topic>direct navigation</topic>
+                    </subject>
+                    <classification>Geneeskunde</classification>
+                    <identifier type="hdl" typeURI="http://id.loc.gov/vocabulary/identifiers/hdl">1874/3054</identifier>
+                    <identifier type="isbn" typeURI="http://id.loc.gov/vocabulary/identifiers/isbn/">90–393–3859–0</identifier>
+                    <extension>
+                      <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai http://www.surfgroepen.nl/sites/oai/metadata/Shared%20Documents/dai-extension.xsd"/>
+                    </extension>
+                  </mods>
+                </didl:Resource>
+              </didl:Component>
+            </didl:Item>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource ref="https://dspace.library.uu.nl/handle/1874/3054" mimeType="text/html"/>
+              </didl:Component>
+            </didl:Item>
+          </didl:Item>
+        </didl:DIDL>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>

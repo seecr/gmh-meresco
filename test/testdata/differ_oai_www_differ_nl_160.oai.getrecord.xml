@@ -1,39 +1,78 @@
-<?xml version="1.0" encoding="UTF-8"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"><responseDate>2025-08-27T08:03:47Z</responseDate><request verb="GetRecord" identifier="oai:www.differ.nl:160" metadataPrefix="nl_didl">https://dspace.library.uu.nl/oai/dare</request><GetRecord><record>
- <header> <identifier>oai:www.differ.nl:160</identifier>
- <datestamp>2016-06-24T12:43:42Z</datestamp>
-</header>
-   <metadata>
-<didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd "><didl:Item> <didl:Descriptor> <didl:Statement mimeType="text/xml"> <dii:Identifier>urn:nbn:nl:ui:39-4cdece612010e2332d3d304cbbddfdb1</dii:Identifier>
-</didl:Statement>
-</didl:Descriptor>
- <didl:Descriptor> <didl:Statement mimeType="application/xml"> <dcterms:modified>2016-06-24T12:43:42Z</dcterms:modified>
-</didl:Statement>
-</didl:Descriptor>
- <didl:Component> <didl:Resource mimeType="text/html" ref="https://www.differ.nl/node/160"/>
-</didl:Component>
-<didl:Item> <didl:Descriptor> <didl:Statement mimeType="application/xml"> <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
-</didl:Statement>
-</didl:Descriptor>
-<didl:Component><didl:Resource mimeType="application/xml"><mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.0" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd"> <mods:originInfo> <mods:dateIssued encoding="iso8601">1985</mods:dateIssued>
-</mods:originInfo>
- <mods:titleInfo> <mods:title>Anomalous plasma heating induced by modulation of the current-density profile</mods:title>
-</mods:titleInfo>
- <mods:name type="personal" ID="n160-aut0"> <mods:namePart type="given"/>
- <mods:namePart type="family">N.J. Lopes Cardozo</mods:namePart>
- <mods:namePart type="termsOfAddress"/>
- <mods:role> <mods:roleTerm authority="marcrelator" type="code">aut</mods:roleTerm>
-</mods:role>
-</mods:name>
- <mods:extension> <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd"> <dai:identifier authority="info:eu-repo/dai/nl" IDref="n160-aut0">071090665</dai:identifier>
-</dai:daiList>
-</mods:extension>
- <mods:typeOfResource>text</mods:typeOfResource>
-<mods:relatedItem type="host"> <mods:titleInfo/>
-</mods:relatedItem> <mods:genre>info:eu-repo/semantics/report</mods:genre>
-</mods:mods></didl:Resource></didl:Component></didl:Item><didl:Item> <didl:Descriptor> <didl:Statement mimeType="application/xml"> <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
-</didl:Statement>
-</didl:Descriptor>
-<didl:Component><didl:Resource mimeType="text/html" ref="https://www.differ.nl/node/160"/></didl:Component></didl:Item></didl:Item> </didl:DIDL>
-</metadata>
-  </record>
-</GetRecord></OAI-PMH>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2025-08-27T08:03:47Z</responseDate>
+  <request verb="GetRecord" identifier="oai:www.differ.nl:160" metadataPrefix="nl_didl">https://dspace.library.uu.nl/oai/dare</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:www.differ.nl:160</identifier>
+        <datestamp>2016-06-24T12:43:42Z</datestamp>
+      </header>
+      <metadata>
+        <didl:DIDL xmlns:didl="urn:mpeg:mpeg21:2002:02-DIDL-NS" xmlns:dii="urn:mpeg:mpeg21:2002:01-DII-NS" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:mpeg21:2002:02-DIDL-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/did/didl.xsd urn:mpeg:mpeg21:2002:01-DII-NS http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-21_schema_files/dii/dii.xsd ">
+          <didl:Item>
+            <didl:Descriptor>
+              <didl:Statement mimeType="text/xml">
+                <dii:Identifier>urn:nbn:nl:ui:39-4cdece612010e2332d3d304cbbddfdb1</dii:Identifier>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Descriptor>
+              <didl:Statement mimeType="application/xml">
+                <dcterms:modified>2016-06-24T12:43:42Z</dcterms:modified>
+              </didl:Statement>
+            </didl:Descriptor>
+            <didl:Component>
+              <didl:Resource mimeType="text/html" ref="https://www.differ.nl/node/160"/>
+            </didl:Component>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/descriptiveMetadata"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="application/xml">
+                  <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" version="3.0" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
+                    <mods:originInfo>
+                      <mods:dateIssued encoding="iso8601">1985</mods:dateIssued>
+                    </mods:originInfo>
+                    <mods:titleInfo>
+                      <mods:title>Anomalous plasma heating induced by modulation of the current-density profile</mods:title>
+                    </mods:titleInfo>
+                    <mods:name type="personal" ID="n160-aut0">
+                      <mods:namePart type="given"/>
+                      <mods:namePart type="family">N.J. Lopes Cardozo</mods:namePart>
+                      <mods:namePart type="termsOfAddress"/>
+                      <mods:role>
+                        <mods:roleTerm authority="marcrelator" type="code">aut</mods:roleTerm>
+                      </mods:role>
+                    </mods:name>
+                    <mods:extension>
+                      <dai:daiList xmlns:dai="info:eu-repo/dai" xsi:schemaLocation="info:eu-repo/dai http://purl.org/REP/standards/dai-extension.xsd">
+                        <dai:identifier authority="info:eu-repo/dai/nl" IDref="n160-aut0">071090665</dai:identifier>
+                      </dai:daiList>
+                    </mods:extension>
+                    <mods:typeOfResource>text</mods:typeOfResource>
+                    <mods:relatedItem type="host">
+                      <mods:titleInfo/>
+                    </mods:relatedItem>
+                    <mods:genre>info:eu-repo/semantics/report</mods:genre>
+                  </mods:mods>
+                </didl:Resource>
+              </didl:Component>
+            </didl:Item>
+            <didl:Item>
+              <didl:Descriptor>
+                <didl:Statement mimeType="application/xml">
+                  <rdf:type rdf:resource="info:eu-repo/semantics/humanStartPage"/>
+                </didl:Statement>
+              </didl:Descriptor>
+              <didl:Component>
+                <didl:Resource mimeType="text/html" ref="https://www.differ.nl/node/160"/>
+              </didl:Component>
+            </didl:Item>
+          </didl:Item>
+        </didl:DIDL>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>
