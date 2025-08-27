@@ -23,25 +23,22 @@
 #
 ## end license ##
 
-import pathlib
-from lxml.etree import parse
 from io import StringIO
+
+import pytest
+from lxml.etree import parse
+from meresco.components.xml_generic.validate import ValidateException
+from meresco.xml import xpathFirst
 from seecr.test import CallTrace
 from weightless.core import Observable, be, compose
 
-normdoc_path = pathlib.Path(__file__).parent / "testdata"
-
-from meresco.xml import xpathFirst
-
+from gmh_meresco import testdata_path
 from gmh_meresco.dans.normalisedidl import NormaliseDIDL
 from gmh_meresco.dans.utils import NAMESPACEMAP
 
-import difflib
-import pytest
-from meresco.components.xml_generic.validate import ValidateException
 
-
-def test_normalise_didl():
+@pytest.mark.parametrize("filename", testdata_path.glob("*.normdoc"))
+def test_normalise_didl(filename):
 
     observer = CallTrace(emptyGeneratorMethods=["add"])
     dna = be(
@@ -54,22 +51,21 @@ def test_normalise_didl():
         )
     )
 
-    for filename in sorted(normdoc_path.glob("*.normdoc")):
-        with filename.open() as fp:
-            lxmlNode = parse(fp)
-            record_identifier = filename.stem
+    with filename.open() as fp:
+        lxmlNode = parse(fp)
+        record_identifier = filename.stem
 
-            before = xpathFirst(lxmlNode, "//document:part[@name='normdoc']/text()")
-            list(
-                compose(
-                    dna.all.add(
-                        record_identifier,
-                        partname="document",
-                        lxmlNode=lxmlNode,
-                    )
+        before = xpathFirst(lxmlNode, "//document:part[@name='normdoc']/text()")
+        list(
+            compose(
+                dna.all.add(
+                    record_identifier,
+                    partname="document",
+                    lxmlNode=lxmlNode,
                 )
             )
-            after = xpathFirst(lxmlNode, "//document:part[@name='normdoc']/text()")
+        )
+        after = xpathFirst(lxmlNode, "//document:part[@name='normdoc']/text()")
 
 
 def test_normalize_didl2():

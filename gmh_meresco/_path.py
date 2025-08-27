@@ -2,11 +2,6 @@
 #
 # Gemeenschappelijke Metadata Harvester (GMH) data extractie en OAI service
 #
-# Copyright (C) 2007-2008 SURF Foundation. http://www.surf.nl
-# Copyright (C) 2007-2010 Seek You Too (CQ2) http://www.cq2.nl
-# Copyright (C) 2007-2009 Stichting Kennisnet Ict op school. http://www.kennisnetictopschool.nl
-# Copyright (C) 2009 Delft University of Technology http://www.tudelft.nl
-# Copyright (C) 2009 Tilburg University http://www.uvt.nl
 # Copyright (C) 2025 Koninklijke Bibliotheek (KB) https://www.kb.nl
 # Copyright (C) 2025 Seecr (Seek You Too B.V.) https://seecr.nl
 #
@@ -28,12 +23,8 @@
 #
 ## end license ##
 
-from pkgutil import extend_path
+__all__ = ["testdata_path"]
+import pathlib
 
-__path__ = extend_path(__path__, __name__)
-
-import seecr_initvm
-
-seecr_initvm.initvm("meresco_lucene", "meresco_oai", "meresco_sequentialstore")
-
-from ._path import *
+mypath = pathlib.Path(__file__).resolve().parent
+testdata_path = mypath.parent / "test/testdata"

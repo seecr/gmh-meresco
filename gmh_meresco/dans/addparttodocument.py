@@ -46,8 +46,19 @@ class AddMetadataDocumentPart(Converter):
         if not type(lxmlNode) == _ElementTree:
             return lxmlNode
         e_merescodocument = lxmlNode.xpath("//document:document", namespaces=namespaces)
-        record_tree = fromstring(lxmlNode.xpath("//document:document/document:part[@name='record']/text()", namespaces=namespaces)[0])
-        metadata_xml = record_tree.xpath('//oai:metadata', namespaces=namespaces)[0]
-        etree.SubElement(e_merescodocument[0], namespaces.curieToTag('document:part'), name=self._partName).text = tostring(metadata_xml, pretty_print=True, encoding="utf-8").decode('utf-8')
+        record_tree = fromstring(
+            lxmlNode.xpath(
+                "//document:document/document:part[@name='record']/text()",
+                namespaces=namespaces,
+            )[0]
+        )
+        metadata_xml = record_tree.xpath("//oai:metadata", namespaces=namespaces)[0]
+        etree.SubElement(
+            e_merescodocument[0],
+            namespaces.curieToTag("document:part"),
+            name=self._partName,
+        ).text = tostring(metadata_xml, pretty_print=True, encoding="utf-8").decode(
+            "utf-8"
+        )
         # print tostring(lxmlNode)
         return lxmlNode

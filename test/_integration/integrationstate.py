@@ -43,6 +43,7 @@ import json
 
 from gmh_common.utils import read_db_config
 from gmh_common.test_utils import TestDbConf
+from gmh_meresco import testdata_path
 
 mydir = dirname(abspath(__file__))
 projectDir = dirname(dirname(mydir))
@@ -51,7 +52,6 @@ projectDir = dirname(dirname(mydir))
 class GmhTestIntegrationState(IntegrationState):
     def __init__(self, stateName, tests=None, fastMode=False):
         IntegrationState.__init__(self, stateName, tests=tests, fastMode=fastMode)
-        self.testdataDir = join(dirname(mydir), "updateRequest")
         self.gatewayPort = PortNumberGenerator.nextPort()
         self.apiPort = PortNumberGenerator.nextPort()
         self.resolverPort = PortNumberGenerator.nextPort()
@@ -136,12 +136,12 @@ class GmhTestIntegrationState(IntegrationState):
         start = time()
         print("Creating database in", self.integrationTempdir)
         try:
-            for f in sorted(glob(self.testdataDir + "/*.updateRequest")):
+            for f in sorted(testdata_path.glob("*.updateRequest")):
                 print("Uploading file:", f)
                 postRequest(
                     self.gatewayPort,
                     "/update",
-                    data=open(join(self.testdataDir, f)).read(),
+                    data=f.read_text(),
                     parse=False,
                 )
                 sleepWheel(0.3)

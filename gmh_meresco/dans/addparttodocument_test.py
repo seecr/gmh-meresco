@@ -23,15 +23,10 @@
 #
 ## end license ##
 
-import pathlib
 from lxml.etree import parse, tostring
 from io import BytesIO
 
-my_path = pathlib.Path(__file__).resolve().parent
-test_path = my_path.parent.parent / "test"
-
-update_request_path = test_path / "updateRequest"
-testdata_path = test_path / "testdata"
+from gmh_meresco import testdata_path
 
 from meresco.xml import xpathFirst, xpath
 from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
@@ -39,6 +34,7 @@ from gmh_meresco.dans.addparttodocument import AddMetadataDocumentPart
 from seecr.test import CallTrace
 from meresco.core import Observable, be
 from weightless.core import compose
+import pytest
 
 
 #
@@ -47,7 +43,8 @@ from weightless.core import compose
 # een document:part[name="normdoc"]. Het resultaat wordt in de testdata directory
 # gelegd voor andere test als input.
 #
-def test_add_metadata_document_part():
+@pytest.mark.parametrize("filename", testdata_path.glob("*.updateRequest"))
+def test_add_metadata_document_part(filename):
 
     observer = CallTrace(emptyGeneratorMethods=["add"])
     dna = be(
@@ -60,58 +57,48 @@ def test_add_metadata_document_part():
         )
     )
 
-    count = 0
-    for filename in sorted(update_request_path.glob("*.updateRequest")):
-        count += 1
-        with filename.open() as fp:
-            lxmlNode = parse(fp)
-            update_request = xpathFirst(lxmlNode, '/*[local-name()="updateRequest"]')
+    with filename.open() as fp:
+        lxmlNode = parse(fp)
+        update_request = xpathFirst(lxmlNode, '/*[local-name()="updateRequest"]')
 
-            record_identifier = xpathFirst(
-                update_request, "ucp:recordIdentifier/text()"
-            )
+        record_identifier = xpathFirst(update_request, "ucp:recordIdentifier/text()")
 
-            action = xpathFirst(update_request, "ucp:action/text()")
-            if action.partition("info:srw/action/1/")[-1] in ["create", "replace"]:
-                document_data = xpathFirst(
-                    update_request, "srw:record/srw:recordData/*"
-                )
-                if document_data is not None:
-                    document_xml = parse(BytesIO(tostring(document_data)))
+        action = xpathFirst(update_request, "ucp:action/text()")
+        if action.partition("info:srw/action/1/")[-1] in ["create", "replace"]:
+            document_data = xpathFirst(update_request, "srw:record/srw:recordData/*")
+            if document_data is not None:
+                document_xml = parse(BytesIO(tostring(document_data)))
 
-                    assert xpath(document_xml, "//document:part/@name") == [
-                        "record",
-                        "meta",
-                    ]
-                    try:
-                        list(
-                            compose(
-                                dna.all.add(
-                                    record_identifier,
-                                    partname="document",
-                                    lxmlNode=document_xml,
-                                )
+                assert xpath(document_xml, "//document:part/@name") == [
+                    "record",
+                    "meta",
+                ]
+                try:
+                    list(
+                        compose(
+                            dna.all.add(
+                                record_identifier,
+                                partname="document",
+                                lxmlNode=document_xml,
                             )
                         )
-                    except:
-                        print("ERROR with", record_identifier)
-                    assert xpath(document_xml, "//document:part/@name") == [
-                        "record",
-                        "meta",
-                        "normdoc",
-                    ]
-
-                    formatted = tostring(document_xml, pretty_print=True).decode(
-                        encoding="utf-8"
                     )
-                    target_filename = (
-                        testdata_path / filename.with_suffix(".normdoc").name
-                    )
+                except:
+                    print("ERROR with", record_identifier)
+                assert xpath(document_xml, "//document:part/@name") == [
+                    "record",
+                    "meta",
+                    "normdoc",
+                ]
 
-                    if (
-                        not target_filename.exists()
-                        or target_filename.read_text() != formatted
-                    ):
-                        target_filename.write_text(formatted)
-                        print(f"Wrote {target_filename}")
-    assert count > 0
+                formatted = tostring(document_xml, pretty_print=True).decode(
+                    encoding="utf-8"
+                )
+                target_filename = testdata_path / filename.with_suffix(".normdoc").name
+
+                if (
+                    not target_filename.exists()
+                    or target_filename.read_text() != formatted
+                ):
+                    target_filename.write_text(formatted)
+                    print(f"Wrote {target_filename}")
