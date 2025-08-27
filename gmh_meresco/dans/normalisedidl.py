@@ -310,7 +310,7 @@ class NormaliseDIDL(UiaConverter):
             lxmlNode,
             "%s",
             "//didl:DIDL/didl:Item/didl:Component/didl:Resource/@ref",
-            "//didl:DIDL/didl:Item/didl:Component/didl:Resource/text()"
+            "//didl:DIDL/didl:Item/didl:Component/didl:Resource/text()",
             '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@rdf:resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref',  # DIDL 3.0
             '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/rdf:type/@resource="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref',  # DIDL 3.0, without @rdf:resource
             '//didl:Item/didl:Item[didl:Descriptor/didl:Statement/dip:ObjectType/text()="info:eu-repo/semantics/humanStartPage"]/didl:Component/didl:Resource/@ref',  # fallback DIDL 2.3.1

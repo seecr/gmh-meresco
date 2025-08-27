@@ -67,7 +67,7 @@ class ResolverTest(IntegrationTestCase):
             ),
             (
                 "urn:nbn:nl:ui:10-1874-1170",
-                ["http://dspace.library.uu.nl/bitstream/1874/1170/1/Glandorf2001.pdf"],
+                ["http://dspace.library.uu.nl/handle/1874/1170"],
             ),
             (
                 "urn:nbn:nl:ui:11-dbi/509105ab6e3b0",
